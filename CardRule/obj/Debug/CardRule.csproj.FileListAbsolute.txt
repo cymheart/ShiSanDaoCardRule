@@ -1,0 +1,7 @@
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\bin\Debug\CardRule.exe.config
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\bin\Debug\CardRule.exe
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\bin\Debug\CardRule.pdb
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.csprojAssemblyReference.cache
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.csproj.CoreCompileInputs.cache
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.exe
+D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.pdb
