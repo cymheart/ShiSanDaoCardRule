@@ -1,12 +1,70 @@
-﻿using GameAssets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardRule
+namespace CardRuleNS
 {
+    public enum RulePaiXingType
+    {
+        /// <summary>
+        /// 不存在
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 单张
+        /// </summary>
+        Single,
+
+        /// <summary>
+        /// 对子
+        /// </summary>
+        DuiZi,
+
+        /// <summary>
+        /// 两对
+        /// </summary>
+        TwoDui,
+
+        /// <summary>
+        /// 三条
+        /// </summary>
+        SanTiao,
+
+        /// <summary>
+        /// 顺子
+        /// </summary>
+        ShunZi,
+
+        /// <summary>
+        /// 同花
+        /// </summary>
+        TongHua,
+
+        /// <summary>
+        /// 葫芦
+        /// </summary>
+        HuLu,
+
+        /// <summary>
+        /// 炸弹
+        /// </summary>
+        Bomb,
+
+        /// <summary>
+        /// 同花顺
+        /// </summary>
+        TongHuaShun,
+
+        /// <summary>
+        /// 五同
+        /// </summary>
+        WuTong,
+
+    }
+
     // <summary>
     /// 扑克面值
     /// </summary>
@@ -286,16 +344,41 @@ namespace CardRule
         Count
     }
 
+    public struct PaiXingInfo
+    {
+        public RulePaiXingType paiXingType;
+        public RulePukeFaceValue[] cardFaceValues;
+        public int laiziCount;
+    }
+
     public class CardLaiziRulesOp
     {
         List<CardInfo> cardInfoList = new List<CardInfo>();
-        public CardLaiziRulesOp()
+
+        //
+        RulePukeFaceValue[] pukeFaceValues;
+
+        //
+        public List<PaiXingInfo> wutongList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> tonghuashunList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> shunziList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> huluList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> tiezhiList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> twoduiList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> santiaoList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> duiziList = new List<PaiXingInfo>();
+
+        public CardLaiziRulesOp(RulePukeFaceValue[] pukeFaceValues)
         {
+            this.pukeFaceValues = pukeFaceValues;
+
             CreatePukeInfoList();
         }
 
-        public void CreatePaiXingArray(RulePukeFaceValue[] pukeFaceValues)
+        public void CreatePaiXingArray()
         {
+            Clear();
+
             List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
             int laiziCount = 0;
 
@@ -314,43 +397,123 @@ namespace CardRule
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
             HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(cards);
             HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(cards);
+            HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(cards);
 
-            CreatePaiXingArrayBySplitGroup5(cardkeyHashSet5, laiziCount);
+            CreatePaiXingArrayBySplitGroup(cardkeyHashSet5, laiziCount, 5);
+            CreatePaiXingArrayBySplitGroup(cardkeyHashSet4, laiziCount, 4);
+            CreatePaiXingArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
+            CreatePaiXingArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
+            CreatePaiXingArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
         }
 
 
-        void CreatePaiXingArrayBySplitGroup5(HashSet<CardKey> cardkeyHashSet5, int laiziCount)
+        void CreatePaiXingArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
+        {
+            foreach (var cardkey in cardkeyHashSet)
+            {
+                _CreatePaiXingArray(cardkey, laiziCount, splitGroup);
+            }
+        }
+       
+        void _CreatePaiXingArray(CardKey cardkey, int laiziCount, int splitGroup)
         {
             bool ret;
             int mustLaziCount;
             CardInfo[] cardInfos;
+            PaiXingInfo paiXingInfo;
 
-            foreach (var cardkey in cardkeyHashSet5)
+            ret = CardLaiziRules.Instance.wutongKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
             {
-                ret = CardLaiziRules.Instance.shunziKeyDict.TryGetValue(cardkey, out mustLaziCount);
-                if (ret == true && mustLaziCount <= laiziCount)
-                {
-                    cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
-                }
-
-                ret = CardLaiziRules.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out mustLaziCount);
-                if (ret == true && mustLaziCount <= laiziCount)
-                {
-
-                }
-
-                ret = CardLaiziRules.Instance.huluKeyDict.TryGetValue(cardkey, out mustLaziCount);
-                if (ret == true && mustLaziCount <= laiziCount)
-                {
-
-                }
-
-                ret = CardLaiziRules.Instance.wutongKeyDict.TryGetValue(cardkey, out mustLaziCount);
-                if (ret == true && mustLaziCount <= laiziCount)
-                {
-
-                }
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.WuTong, mustLaziCount);
+                wutongList.Add(paiXingInfo);
             }
+
+            ret = CardLaiziRules.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TongHuaShun, mustLaziCount);
+                tonghuashunList.Add(paiXingInfo);
+            }
+
+            ret = CardLaiziRules.Instance.shunziKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.ShunZi, mustLaziCount);
+                shunziList.Add(paiXingInfo);
+            }
+ 
+            ret = CardLaiziRules.Instance.huluKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.HuLu, mustLaziCount);
+                huluList.Add(paiXingInfo);
+            }
+
+            if (splitGroup == 5)
+                return;
+
+            ret = CardLaiziRules.Instance.tiezhiKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.Bomb, mustLaziCount);
+                tiezhiList.Add(paiXingInfo);
+            }
+
+            ret = CardLaiziRules.Instance.twoduiKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TwoDui, mustLaziCount);
+                twoduiList.Add(paiXingInfo);
+            }
+
+            if (splitGroup == 4)
+                return;
+
+            ret = CardLaiziRules.Instance.santiaoKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.SanTiao, mustLaziCount);
+                santiaoList.Add(paiXingInfo);
+            }
+
+            if (splitGroup == 3)
+                return;
+
+            ret = CardLaiziRules.Instance.duiziKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            if (ret == true && mustLaziCount <= laiziCount)
+            {
+                cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
+                paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.DuiZi, mustLaziCount);
+                duiziList.Add(paiXingInfo);
+            }
+
+        }
+
+
+        PaiXingInfo CreatePaiXingInfo(CardInfo[] cardInfos, RulePaiXingType paiXingType, int laiziCount)
+        {
+            PaiXingInfo paiXingInfo = new PaiXingInfo();
+            paiXingInfo.laiziCount = laiziCount;
+            paiXingInfo.paiXingType = paiXingType;
+            paiXingInfo.cardFaceValues = new RulePukeFaceValue[cardInfos.Length];
+
+            RulePukeFaceValue face;
+
+            for (int i=0; i < cardInfos.Length; i++)
+            {
+                face = GetRulePukeFaceValue(cardInfos[i].value, cardInfos[i].suit);
+                paiXingInfo.cardFaceValues[i] = face;
+            }
+
+            return paiXingInfo;
         }
 
 
@@ -505,7 +668,7 @@ namespace CardRule
             {
                 for (int j = i + 1; j < cards.Length - 1; j++)
                 {
-                    for (int k = j + 1; j < cards.Length; k++)
+                    for (int k = j + 1; k < cards.Length; k++)
                     {
                         cardkey = new CardKey();
                         cardkey = CardLaiziRules.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
@@ -536,6 +699,23 @@ namespace CardRule
                     if (!cardkeyHashSet.Contains(cardkey))
                         cardkeyHashSet.Add(cardkey);
                 }
+            }
+
+            return cardkeyHashSet;
+        }
+
+
+        HashSet<CardKey> SplitCardsGroup1(CardInfo[] cards)
+        {
+            HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>(new CardKey.EqualityComparer());
+            CardKey cardkey;
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                cardkey = new CardKey();
+                cardkey = CardLaiziRules.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                if (!cardkeyHashSet.Contains(cardkey))
+                    cardkeyHashSet.Add(cardkey);
             }
 
             return cardkeyHashSet;
@@ -596,73 +776,29 @@ namespace CardRule
         CardInfo CreateCardInfo(RulePukeFaceValue pukeFaceValue)
         {
             CardInfo pukeInfo = new CardInfo();
-
-            switch (pukeFaceValue)
-            {
-                case RulePukeFaceValue.Diamond_A: pukeInfo.suit = 0; pukeInfo.value = 1; break;
-                case RulePukeFaceValue.Diamond_2: pukeInfo.suit = 0; pukeInfo.value = 2; break;
-                case RulePukeFaceValue.Diamond_3: pukeInfo.suit = 0; pukeInfo.value = 3; break;
-                case RulePukeFaceValue.Diamond_4: pukeInfo.suit = 0; pukeInfo.value = 4; break;
-                case RulePukeFaceValue.Diamond_5: pukeInfo.suit = 0; pukeInfo.value = 5; break;
-                case RulePukeFaceValue.Diamond_6: pukeInfo.suit = 0; pukeInfo.value = 6; break;
-                case RulePukeFaceValue.Diamond_7: pukeInfo.suit = 0; pukeInfo.value = 7; break;
-                case RulePukeFaceValue.Diamond_8: pukeInfo.suit = 0; pukeInfo.value = 8; break;
-                case RulePukeFaceValue.Diamond_9: pukeInfo.suit = 0; pukeInfo.value = 9; break;
-                case RulePukeFaceValue.Diamond_10: pukeInfo.suit = 0; pukeInfo.value = 10; break;
-                case RulePukeFaceValue.Diamond_J: pukeInfo.suit = 0; pukeInfo.value = 11; break;
-                case RulePukeFaceValue.Diamond_Q: pukeInfo.suit = 0; pukeInfo.value = 12; break;
-                case RulePukeFaceValue.Diamond_K: pukeInfo.suit = 0; pukeInfo.value = 13; break;
-
-                //
-                case RulePukeFaceValue.Club_A: pukeInfo.suit = 1; pukeInfo.value = 1; break;
-                case RulePukeFaceValue.Club_2: pukeInfo.suit = 1; pukeInfo.value = 2; break;
-                case RulePukeFaceValue.Club_3: pukeInfo.suit = 1; pukeInfo.value = 3; break;
-                case RulePukeFaceValue.Club_4: pukeInfo.suit = 1; pukeInfo.value = 4; break;
-                case RulePukeFaceValue.Club_5: pukeInfo.suit = 1; pukeInfo.value = 5; break;
-                case RulePukeFaceValue.Club_6: pukeInfo.suit = 1; pukeInfo.value = 6; break;
-                case RulePukeFaceValue.Club_7: pukeInfo.suit = 1; pukeInfo.value = 7; break;
-                case RulePukeFaceValue.Club_8: pukeInfo.suit = 1; pukeInfo.value = 8; break;
-                case RulePukeFaceValue.Club_9: pukeInfo.suit = 1; pukeInfo.value = 9; break;
-                case RulePukeFaceValue.Club_10: pukeInfo.suit = 1; pukeInfo.value = 10; break;
-                case RulePukeFaceValue.Club_J: pukeInfo.suit = 1; pukeInfo.value = 11; break;
-                case RulePukeFaceValue.Club_Q: pukeInfo.suit = 1; pukeInfo.value = 12; break;
-                case RulePukeFaceValue.Club_K: pukeInfo.suit = 1; pukeInfo.value = 13; break;
-
-                //
-                case RulePukeFaceValue.Heart_A: pukeInfo.suit = 2; pukeInfo.value = 1; break;
-                case RulePukeFaceValue.Heart_2: pukeInfo.suit = 2; pukeInfo.value = 2; break;
-                case RulePukeFaceValue.Heart_3: pukeInfo.suit = 2; pukeInfo.value = 3; break;
-                case RulePukeFaceValue.Heart_4: pukeInfo.suit = 2; pukeInfo.value = 4; break;
-                case RulePukeFaceValue.Heart_5: pukeInfo.suit = 2; pukeInfo.value = 5; break;
-                case RulePukeFaceValue.Heart_6: pukeInfo.suit = 2; pukeInfo.value = 6; break;
-                case RulePukeFaceValue.Heart_7: pukeInfo.suit = 2; pukeInfo.value = 7; break;
-                case RulePukeFaceValue.Heart_8: pukeInfo.suit = 2; pukeInfo.value = 8; break;
-                case RulePukeFaceValue.Heart_9: pukeInfo.suit = 2; pukeInfo.value = 9; break;
-                case RulePukeFaceValue.Heart_10: pukeInfo.suit = 2; pukeInfo.value = 10; break;
-                case RulePukeFaceValue.Heart_J: pukeInfo.suit = 2; pukeInfo.value = 11; break;
-                case RulePukeFaceValue.Heart_Q: pukeInfo.suit = 2; pukeInfo.value = 12; break;
-                case RulePukeFaceValue.Heart_K: pukeInfo.suit = 2; pukeInfo.value = 13; break;
-
-                //
-                case RulePukeFaceValue.Spade_A: pukeInfo.suit = 3; pukeInfo.value = 1; break;
-                case RulePukeFaceValue.Spade_2: pukeInfo.suit = 3; pukeInfo.value = 2; break;
-                case RulePukeFaceValue.Spade_3: pukeInfo.suit = 3; pukeInfo.value = 3; break;
-                case RulePukeFaceValue.Spade_4: pukeInfo.suit = 3; pukeInfo.value = 4; break;
-                case RulePukeFaceValue.Spade_5: pukeInfo.suit = 3; pukeInfo.value = 5; break;
-                case RulePukeFaceValue.Spade_6: pukeInfo.suit = 3; pukeInfo.value = 6; break;
-                case RulePukeFaceValue.Spade_7: pukeInfo.suit = 3; pukeInfo.value = 7; break;
-                case RulePukeFaceValue.Spade_8: pukeInfo.suit = 3; pukeInfo.value = 8; break;
-                case RulePukeFaceValue.Spade_9: pukeInfo.suit = 3; pukeInfo.value = 9; break;
-                case RulePukeFaceValue.Spade_10: pukeInfo.suit = 3; pukeInfo.value = 10; break;
-                case RulePukeFaceValue.Spade_J: pukeInfo.suit = 3; pukeInfo.value = 11; break;
-                case RulePukeFaceValue.Spade_Q: pukeInfo.suit = 3; pukeInfo.value = 12; break;
-                case RulePukeFaceValue.Spade_K: pukeInfo.suit = 3; pukeInfo.value = 13; break;
-
-                //
-                case RulePukeFaceValue.Laizi: pukeInfo.suit = -1; pukeInfo.value = 14; break;
-            }
-
+            int n = (int)pukeFaceValue;
+            int suit = n / 13;
+            int value = n % 13 + 1;
+            pukeInfo.suit = suit;
+            pukeInfo.value = value;
             return pukeInfo;
+        }
+
+        RulePukeFaceValue GetRulePukeFaceValue(int cardValue, int cardSuit)
+        {
+            return (RulePukeFaceValue)(cardSuit * 13 + cardValue - 1);
+        }
+
+        void Clear()
+        {
+            wutongList.Clear();
+            tonghuashunList.Clear();
+            shunziList.Clear();
+            huluList.Clear();
+            tiezhiList.Clear();
+            twoduiList.Clear();
+            santiaoList.Clear();
+            duiziList.Clear();
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GameAssets
+namespace CardRuleNS
 {
     public struct CardInfo
     {
@@ -63,7 +63,7 @@ namespace GameAssets
         public Dictionary<CardKey, int> shunziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> tongHuaShunKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> huluKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> towduiKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, int> twoduiKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> wutongKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> tiezhiKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> santiaoKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
@@ -350,7 +350,7 @@ namespace GameAssets
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            towduiKeyDict[cardkey] = 0;
+            twoduiKeyDict[cardkey] = 0;
 
             //
             int tmp1;
@@ -368,7 +368,7 @@ namespace GameAssets
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                towduiKeyDict[cardkey] = 1;
+                twoduiKeyDict[cardkey] = 1;
                 cards[i].value = tmp1;
             }
 
@@ -380,7 +380,7 @@ namespace GameAssets
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[m[i]].value, cards[m[i]].suit);
                 cardkey = AppendCardToCardKey(cardkey, cards[m[i+1]].value, cards[m[i+1]].suit);
-                towduiKeyDict[cardkey] = 2;
+                twoduiKeyDict[cardkey] = 2;
             }
         }
 

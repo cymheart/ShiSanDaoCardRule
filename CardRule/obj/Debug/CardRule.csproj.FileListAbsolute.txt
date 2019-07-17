@@ -5,3 +5,10 @@ D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.
 D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.csproj.CoreCompileInputs.cache
 D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.exe
 D:\MyDocuments\Visual Studio 2017\Projects\CardRule\CardRule\obj\Debug\CardRule.pdb
+D:\Documents\github\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.exe.config
+D:\Documents\github\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.exe
+D:\Documents\github\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.pdb
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.csprojAssemblyReference.cache
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.csproj.CoreCompileInputs.cache
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.exe
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.pdb
