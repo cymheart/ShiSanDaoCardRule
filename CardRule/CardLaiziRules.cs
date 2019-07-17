@@ -80,6 +80,8 @@ namespace CardRuleNS
             CreateDuiZiDict();
         }
 
+
+
         void CreateShunziDict()
         {
             CardInfo[] cards = new CardInfo[5]
@@ -825,6 +827,39 @@ namespace CardRuleNS
 
             return key;
         }
+
+        public bool IsContains(CardKey cardkey, CardKey checkCardKey)
+        {
+            uint a = cardkey.bit_31_0 & checkCardKey.bit_31_0;
+            uint b = cardkey.bit_63_32 & checkCardKey.bit_63_32;
+            uint c = cardkey.bit_95_64 & checkCardKey.bit_95_64;
+            uint d = cardkey.bit_103_96 & checkCardKey.bit_103_96;
+
+            if(a == checkCardKey.bit_31_0 && 
+                b == checkCardKey.bit_63_32 &&
+                c == checkCardKey.bit_95_64 &&
+                d == checkCardKey.bit_103_96)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public CardKey CreateCardKey(CardInfo[] cardinfos)
+        {
+            CardKey cardkey = new CardKey();
+            if (cardinfos == null || cardinfos.Length == 0)
+                return cardkey;
+
+            for (int i = 0; i < cardinfos.Length; i++)
+            {
+                cardkey = AppendCardToCardKey(cardkey, cardinfos[i].value, cardinfos[i].suit);
+            }
+
+            return cardkey;
+        }
+
 
         public CardInfo[] CreateCardInfos(CardKey cardkey)
         {
