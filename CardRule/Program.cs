@@ -23,7 +23,7 @@ namespace CardRule
                 RulePukeFaceValue.Diamond_J,
                 RulePukeFaceValue.Heart_10,
                 RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Spade_Q,
+                RulePukeFaceValue.Club_3,
                 RulePukeFaceValue.Laizi,
                 RulePukeFaceValue.Laizi,
                 RulePukeFaceValue.Diamond_A,

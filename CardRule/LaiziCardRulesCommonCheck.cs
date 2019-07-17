@@ -498,10 +498,6 @@ namespace CardRuleNS
             CreatePaiXingArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreatePaiXingArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
 
-
-            //
-            //CreateTonghuaList(cards);
-
         }
 
         void CreateShunziList(CardKey cardKey, int laiziCount)
