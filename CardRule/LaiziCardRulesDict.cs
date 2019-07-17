@@ -173,6 +173,10 @@ namespace CardRuleNS
                 }
             }
 
+            if (realCount == 1)
+                return;
+
+
             bool isEqual = true;
             int prevCardSuit = -1;
             for (int i = 0; i < count; i++)
@@ -193,7 +197,12 @@ namespace CardRuleNS
             if (isEqual)
                 tongHuaShunKeyDict[cardkey] = 5 - realCount;
             else
+            {
+                if (realCount <= 2)
+                    return;
+
                 shunziKeyDict[cardkey] = 5 - realCount;
+            }
         }
 
         void CreateHuluDict()
@@ -223,7 +232,7 @@ namespace CardRuleNS
                         {
                             cards[2].suit = s2;
 
-                            for (int j = 0; j <= 13; j++)
+                            for (int j = 1; j <= 13; j++)
                             {
                                 cards[3].value = j;
                                 cards[4].value = j;
@@ -785,7 +794,20 @@ namespace CardRuleNS
             }
         }
 
-        
+
+        void CreateTonghuaDict()
+        {
+            CardInfo[] cards = new CardInfo[5]
+            {
+                new CardInfo(),new CardInfo(),
+                new CardInfo(),new CardInfo(),
+                new CardInfo()
+            };
+
+            
+        }
+
+
         public CardKey AppendCardToCardKey(CardKey cardkey, int cardValue, int cardSuit)
         {
             int n = (cardValue - 1) * 8;
