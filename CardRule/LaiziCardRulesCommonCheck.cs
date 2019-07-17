@@ -441,17 +441,12 @@ namespace CardRuleNS
         /// 对子牌型组
         /// </summary>
         public List<PaiXingInfo> DuiziList = new List<PaiXingInfo>();
-
+       
+        /// <summary>
         /// 同花牌型组
         /// </summary>
         public List<PaiXingInfo> TonghuaList = new List<PaiXingInfo>();
 
-        /// <summary>
-        /// 同花内部牌型组
-        /// </summary>
-        List<CardInfo>[] tonghuaLists;
-        int[] tonghuaIdx = new int[5];
-        int tonghuaPos = 0;
 
         //
         List<CardInfo> cardInfoList = new List<CardInfo>();
