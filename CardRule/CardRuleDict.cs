@@ -11,6 +11,9 @@ namespace CardRuleNS
         public int suit;
     }
 
+    /// <summary>
+    /// 用于把手牌数据打包成紧凑的cardkey类型
+    /// </summary>
     public struct CardKey
     {
         public uint bit_103_96;
@@ -50,15 +53,15 @@ namespace CardRuleNS
     /// <summary>
     /// 十三道赖子牌型字典
     /// </summary>
-    public class LaiziCardRulesDict
+    public class CardRuleDict
     {
-        private static LaiziCardRulesDict instance = null;
-        public static LaiziCardRulesDict Instance
+        private static CardRuleDict instance = null;
+        public static CardRuleDict Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new LaiziCardRulesDict();
+                    instance = new CardRuleDict();
                 return instance;
             }
         }
@@ -86,6 +89,100 @@ namespace CardRuleNS
             CreateSanTiaoDict();
             CreateDuiZiDict();
             CreateTongHuaDict();
+        }
+
+
+        /// <summary>
+        /// 添加牌数据到现有cardkey
+        /// </summary>
+        /// <param name="cardkey"></param>
+        /// <param name="cardValue"></param>
+        /// <param name="cardSuit"></param>
+        /// <returns></returns>
+        public CardKey AppendCardToCardKey(CardKey cardkey, int cardValue, int cardSuit)
+        {
+            int n = (cardValue - 1) * 8;
+            int m = cardSuit * 2;
+
+            if (n <= 31)
+            {
+                cardkey.bit_31_0 = FlagKeyBit(cardkey.bit_31_0, n, m);
+            }
+            else if (n <= 63)
+            {
+                n -= 32;
+                cardkey.bit_63_32 = FlagKeyBit(cardkey.bit_63_32, n, m);
+            }
+            else if (n <= 95)
+            {
+                n -= 64;
+                cardkey.bit_95_64 = FlagKeyBit(cardkey.bit_95_64, n, m);
+            }
+            else
+            {
+                n -= 96;
+                cardkey.bit_103_96 = FlagKeyBit(cardkey.bit_103_96, n, m);
+            }
+
+            return cardkey;
+        }
+
+        /// <summary>
+        /// 检查cardkey是否包含checkCardKey的牌数据
+        /// </summary>
+        /// <param name="cardkey"></param>
+        /// <param name="checkCardKey"></param>
+        /// <returns></returns>
+        public bool IsContains(CardKey cardkey, CardKey checkCardKey)
+        {
+            uint a = cardkey.bit_31_0 & checkCardKey.bit_31_0;
+            uint b = cardkey.bit_63_32 & checkCardKey.bit_63_32;
+            uint c = cardkey.bit_95_64 & checkCardKey.bit_95_64;
+            uint d = cardkey.bit_103_96 & checkCardKey.bit_103_96;
+
+            if (a == checkCardKey.bit_31_0 &&
+                b == checkCardKey.bit_63_32 &&
+                c == checkCardKey.bit_95_64 &&
+                d == checkCardKey.bit_103_96)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 通过CardInfo[]生成CardKey
+        /// </summary>
+        /// <param name="cardinfos"></param>
+        /// <returns></returns>
+        public CardKey CreateCardKey(CardInfo[] cardinfos)
+        {
+            CardKey cardkey = new CardKey();
+            if (cardinfos == null || cardinfos.Length == 0)
+                return cardkey;
+
+            for (int i = 0; i < cardinfos.Length; i++)
+            {
+                cardkey = AppendCardToCardKey(cardkey, cardinfos[i].value, cardinfos[i].suit);
+            }
+
+            return cardkey;
+        }
+
+        /// <summary>
+        /// 根据cardkey还原出CardInfo
+        /// </summary>
+        /// <param name="cardkey"></param>
+        /// <returns></returns>
+        public CardInfo[] CreateCardInfos(CardKey cardkey)
+        {
+            List<CardInfo> cardInfoList = new List<CardInfo>();
+            CreateCardInfoToList((int)cardkey.bit_31_0, 0, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_63_32, 4, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_95_64, 8, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_103_96, 12, cardInfoList);
+            return cardInfoList.ToArray();
         }
 
         void CreateShunziDict()
@@ -909,34 +1006,6 @@ namespace CardRuleNS
             }
         }
 
-        public CardKey AppendCardToCardKey(CardKey cardkey, int cardValue, int cardSuit)
-        {
-            int n = (cardValue - 1) * 8;
-            int m = cardSuit * 2;
-
-            if (n <= 31)
-            {
-                cardkey.bit_31_0 = FlagKeyBit(cardkey.bit_31_0, n, m);
-            }
-            else if (n <= 63)
-            {
-                n -= 32;
-                cardkey.bit_63_32 = FlagKeyBit(cardkey.bit_63_32, n, m);
-            }
-            else if (n <= 95)
-            {
-                n -= 64;
-                cardkey.bit_95_64 = FlagKeyBit(cardkey.bit_95_64, n, m);
-            }
-            else
-            {
-                n -= 96;
-                cardkey.bit_103_96 = FlagKeyBit(cardkey.bit_103_96, n, m);
-            }
-
-            return cardkey;
-        }
-
         uint FlagKeyBit(uint key, int n, int m)
         {
             uint bitflag = (uint)(1 << n);
@@ -955,50 +1024,7 @@ namespace CardRuleNS
 
             return key;
         }
-
-        public bool IsContains(CardKey cardkey, CardKey checkCardKey)
-        {
-            uint a = cardkey.bit_31_0 & checkCardKey.bit_31_0;
-            uint b = cardkey.bit_63_32 & checkCardKey.bit_63_32;
-            uint c = cardkey.bit_95_64 & checkCardKey.bit_95_64;
-            uint d = cardkey.bit_103_96 & checkCardKey.bit_103_96;
-
-            if(a == checkCardKey.bit_31_0 && 
-                b == checkCardKey.bit_63_32 &&
-                c == checkCardKey.bit_95_64 &&
-                d == checkCardKey.bit_103_96)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public CardKey CreateCardKey(CardInfo[] cardinfos)
-        {
-            CardKey cardkey = new CardKey();
-            if (cardinfos == null || cardinfos.Length == 0)
-                return cardkey;
-
-            for (int i = 0; i < cardinfos.Length; i++)
-            {
-                cardkey = AppendCardToCardKey(cardkey, cardinfos[i].value, cardinfos[i].suit);
-            }
-
-            return cardkey;
-        }
-
-
-        public CardInfo[] CreateCardInfos(CardKey cardkey)
-        {
-            List<CardInfo> cardInfoList = new List<CardInfo>();
-            CreateCardInfoToList((int)cardkey.bit_31_0, 0, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_63_32, 4, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_95_64, 8, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_103_96, 12, cardInfoList);
-            return cardInfoList.ToArray();
-        }
-
+  
         void CreateCardInfoToList(int key, int baseValue, List<CardInfo> cardInfoList)
         {
             int mask = 0x1;

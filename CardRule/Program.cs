@@ -11,7 +11,7 @@ namespace CardRule
     {
         static void Main(string[] args)
         {
-            LaiziCardRulesDict.Instance.CreatePaiXingDict();
+            CardRuleDict.Instance.CreatePaiXingDict();
 
             RulePukeFaceValue[] faceValues = new RulePukeFaceValue[]
             {
@@ -30,7 +30,7 @@ namespace CardRule
                 RulePukeFaceValue.Laizi
             };
 
-            CommonRulesCheck paixingCheck = new CommonRulesCheck();
+            CardRuleCommonCheck paixingCheck = new CardRuleCommonCheck();
 
 
             paixingCheck.CreatePaiXingArray(faceValues);

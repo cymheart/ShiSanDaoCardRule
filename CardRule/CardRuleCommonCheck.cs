@@ -4,7 +4,7 @@ using System.Collections.Generic;
 #region 牌型检测算法使用例子
 //void PaiXiDemoTest()
 //{
-//    LaiziCardRulesDict.Instance.CreatePaiXingDict();
+//    CardRuleDict.Instance.CreatePaiXingDict();
 //
 //    RulePukeFaceValue[] faceValues = new RulePukeFaceValue[]
 //    {
@@ -22,7 +22,7 @@ using System.Collections.Generic;
 //                RulePukeFaceValue.Diamond_A,
 //                RulePukeFaceValue.Laizi
 //    };
-//    CommonRulesCheck check = new CommonRulesCheck();
+//    CardRuleCommonCheck check = new CardRuleCommonCheck();
 //    check.CreatePaiXingArray(faceValues);
 //        
 //    List<PaiXingInfo> shunziList = check.ShunziList; //获取所有的顺子牌型(包括赖子组成的牌型，数据里提示了需要几张赖子牌)
@@ -400,7 +400,7 @@ namespace CardRuleNS
     /// <summary>
     /// 普通牌型检查算法
     /// </summary>
-    public class CommonRulesCheck
+    public class CardRuleCommonCheck
     {    
         /// <summary>
         /// 五同牌型组
@@ -451,7 +451,7 @@ namespace CardRuleNS
         //
         List<CardInfo> cardInfoList = new List<CardInfo>();
 
-        public CommonRulesCheck()
+        public CardRuleCommonCheck()
         {
             CreatePukeInfoList();
         }
@@ -479,7 +479,7 @@ namespace CardRuleNS
             CardInfo[] cards = TransToCardInfo(newPukeFaceValueList.ToArray());
             SortCards(cards);
 
-            CardKey orgcardkey = LaiziCardRulesDict.Instance.CreateCardKey(cards);
+            CardKey orgcardkey = CardRuleDict.Instance.CreateCardKey(cards);
 
             CreateShunziList(orgcardkey, laiziCount);
             CreateTonghuashunList(orgcardkey, laiziCount);
@@ -506,13 +506,13 @@ namespace CardRuleNS
             CardInfo[] cardInfos;
             PaiXingInfo paiXingInfo;
 
-            foreach (var item in LaiziCardRulesDict.Instance.shunziKeyDict)
+            foreach (var item in CardRuleDict.Instance.shunziKeyDict)
             {
-                ret = LaiziCardRulesDict.Instance.IsContains(cardKey, item.Key);
+                ret = CardRuleDict.Instance.IsContains(cardKey, item.Key);
 
                 if(ret == true && item.Value <= laiziCount)
                 {
-                    cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(item.Key);
+                    cardInfos = CardRuleDict.Instance.CreateCardInfos(item.Key);
                     paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.ShunZi, item.Value);
                     ShunziList.Add(paiXingInfo);
                 }
@@ -525,13 +525,13 @@ namespace CardRuleNS
             CardInfo[] cardInfos;
             PaiXingInfo paiXingInfo;
 
-            foreach (var item in LaiziCardRulesDict.Instance.tongHuaShunKeyDict)
+            foreach (var item in CardRuleDict.Instance.tongHuaShunKeyDict)
             {
-                ret = LaiziCardRulesDict.Instance.IsContains(cardKey, item.Key);
+                ret = CardRuleDict.Instance.IsContains(cardKey, item.Key);
 
                 if (ret == true && item.Value <= laiziCount)
                 {
-                    cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(item.Key);
+                    cardInfos = CardRuleDict.Instance.CreateCardInfos(item.Key);
                     paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TongHuaShun, item.Value);
                     TonghuashunList.Add(paiXingInfo);
                 }
@@ -544,13 +544,13 @@ namespace CardRuleNS
             CardInfo[] cardInfos;
             PaiXingInfo paiXingInfo;
 
-            foreach (var item in LaiziCardRulesDict.Instance.tonghuaKeyDict)
+            foreach (var item in CardRuleDict.Instance.tonghuaKeyDict)
             {
-                ret = LaiziCardRulesDict.Instance.IsContains(cardKey, item.Key);
+                ret = CardRuleDict.Instance.IsContains(cardKey, item.Key);
 
                 if (ret == true && item.Value <= laiziCount)
                 {
-                    cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(item.Key);
+                    cardInfos = CardRuleDict.Instance.CreateCardInfos(item.Key);
                     paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TongHua, item.Value);
                     TonghuaList.Add(paiXingInfo);
                 }
@@ -572,18 +572,18 @@ namespace CardRuleNS
             CardInfo[] cardInfos;
             PaiXingInfo paiXingInfo;
 
-            ret = LaiziCardRulesDict.Instance.wutongKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            ret = CardRuleDict.Instance.wutongKeyDict.TryGetValue(cardkey, out mustLaziCount);
             if (ret == true && mustLaziCount <= laiziCount)
             {
-                cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(cardkey);
+                cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.WuTong, mustLaziCount);
                 WutongList.Add(paiXingInfo);
             }
 
-            ret = LaiziCardRulesDict.Instance.huluKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            ret = CardRuleDict.Instance.huluKeyDict.TryGetValue(cardkey, out mustLaziCount);
             if (ret == true && mustLaziCount <= laiziCount)
             {
-                cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(cardkey);
+                cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.HuLu, mustLaziCount);
                 HuluList.Add(paiXingInfo);
             }
@@ -591,18 +591,18 @@ namespace CardRuleNS
             if (splitGroup == 5)
                 return;
 
-            ret = LaiziCardRulesDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            ret = CardRuleDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out mustLaziCount);
             if (ret == true && mustLaziCount <= laiziCount)
             {
-                cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(cardkey);
+                cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.Bomb, mustLaziCount);
                 TiezhiList.Add(paiXingInfo);
             }
 
-            ret = LaiziCardRulesDict.Instance.twoduiKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            ret = CardRuleDict.Instance.twoduiKeyDict.TryGetValue(cardkey, out mustLaziCount);
             if (ret == true && mustLaziCount <= laiziCount)
             {
-                cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(cardkey);
+                cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TwoDui, mustLaziCount);
                 TwoduiList.Add(paiXingInfo);
             }
@@ -610,10 +610,10 @@ namespace CardRuleNS
             if (splitGroup == 4)
                 return;
 
-            ret = LaiziCardRulesDict.Instance.santiaoKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            ret = CardRuleDict.Instance.santiaoKeyDict.TryGetValue(cardkey, out mustLaziCount);
             if (ret == true && mustLaziCount <= laiziCount)
             {
-                cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(cardkey);
+                cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.SanTiao, mustLaziCount);
                 SantiaoList.Add(paiXingInfo);
             }
@@ -621,10 +621,10 @@ namespace CardRuleNS
             if (splitGroup == 3)
                 return;
 
-            ret = LaiziCardRulesDict.Instance.duiziKeyDict.TryGetValue(cardkey, out mustLaziCount);
+            ret = CardRuleDict.Instance.duiziKeyDict.TryGetValue(cardkey, out mustLaziCount);
             if (ret == true && mustLaziCount <= laiziCount)
             {
-                cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(cardkey);
+                cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.DuiZi, mustLaziCount);
                 DuiziList.Add(paiXingInfo);
             }
@@ -658,11 +658,11 @@ namespace CardRuleNS
             for (int i = 0; i < cards.Length - 4; i++)
             {
                 cardkey = new CardKey();
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 2].value, cards[i + 2].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 3].value, cards[i + 3].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 4].value, cards[i + 4].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 2].value, cards[i + 2].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 3].value, cards[i + 3].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 4].value, cards[i + 4].suit);
 
                 if (!cardkeyHashSet.Contains(cardkey))
                     cardkeyHashSet.Add(cardkey);
@@ -675,17 +675,17 @@ namespace CardRuleNS
             for (int i = 0; i < cards.Length - 2; i++)
             {
                 cardkey = new CardKey();
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 2].value, cards[i + 2].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 2].value, cards[i + 2].suit);
 
                 for (int j = 0; j < cards.Length - 1; j++)
                 {
                     if (j < i - 1 || j > i + 2)
                     {
                         tmpCardkey = cardkey;
-                        tmpCardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j].value, cards[j].suit);
-                        tmpCardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j + 1].value, cards[j + 1].suit);
+                        tmpCardkey = CardRuleDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j].value, cards[j].suit);
+                        tmpCardkey = CardRuleDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j + 1].value, cards[j + 1].suit);
                         if (!cardkeyHashSet.Contains(tmpCardkey))
                             cardkeyHashSet.Add(tmpCardkey);
                     }
@@ -704,10 +704,10 @@ namespace CardRuleNS
             for (int i = 0; i < cards.Length - 3; i++)
             {
                 cardkey = new CardKey();
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 2].value, cards[i + 2].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 3].value, cards[i + 3].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 2].value, cards[i + 2].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 3].value, cards[i + 3].suit);
                 if (!cardkeyHashSet.Contains(cardkey))
                     cardkeyHashSet.Add(cardkey);
             }
@@ -720,16 +720,16 @@ namespace CardRuleNS
             for (int i = 0; i < cards.Length - 1; i++)
             {
                 cardkey = new CardKey();
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
 
                 for (int j = 0; j < cards.Length - 1; j++)
                 {
                     if (j < i - 1 || j > i + 1)
                     {
                         tmpCardkey = cardkey;
-                        tmpCardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j].value, cards[j].suit);
-                        tmpCardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j + 1].value, cards[j + 1].suit);
+                        tmpCardkey = CardRuleDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j].value, cards[j].suit);
+                        tmpCardkey = CardRuleDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j + 1].value, cards[j + 1].suit);
                         if (!cardkeyHashSet.Contains(tmpCardkey))
                             cardkeyHashSet.Add(tmpCardkey);
                     }
@@ -752,9 +752,9 @@ namespace CardRuleNS
                     for (int k = j + 1; k < cards.Length; k++)
                     {
                         cardkey = new CardKey();
-                        cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                        cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
-                        cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
+                        cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                        cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
+                        cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
                         if (!cardkeyHashSet.Contains(cardkey))
                             cardkeyHashSet.Add(cardkey);
                     }
@@ -775,8 +775,8 @@ namespace CardRuleNS
                 for (int j = i + 1; j < cards.Length; j++)
                 {
                     cardkey = new CardKey();
-                    cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                    cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
+                    cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                    cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                     if (!cardkeyHashSet.Contains(cardkey))
                         cardkeyHashSet.Add(cardkey);
                 }
@@ -794,7 +794,7 @@ namespace CardRuleNS
             for (int i = 0; i < cards.Length; i++)
             {
                 cardkey = new CardKey();
-                cardkey = LaiziCardRulesDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                cardkey = CardRuleDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
                 if (!cardkeyHashSet.Contains(cardkey))
                     cardkeyHashSet.Add(cardkey);
             }
