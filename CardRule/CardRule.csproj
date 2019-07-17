@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CardLaiziRules.cs" />
-    <Compile Include="CardLaiziRulesOp.cs" />
+    <Compile Include="LaiziCardRulesDict.cs" />
+    <Compile Include="LaiziCardRulesOp.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

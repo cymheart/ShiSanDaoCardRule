@@ -47,15 +47,15 @@ namespace CardRuleNS
         }
     }
 
-    public class CardLaiziRules
+    public class LaiziCardRulesDict
     {
-        private static CardLaiziRules instance = null;
-        public static CardLaiziRules Instance
+        private static LaiziCardRulesDict instance = null;
+        public static LaiziCardRulesDict Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new CardLaiziRules();
+                    instance = new LaiziCardRulesDict();
                 return instance;
             }
         }
@@ -69,6 +69,10 @@ namespace CardRuleNS
         public Dictionary<CardKey, int> santiaoKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> duiziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
 
+
+        /// <summary>
+        /// 生成牌型查询字典
+        /// </summary>
         public void CreatePaiXingDict()
         {
             CreateShunziDict();
@@ -79,8 +83,6 @@ namespace CardRuleNS
             CreateSanTiaoDict();
             CreateDuiZiDict();
         }
-
-
 
         void CreateShunziDict()
         {
