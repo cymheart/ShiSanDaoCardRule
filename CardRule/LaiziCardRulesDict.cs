@@ -873,7 +873,9 @@ namespace CardRuleNS
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                tonghuaKeyDict[cardkey] = 1;
+                if (!tongHuaShunKeyDict.ContainsKey(cardkey))
+                    tonghuaKeyDict[cardkey] = 1;
+    
                 cards[i].value = tmp1;
             }
 
@@ -897,7 +899,9 @@ namespace CardRuleNS
                         cardkey = AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
                     }
 
-                    tonghuaKeyDict[cardkey] = 2;
+                    if (!tongHuaShunKeyDict.ContainsKey(cardkey))
+                        tonghuaKeyDict[cardkey] = 2;
+
                     cards[j].value = tmp2;
                 }
 

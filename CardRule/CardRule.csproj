@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LaiziCardRulesDict.cs" />
-    <Compile Include="LaiziCardRulesCommonCheck.cs" />
+    <Compile Include="CommonRulesCheck.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

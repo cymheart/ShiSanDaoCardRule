@@ -22,11 +22,11 @@ using System.Collections.Generic;
 //                RulePukeFaceValue.Diamond_A,
 //                RulePukeFaceValue.Laizi
 //    };
-//    LaiziCardRulesCommonCheck cardop = new LaiziCardRulesOp();
-//    cardop.CreatePaiXingArray(faceValues);
+//    CommonRulesCheck check = new CommonRulesCheck();
+//    check.CreatePaiXingArray(faceValues);
 //        
-//    List<PaiXingInfo> shunziList = cardop.ShunziList; //获取所有的顺子牌型(包括赖子组成的牌型，数据里提示了需要几张赖子牌)
-//    List<PaiXingInfo> huluList = cardop.HuluList; //获取所有的葫芦牌型(包括赖子组成的牌型，数据里提示了需要几张赖子牌)
+//    List<PaiXingInfo> shunziList = check.ShunziList; //获取所有的顺子牌型(包括赖子组成的牌型，数据里提示了需要几张赖子牌)
+//    List<PaiXingInfo> huluList = check.HuluList; //获取所有的葫芦牌型(包括赖子组成的牌型，数据里提示了需要几张赖子牌)
 //}
 #endregion
 
@@ -400,7 +400,7 @@ namespace CardRuleNS
     /// <summary>
     /// 普通牌型检查算法
     /// </summary>
-    public class LaiziCardRulesCommonCheck
+    public class CommonRulesCheck
     {    
         /// <summary>
         /// 五同牌型组
@@ -451,7 +451,7 @@ namespace CardRuleNS
         //
         List<CardInfo> cardInfoList = new List<CardInfo>();
 
-        public LaiziCardRulesCommonCheck()
+        public CommonRulesCheck()
         {
             CreatePukeInfoList();
         }

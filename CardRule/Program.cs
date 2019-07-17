@@ -30,7 +30,7 @@ namespace CardRule
                 RulePukeFaceValue.Laizi
             };
 
-            LaiziCardRulesCommonCheck paixingCheck = new LaiziCardRulesCommonCheck();
+            CommonRulesCheck paixingCheck = new CommonRulesCheck();
 
 
             paixingCheck.CreatePaiXingArray(faceValues);
