@@ -47,6 +47,9 @@ namespace CardRuleNS
         }
     }
 
+    /// <summary>
+    /// 十三道赖子牌型字典
+    /// </summary>
     public class LaiziCardRulesDict
     {
         private static LaiziCardRulesDict instance = null;
