@@ -373,42 +373,42 @@ namespace CardRuleNS
         /// <summary>
         /// 五同牌型组
         /// </summary>
-        public List<PaiXingInfo> wutongList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> WutongList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 同花顺牌型组
         /// </summary>
-        public List<PaiXingInfo> tonghuashunList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> TonghuashunList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 顺子牌型组
         /// </summary>
-        public List<PaiXingInfo> shunziList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> ShunziList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 葫芦牌型组
         /// </summary>
-        public List<PaiXingInfo> huluList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> HuluList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 铁枝牌型组
         /// </summary>
-        public List<PaiXingInfo> tiezhiList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> TiezhiList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 两对牌型组
         /// </summary>
-        public List<PaiXingInfo> twoduiList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> TwoduiList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 三条牌型组
         /// </summary>
-        public List<PaiXingInfo> santiaoList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> SantiaoList = new List<PaiXingInfo>();
 
         /// <summary>
         /// 对子牌型组
         /// </summary>
-        public List<PaiXingInfo> duiziList = new List<PaiXingInfo>();
+        public List<PaiXingInfo> DuiziList = new List<PaiXingInfo>();
 
 
         List<CardInfo> cardInfoList = new List<CardInfo>();
@@ -475,7 +475,7 @@ namespace CardRuleNS
                 {
                     cardInfos = CardLaiziRules.Instance.CreateCardInfos(item.Key);
                     paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.ShunZi, item.Value);
-                    shunziList.Add(paiXingInfo);
+                    ShunziList.Add(paiXingInfo);
                 }
             }
         }
@@ -494,7 +494,7 @@ namespace CardRuleNS
                 {
                     cardInfos = CardLaiziRules.Instance.CreateCardInfos(item.Key);
                     paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TongHuaShun, item.Value);
-                    tonghuashunList.Add(paiXingInfo);
+                    TonghuashunList.Add(paiXingInfo);
                 }
             }
         }
@@ -520,7 +520,7 @@ namespace CardRuleNS
             {
                 cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.WuTong, mustLaziCount);
-                wutongList.Add(paiXingInfo);
+                WutongList.Add(paiXingInfo);
             }
 
             ret = CardLaiziRules.Instance.huluKeyDict.TryGetValue(cardkey, out mustLaziCount);
@@ -528,7 +528,7 @@ namespace CardRuleNS
             {
                 cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.HuLu, mustLaziCount);
-                huluList.Add(paiXingInfo);
+                HuluList.Add(paiXingInfo);
             }
 
             if (splitGroup == 5)
@@ -539,7 +539,7 @@ namespace CardRuleNS
             {
                 cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.Bomb, mustLaziCount);
-                tiezhiList.Add(paiXingInfo);
+                TiezhiList.Add(paiXingInfo);
             }
 
             ret = CardLaiziRules.Instance.twoduiKeyDict.TryGetValue(cardkey, out mustLaziCount);
@@ -547,7 +547,7 @@ namespace CardRuleNS
             {
                 cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TwoDui, mustLaziCount);
-                twoduiList.Add(paiXingInfo);
+                TwoduiList.Add(paiXingInfo);
             }
 
             if (splitGroup == 4)
@@ -558,7 +558,7 @@ namespace CardRuleNS
             {
                 cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.SanTiao, mustLaziCount);
-                santiaoList.Add(paiXingInfo);
+                SantiaoList.Add(paiXingInfo);
             }
 
             if (splitGroup == 3)
@@ -569,7 +569,7 @@ namespace CardRuleNS
             {
                 cardInfos = CardLaiziRules.Instance.CreateCardInfos(cardkey);
                 paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.DuiZi, mustLaziCount);
-                duiziList.Add(paiXingInfo);
+                DuiziList.Add(paiXingInfo);
             }
         }
 
@@ -814,14 +814,14 @@ namespace CardRuleNS
 
         void Clear()
         {
-            wutongList.Clear();
-            tonghuashunList.Clear();
-            shunziList.Clear();
-            huluList.Clear();
-            tiezhiList.Clear();
-            twoduiList.Clear();
-            santiaoList.Clear();
-            duiziList.Clear();
+            WutongList.Clear();
+            TonghuashunList.Clear();
+            ShunziList.Clear();
+            HuluList.Clear();
+            TiezhiList.Clear();
+            TwoduiList.Clear();
+            SantiaoList.Clear();
+            DuiziList.Clear();
         }
     }
 }
