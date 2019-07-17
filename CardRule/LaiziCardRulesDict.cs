@@ -71,7 +71,7 @@ namespace CardRuleNS
         public Dictionary<CardKey, int> tiezhiKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> santiaoKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> duiziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-
+        public Dictionary<CardKey, int> tonghuaKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
 
         /// <summary>
         /// 生成牌型查询字典
@@ -85,6 +85,7 @@ namespace CardRuleNS
             CreateTieZhiDict();
             CreateSanTiaoDict();
             CreateDuiZiDict();
+            CreateTongHuaDict();
         }
 
         void CreateShunziDict()
@@ -282,7 +283,7 @@ namespace CardRuleNS
 
             //
             int tmp1;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 tmp1 = cards[i].value;
                 cards[i].value = -1;
@@ -795,7 +796,7 @@ namespace CardRuleNS
         }
 
 
-        void CreateTonghuaDict()
+        void CreateTongHuaDict()
         {
             CardInfo[] cards = new CardInfo[5]
             {
@@ -804,9 +805,105 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            
+            for (int i = 1; i <= 9; i++)
+            {
+                cards[0].value = i;
+
+                for (int j = i; j <= 10; j++)
+                {
+                    cards[1].value = j;
+                    for (int k = j; k <= 11; k++)
+                    {
+                        cards[2].value = k;
+                        for (int m = k; m <= 12; m++)
+                        {
+                            cards[3].value = m;
+
+                            for (int n = m; n <= 13; n++)
+                            {
+                                if ((i == j && i == k) || (i == k && i == m ) || (i == m && i == n) ||
+                                    (j == k && j == m) || (j == m && j == n) || (k == m && k == n))
+                                    continue;
+
+                                else if (i == j + 1 && j == k + 1 &&
+                                    k == m + 1 && m == n + 1)
+                                    continue;
+
+                                cards[4].value = n;
+
+                                for (int y = 0; y < 4; y++)
+                                {
+                                    for (int x = 0; x < 5; x++)
+                                        cards[x].suit = y;
+
+                                    AddTongHuaKeyToList(cards);
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }    
         }
 
+    
+        void AddTongHuaKeyToList(CardInfo[] cards)
+        {
+            CardKey cardkey = new CardKey();
+            for (int i = 0; i < cards.Length; i++)
+            {
+                cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+            }
+
+            tonghuaKeyDict[cardkey] = 0;
+
+            //
+            int tmp1, tmp2;
+            for (int i = 0; i < 5; i++)
+            {
+                tmp1 = cards[i].value;
+                cards[i].value = -1;
+
+                cardkey = new CardKey();
+                for (int j = 0; j < cards.Length; j++)
+                {
+                    if (cards[j].value == -1)
+                        continue;
+
+                    cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
+                }
+
+                tonghuaKeyDict[cardkey] = 1;
+                cards[i].value = tmp1;
+            }
+
+
+            for (int i = 0; i < 4; i++)
+            {
+                tmp1 = cards[i].value;
+                cards[i].value = -1;
+
+                for (int j = i + 1; j < 5; j++)
+                {
+                    tmp2 = cards[j].value;
+                    cards[j].value = -1;
+
+                    cardkey = new CardKey();
+                    for (int k = 0; k < cards.Length; k++)
+                    {
+                        if (cards[k].value == -1)
+                            continue;
+
+                        cardkey = AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
+                    }
+
+                    tonghuaKeyDict[cardkey] = 2;
+                    cards[j].value = tmp2;
+                }
+
+                cards[i].value = tmp1;
+            }
+        }
 
         public CardKey AppendCardToCardKey(CardKey cardkey, int cardValue, int cardSuit)
         {

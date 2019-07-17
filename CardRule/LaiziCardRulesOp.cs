@@ -439,6 +439,10 @@ namespace CardRuleNS
         /// </summary>
         public List<PaiXingInfo> DuiziList = new List<PaiXingInfo>();
 
+        /// 同花牌型组
+        /// </summary>
+        public List<PaiXingInfo> TonghuaList = new List<PaiXingInfo>();
+
         /// <summary>
         /// 同花内部牌型组
         /// </summary>
@@ -481,7 +485,9 @@ namespace CardRuleNS
 
             CreateShunziList(orgcardkey, laiziCount);
             CreateTonghuashunList(orgcardkey, laiziCount);
-           
+            CreateTonghuaList(orgcardkey, laiziCount);
+
+
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
             HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(cards);
@@ -496,7 +502,7 @@ namespace CardRuleNS
 
 
             //
-            CreateTonghuaList(cards);
+            //CreateTonghuaList(cards);
 
         }
 
@@ -538,172 +544,24 @@ namespace CardRuleNS
             }
         }
 
-        void CreateTonghuaList(CardInfo[] cardInfos)
+        void CreateTonghuaList(CardKey cardKey, int laiziCount)
         {
-            tonghuaLists = new List<CardInfo>[4]
-            {
-                new List<CardInfo>(),
-                new List<CardInfo>(),
-                new List<CardInfo>(),
-                new List<CardInfo>()
-            };
+            bool ret;
+            CardInfo[] cardInfos;
+            PaiXingInfo paiXingInfo;
 
-            for (int i = 0; i < cardInfos.Length; i++)
+            foreach (var item in LaiziCardRulesDict.Instance.tonghuaKeyDict)
             {
-                tonghuaLists[cardInfos[i].suit].Add(cardInfos[i]);
-            }
-        }
+                ret = LaiziCardRulesDict.Instance.IsContains(cardKey, item.Key);
 
-        PaiXingInfo GetNextTongHuaPaiXing()
-        {
-            bool flag = true;
-            PaiXingInfo paiXingInfo = new PaiXingInfo();
-
-            while (flag)
-            {
-                switch (tonghuaPos)
+                if (ret == true && item.Value <= laiziCount)
                 {
-                    case -1:
-                        {
-                            ResetTongHuaData();
-                        }
-                        break;
-
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                        {
-                            CardInfo[] cardinfo = new CardInfo[5];
-                            for(int i=0; i<5; i++)
-                                cardinfo[i] = tonghuaLists[tonghuaPos][tonghuaIdx[i]];
-
-                            CardKey cardkey = LaiziCardRulesDict.Instance.CreateCardKey(cardinfo);
-                            bool isRepeat = IsRepeatTongHuaKey(cardkey);
-
-                            if (!isRepeat)
-                            {
-                                paiXingInfo = CreatePaiXingInfo(cardinfo, RulePaiXingType.TongHua, 0);
-                            }
-
-                            int old = tonghuaPos;
-                            SetTongHuaPointer5();
-                            if (tonghuaPos == old)
-                                flag = false;
-                        }
-                        break;
-
-                    case 4:
-                        {
-
-
-
-                        }
-                        break;
-
-                }
-            }
-
-            return paiXingInfo;
-        }
-
-
-
-        bool IsRepeatTongHuaKey(CardKey tonghuaCardkey)
-        {
-            if (LaiziCardRulesDict.Instance.wutongKeyDict.ContainsKey(tonghuaCardkey))
-                return true;
-
-            if (LaiziCardRulesDict.Instance.tongHuaShunKeyDict.ContainsKey(tonghuaCardkey))
-                return true;
-
-            if (LaiziCardRulesDict.Instance.huluKeyDict.ContainsKey(tonghuaCardkey))
-                return true;
-
-            if (LaiziCardRulesDict.Instance.tiezhiKeyDict.ContainsKey(tonghuaCardkey))
-                return true;
-
-            return false;
-        }
-
-        void SetTongHuaPointer5()
-        {
-            tonghuaIdx[4]++;
-            if (tonghuaIdx[4] >= tonghuaLists[tonghuaPos].Count)
-            {
-                tonghuaIdx[3]++;
-
-                if (tonghuaIdx[3] >= tonghuaLists[tonghuaPos].Count - 1)
-                {
-                    tonghuaIdx[2]++;
-
-                    if (tonghuaIdx[2] >= tonghuaLists[tonghuaPos].Count - 2)
-                    {
-                        tonghuaIdx[1]++;
-
-                        if (tonghuaIdx[1] >= tonghuaLists[tonghuaPos].Count - 3)
-                        {
-                            tonghuaIdx[0]++;
-
-                            if (tonghuaIdx[0] >= tonghuaLists[tonghuaPos].Count - 4)
-                            {
-                                ResetTongHuaData();
-                                return;
-                            }
-
-                            tonghuaIdx[1] = tonghuaIdx[0] + 1;
-
-                            if(tonghuaIdx[1] >= tonghuaLists[tonghuaPos].Count - 3)
-                            {
-                                ResetTongHuaData();
-                                return;
-                            }
-                        }
-
-                        tonghuaIdx[2] = tonghuaIdx[1] + 1;
-
-                        if (tonghuaIdx[2] >= tonghuaLists[tonghuaPos].Count - 2)
-                        {
-                            ResetTongHuaData();
-                            return;
-                        }
-                    }
-
-                    tonghuaIdx[3] = tonghuaIdx[2] + 1;
-
-                    if (tonghuaIdx[3] >= tonghuaLists[tonghuaPos].Count - 1)
-                    {
-                        ResetTongHuaData();
-                        return;
-                    }
-                }
-
-                tonghuaIdx[4] = tonghuaIdx[3] + 1;
-                if (tonghuaIdx[4] >= tonghuaLists[tonghuaPos].Count)
-                {
-                    ResetTongHuaData();
-                    return;
+                    cardInfos = LaiziCardRulesDict.Instance.CreateCardInfos(item.Key);
+                    paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TongHua, item.Value);
+                    TonghuaList.Add(paiXingInfo);
                 }
             }
         }
-
-        void ResetTongHuaData()
-        {
-            tonghuaPos++;
-
-            while (tonghuaPos <= 3 && tonghuaLists[tonghuaPos].Count < 5)
-                tonghuaPos++;
-
-            if (tonghuaPos <= 3)
-            {
-                tonghuaIdx[0] = 0;
-                tonghuaIdx[1] = 1;
-                tonghuaIdx[2] = 2;
-                tonghuaIdx[3] = 3;
-                tonghuaIdx[4] = 4;
-            }
-        }
-
 
         void CreatePaiXingArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
         {
