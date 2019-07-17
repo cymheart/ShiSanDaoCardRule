@@ -22,7 +22,7 @@ using System.Collections.Generic;
 //                RulePukeFaceValue.Diamond_A,
 //                RulePukeFaceValue.Laizi
 //    };
-//    LaiziCardRulesOp cardop = new LaiziCardRulesOp();
+//    LaiziCardRulesCommonCheck cardop = new LaiziCardRulesOp();
 //    cardop.CreatePaiXingArray(faceValues);
 //        
 //    List<PaiXingInfo> shunziList = cardop.ShunziList; //获取所有的顺子牌型(包括赖子组成的牌型，数据里提示了需要几张赖子牌)
@@ -397,7 +397,10 @@ namespace CardRuleNS
         public int laiziCount;
     }
 
-    public class LaiziCardRulesOp
+    /// <summary>
+    /// 普通牌型检查算法
+    /// </summary>
+    public class LaiziCardRulesCommonCheck
     {    
         /// <summary>
         /// 五同牌型组
@@ -453,7 +456,7 @@ namespace CardRuleNS
         //
         List<CardInfo> cardInfoList = new List<CardInfo>();
 
-        public LaiziCardRulesOp()
+        public LaiziCardRulesCommonCheck()
         {
             CreatePukeInfoList();
         }
