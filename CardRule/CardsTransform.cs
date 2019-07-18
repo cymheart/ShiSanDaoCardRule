@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CardRuleNS
 {
@@ -51,13 +52,25 @@ namespace CardRuleNS
             if (cardFaceValues == null || cardFaceValues.Length == 0)
                 return cards;
 
-            CardInfo[] cardinfo = CardsTransform.Instance.TransToCardInfo(cardFaceValues);
+            CardInfo[] cardinfo = TransToCardInfo(cardFaceValues);
+            return CreateRemoveCardInfos(cards, cardinfo);
+        }
+
+        public CardInfo[] CreateRemoveCardInfos(CardInfo[] cards, CardInfo[] removeCards)
+        {
+            if (removeCards == null || removeCards.Length == 0)
+                return cards;
+
+            List<CardInfo> cardinfoList = new List<CardInfo>(removeCards);
             List<CardInfo> newCards = new List<CardInfo>();
+            int idx;
 
             for (int i = 0; i < cards.Length; i++)
             {
-                if (!FindCard(cardinfo, cards[i].value, cards[i].value))
+                idx = FindCard(cardinfoList, cards[i].value, cards[i].value);
+                if (idx != -1)
                 {
+                    cardinfoList.RemoveAt(idx);
                     newCards.Add(cards[i]);
                 }
             }
@@ -66,16 +79,16 @@ namespace CardRuleNS
         }
 
 
-        public bool FindCard(CardInfo[] cards, int value, int suit)
+        public int FindCard(List<CardInfo> cards, int value, int suit)
         {
-            for (int i = 0; i < cards.Length; i++)
+            for (int i = 0; i < cards.Count; i++)
             {
                 if (cards[i].value == value &&
                     cards[i].suit == suit)
-                    return true;
+                    return i;
             }
 
-            return false;
+            return -1;
         }
 
         public int FindCard(CardInfo[] cards, int value)
@@ -87,6 +100,40 @@ namespace CardRuleNS
             }
 
             return -1;
+        }
+
+        public CardInfo[] CreateSimpleCards(RulePukeFaceValue[] pukeFaceValues, ref int laiziCount)
+        {
+            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
+            laiziCount = 0;
+
+            for (int i = 0; i < pukeFaceValues.Length; i++)
+            {
+                if (pukeFaceValues[i] == RulePukeFaceValue.Laizi)
+                    laiziCount++;
+                else
+                    newPukeFaceValueList.Add(pukeFaceValues[i]);
+            }
+
+            CardInfo[] cards = TransToCardInfo(newPukeFaceValueList.ToArray());
+            SortCards(cards);
+
+            return cards;
+        }
+
+        public void SortCards(CardInfo[] cards)
+        {
+            Array.Sort(cards,
+
+               delegate (CardInfo p1, CardInfo p2)
+               {
+                   if (p1.value > p2.value)
+                       return 1;
+                   else if (p1.value < p2.value)
+                       return -1;
+                   return 0;
+               }
+           );
         }
 
 

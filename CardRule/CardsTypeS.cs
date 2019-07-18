@@ -66,6 +66,65 @@ namespace CardRuleNS
 
     }
 
+
+    public enum SpecCardsType
+    {
+        /// <summary>
+        /// 普通牌型
+        /// </summary>       
+        Normal = 0,
+
+        /// <summary>
+        /// 至尊一条龙
+        /// </summary>
+        ZhiZunQinLong,
+
+        /// <summary>
+        /// 一条龙
+        /// </summary>
+        YiTiaoLong,
+
+        /// <summary>
+        /// 六对半
+        /// </summary>
+        LiuDuiBan,
+
+        /// <summary>
+        /// 三顺子
+        /// </summary>
+        SanShunZi,
+
+        /// <summary>
+        /// 三同花
+        /// </summary>
+        SanTongHua,
+
+        /// <summary>
+        /// 至尊雷
+        /// </summary>
+        ZhiZunLei,
+      
+        /// <summary>
+        /// 八炸
+        /// </summary>
+        EightBomb,
+
+        /// <summary>
+        /// 七炸
+        /// </summary>
+        SevenBomb,
+
+        /// <summary>
+        /// 六炸
+        /// </summary>
+        SixBomb,
+
+        /// <summary>
+        /// 四套三条
+        /// </summary>
+        SiTaoSan,
+    }
+
     // <summary>
     /// 扑克面值
     /// </summary>

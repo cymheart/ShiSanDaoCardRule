@@ -13,7 +13,7 @@ namespace CardRule
         {
             CardsTypeDict.Instance.CreateDict();
 
-            RulePukeFaceValue[] faceValues = new RulePukeFaceValue[]
+            RulePukeFaceValue[] cardValues = new RulePukeFaceValue[]
             {
                 RulePukeFaceValue.Club_2,
                 RulePukeFaceValue.Club_6,
@@ -21,7 +21,7 @@ namespace CardRule
                 RulePukeFaceValue.Club_3,
                 RulePukeFaceValue.Club_J,
                 RulePukeFaceValue.Club_J,
-               RulePukeFaceValue.Laizi,
+                RulePukeFaceValue.Laizi,
                 RulePukeFaceValue.Laizi,
                 RulePukeFaceValue.Laizi,
                 RulePukeFaceValue.Laizi,
@@ -30,11 +30,18 @@ namespace CardRule
                 RulePukeFaceValue.Spade_3
             };
 
+            //获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
+            creater.CreateAllCardsTypeArray(cardValues);
+            //获取cardValues牌中的顺子组合
+            List<CardsTypeInfo> shunziList = creater.ShunziList;
 
+            //特殊牌型检查
+            SpecCardsCheck specCard = new SpecCardsCheck();
 
-            creater.CreateAllCardsTypeArray(faceValues);
-
+            //存储特殊牌型结果（已排好序）
+            RulePukeFaceValue[] outCards = new RulePukeFaceValue[13];
+            SpecCardsType type = specCard.Check(cardValues, outCards);
         }
     }
 }

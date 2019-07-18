@@ -63,7 +63,7 @@ namespace CardRuleNS
             Clear();
 
             int laiziCount = 0;
-            CardInfo[] cards = CreateSimpleCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateSimpleCards(pukeFaceValues, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -89,7 +89,7 @@ namespace CardRuleNS
 
             List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
             int laiziCount = 0;
-            CardInfo[] cards = CreateSimpleCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateSimpleCards(pukeFaceValues, ref laiziCount);
             CreateShunziArray(cards, laiziCount);
         }
 
@@ -111,26 +111,6 @@ namespace CardRuleNS
             CreateShunziArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
             CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 1);
-        }
-
-
-        CardInfo[] CreateSimpleCards(RulePukeFaceValue[] pukeFaceValues, ref int laiziCount)
-        {
-            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
-            laiziCount = 0;
-
-            for (int i = 0; i < pukeFaceValues.Length; i++)
-            {
-                if (pukeFaceValues[i] == RulePukeFaceValue.Laizi)
-                    laiziCount++;
-                else
-                    newPukeFaceValueList.Add(pukeFaceValues[i]);
-            }
-
-            CardInfo[] cards = CardsTransform.Instance.TransToCardInfo(newPukeFaceValueList.ToArray());
-            SortCards(cards);
-
-            return cards;
         }
 
         void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
@@ -529,22 +509,6 @@ namespace CardRuleNS
 
             return cardkeyHashSet;
         }
-
-        void SortCards(CardInfo[] cards)
-        {
-            Array.Sort(cards,
-
-               delegate (CardInfo p1, CardInfo p2)
-               {
-                   if (p1.value > p2.value)
-                       return 1;
-                   else if (p1.value < p2.value)
-                       return -1;
-                   return 0;
-               }
-           );
-        }
-
 
         void Clear()
         {
