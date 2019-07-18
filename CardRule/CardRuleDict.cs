@@ -507,6 +507,8 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
+            AddWuTongKeyToList(null);
+
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
@@ -546,6 +548,13 @@ namespace CardRuleNS
 
         void AddWuTongKeyToList(CardInfo[] cards)
         {
+            if(cards == null)
+            {
+                CardKey key = new CardKey();
+                wutongKeyDict[key] = 5;
+                return;
+            }
+
             int[] suitCount = new int[4] { 0, 0, 0, 0 };
             for (int i = 0; i < cards.Length; i++)
             {
@@ -663,6 +672,8 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
+            AddTieZhiKeyToList(null);
+
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
@@ -695,6 +706,13 @@ namespace CardRuleNS
 
         void AddTieZhiKeyToList(CardInfo[] cards)
         {
+            if (cards == null)
+            {
+                CardKey key = new CardKey();
+                tiezhiKeyDict[key] = 4;
+                return;
+            }
+
             int[] suitCount = new int[4] { 0, 0, 0, 0 };
             for (int i = 0; i < cards.Length; i++)
             {
@@ -775,6 +793,8 @@ namespace CardRuleNS
                 new CardInfo(),
             };
 
+            AddSanTiaoKeyToList(null);
+
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
@@ -801,6 +821,13 @@ namespace CardRuleNS
 
         void AddSanTiaoKeyToList(CardInfo[] cards)
         {
+            if (cards == null)
+            {
+                CardKey key = new CardKey();
+                santiaoKeyDict[key] = 3;
+                return;
+            }
+
             int[] suitCount = new int[4] { 0, 0, 0, 0 };
             for (int i = 0; i < cards.Length; i++)
             {
@@ -855,6 +882,8 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
+            AddDuiZiKeyToList(null);
+
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
@@ -875,6 +904,13 @@ namespace CardRuleNS
 
         void AddDuiZiKeyToList(CardInfo[] cards)
         {
+            if (cards == null)
+            {
+                CardKey key = new CardKey();
+                duiziKeyDict[key] = 2;
+                return;
+            }
+
             CardKey cardkey = new CardKey();
             for (int i = 0; i < cards.Length; i++)
             {

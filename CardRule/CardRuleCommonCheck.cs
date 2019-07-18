@@ -614,9 +614,9 @@ namespace CardRuleNS
         {
             HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>(new CardKey.EqualityComparer());
 
-          
-            //可能的五同
             CardKey cardkey;
+
+            //可能的五同
             for (int i = 0; i < cards.Length - 4; i++)
             {
                 cardkey = new CardKey();
@@ -849,7 +849,8 @@ namespace CardRuleNS
         HashSet<CardKey> SplitCardsGroup1(CardInfo[] cards)
         {
             HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>(new CardKey.EqualityComparer());
-            CardKey cardkey;
+            CardKey cardkey = new CardKey();
+            cardkeyHashSet.Add(cardkey);
 
             for (int i = 0; i < cards.Length; i++)
             {
@@ -861,7 +862,6 @@ namespace CardRuleNS
 
             return cardkeyHashSet;
         }
-
 
         void SortCards(CardInfo[] cards)
         {
