@@ -53,15 +53,15 @@ namespace CardRuleNS
     /// <summary>
     /// 十三道赖子牌型字典
     /// </summary>
-    public class CardRuleDict
+    public class CardsTypeDict
     {
-        private static CardRuleDict instance = null;
-        public static CardRuleDict Instance
+        private static CardsTypeDict instance = null;
+        public static CardsTypeDict Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new CardRuleDict();
+                    instance = new CardsTypeDict();
                 return instance;
             }
         }
@@ -79,7 +79,7 @@ namespace CardRuleNS
         /// <summary>
         /// 生成牌型查询字典
         /// </summary>
-        public void CreatePaiXingDict()
+        public void CreateDict()
         {
             CreateShunziDict();
             CreateHuluDict();

@@ -7,7 +7,7 @@ namespace CardRuleNS
     /// <summary>
     /// 特殊牌型检查
     /// </summary>
-    public class CardRuleSpecCheck
+    public class SpecCardsCheck
     {
         /// <summary>
         /// 生成牌型组数据
@@ -539,7 +539,7 @@ namespace CardRuleNS
         /// <returns></returns>
         bool IsSanShunZi(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
         {
-
+            
 
             return true;
         }

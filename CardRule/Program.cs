@@ -11,7 +11,7 @@ namespace CardRule
     {
         static void Main(string[] args)
         {
-            CardRuleDict.Instance.CreatePaiXingDict();
+            CardsTypeDict.Instance.CreateDict();
 
             RulePukeFaceValue[] faceValues = new RulePukeFaceValue[]
             {
@@ -30,10 +30,10 @@ namespace CardRule
                 RulePukeFaceValue.Spade_3
             };
 
-            CardRuleCommonCheck paixingCheck = new CardRuleCommonCheck();
+            CardsTypeCreater creater = new CardsTypeCreater();
 
 
-            paixingCheck.CreateAllPaiXingArray(faceValues);
+            creater.CreateAllCardsTypeArray(faceValues);
 
         }
     }
