@@ -33,7 +33,7 @@ namespace CardRule
             CardRuleCommonCheck paixingCheck = new CardRuleCommonCheck();
 
 
-            paixingCheck.CreatePaiXingArray(faceValues);
+            paixingCheck.CreateAllPaiXingArray(faceValues);
 
         }
     }

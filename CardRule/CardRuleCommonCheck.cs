@@ -458,28 +458,15 @@ namespace CardRuleNS
 
 
         /// <summary>
-        /// 生成牌型组数据
+        /// 生成所有牌型组数据
         /// </summary>
         /// <param name="pukeFaceValues">手牌数据</param>
-        public void CreatePaiXingArray(RulePukeFaceValue[] pukeFaceValues)
+        public void CreateAllPaiXingArray(RulePukeFaceValue[] pukeFaceValues)
         {
             Clear();
 
-            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
             int laiziCount = 0;
-
-            for (int i = 0; i < pukeFaceValues.Length; i++)
-            {
-                if (pukeFaceValues[i] == RulePukeFaceValue.Laizi)
-                    laiziCount++;
-                else
-                    newPukeFaceValueList.Add(pukeFaceValues[i]);
-            }
-
-            CardInfo[] cards = TransToCardInfo(newPukeFaceValueList.ToArray());
-            SortCards(cards);
-
-            CardKey orgcardkey = CardRuleDict.Instance.CreateCardKey(cards);
+            CardInfo[] cards = CreateSimpleCards(pukeFaceValues, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -493,6 +480,89 @@ namespace CardRuleNS
             CreatePaiXingArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreatePaiXingArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
         }
+
+
+        /// <summary>
+        /// 生成顺子牌型数组（包括同花顺）
+        /// </summary>
+        /// <param name="pukeFaceValues"></param>
+        public void CreateShunziArray(RulePukeFaceValue[] pukeFaceValues)
+        {
+            ShunziList.Clear();
+
+            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
+            int laiziCount = 0;
+            CardInfo[] cards = CreateSimpleCards(pukeFaceValues, ref laiziCount);
+            CreateShunziArray(cards, laiziCount);
+        }
+
+        /// <summary>
+        /// 生成顺子牌型数组（包括同花顺）
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="laiziCount"></param>
+        public void CreateShunziArray(CardInfo[] cards, int laiziCount)
+        {
+            HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
+            HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
+            HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(cards);
+            HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(cards);
+            HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(cards);
+
+            CreateShunziArrayBySplitGroup(cardkeyHashSet5, laiziCount, 5);
+            CreateShunziArrayBySplitGroup(cardkeyHashSet4, laiziCount, 4);
+            CreateShunziArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
+            CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
+            CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 1);
+        }
+
+
+        CardInfo[] CreateSimpleCards(RulePukeFaceValue[] pukeFaceValues, ref int laiziCount)
+        {
+            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
+            laiziCount = 0;
+
+            for (int i = 0; i < pukeFaceValues.Length; i++)
+            {
+                if (pukeFaceValues[i] == RulePukeFaceValue.Laizi)
+                    laiziCount++;
+                else
+                    newPukeFaceValueList.Add(pukeFaceValues[i]);
+            }
+
+            CardInfo[] cards = TransToCardInfo(newPukeFaceValueList.ToArray());
+            SortCards(cards);
+
+            return cards;
+        }
+
+        void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
+        {
+            bool ret;
+            int mustLaziCount;
+            CardInfo[] cardInfos;
+            PaiXingInfo paiXingInfo;
+
+            foreach (var cardkey in cardkeyHashSet)
+            {
+                ret = CardRuleDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out mustLaziCount);
+                if (ret == true && mustLaziCount <= laiziCount)
+                {
+                    cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
+                    paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.TongHuaShun, mustLaziCount);
+                    TonghuashunList.Add(paiXingInfo);
+                }
+
+                ret = CardRuleDict.Instance.shunziKeyDict.TryGetValue(cardkey, out mustLaziCount);
+                if (ret == true && mustLaziCount <= laiziCount)
+                {
+                    cardInfos = CardRuleDict.Instance.CreateCardInfos(cardkey);
+                    paiXingInfo = CreatePaiXingInfo(cardInfos, RulePaiXingType.ShunZi, mustLaziCount);
+                    ShunziList.Add(paiXingInfo);
+                }
+            }
+        }
+
 
         void CreatePaiXingArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
         {
@@ -939,6 +1009,7 @@ namespace CardRuleNS
             TwoduiList.Clear();
             SantiaoList.Clear();
             DuiziList.Clear();
+            TonghuaList.Clear();
         }
     }
 }

@@ -271,10 +271,6 @@ namespace CardRuleNS
                 }
             }
 
-            if (realCount == 1)
-                return;
-
-
             bool isEqual = true;
             int prevCardSuit = -1;
             for (int i = 0; i < count; i++)
