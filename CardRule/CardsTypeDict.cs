@@ -5,12 +5,6 @@ using System.Text;
 
 namespace CardRuleNS
 {
-    public struct CardInfo
-    {
-        public int value;
-        public int suit;
-    }
-
     /// <summary>
     /// 用于把手牌数据打包成紧凑的cardkey类型
     /// </summary>
@@ -194,6 +188,8 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
+            AddShunziKeyToList(null, 0);
+
             for (int i = 1; i <= 10; i++)
             {
                 for (int s0 = -1; s0 < 4; s0++)
@@ -260,6 +256,13 @@ namespace CardRuleNS
 
         void AddShunziKeyToList(CardInfo[] cards, int count)
         {
+            if (cards == null)
+            {
+                CardKey key = new CardKey();
+                tongHuaShunKeyDict[key] = 5;
+                return;
+            }
+
             int realCount = 0;
             CardKey cardkey = new CardKey();
             for (int i = 0; i < count; i++)
