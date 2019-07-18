@@ -122,11 +122,8 @@ namespace CardRuleNS
 
                     outFaceValues[n++] = RulePukeFaceValue.Laizi;
                 }
-
             }
-
-     
-
+ 
             return true;
         }
 

@@ -16,18 +16,18 @@ namespace CardRule
             RulePukeFaceValue[] faceValues = new RulePukeFaceValue[]
             {
                 RulePukeFaceValue.Club_2,
-                RulePukeFaceValue.Laizi,
+                RulePukeFaceValue.Club_6,
                 RulePukeFaceValue.Club_5,
+                RulePukeFaceValue.Club_3,
+                RulePukeFaceValue.Club_J,
+                RulePukeFaceValue.Club_J,
+                RulePukeFaceValue.Club_10,
                 RulePukeFaceValue.Diamond_3,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Diamond_J,
-                RulePukeFaceValue.Heart_10,
-                RulePukeFaceValue.Laizi,
+                RulePukeFaceValue.Heart_3,
                 RulePukeFaceValue.Club_3,
                 RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Diamond_A,
-                RulePukeFaceValue.Laizi
+                RulePukeFaceValue.Club_A,
+                RulePukeFaceValue.Spade_3
             };
 
             CardRuleCommonCheck paixingCheck = new CardRuleCommonCheck();
