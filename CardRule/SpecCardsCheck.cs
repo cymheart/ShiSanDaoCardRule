@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CardRuleNS
 {
     /// <summary>
-    /// 特殊牌型检查(带赖子检查算法)
+    /// 特殊牌型检查(带赖子检查算法)，未调试版本
     /// </summary>
     public class SpecCardsCheck
     {
