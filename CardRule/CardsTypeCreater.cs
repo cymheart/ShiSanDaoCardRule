@@ -58,12 +58,12 @@ namespace CardRuleNS
         /// 生成所有牌型组数据
         /// </summary>
         /// <param name="pukeFaceValues">手牌数据</param>
-        public void CreateAllCardsTypeArray(RulePukeFaceValue[] pukeFaceValues)
+        public void CreateAllCardsTypeArray(CardFace[] pukeFaceValues)
         {
             Clear();
 
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateSimpleCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -83,13 +83,13 @@ namespace CardRuleNS
         /// 生成顺子牌型数组（包括同花顺）
         /// </summary>
         /// <param name="pukeFaceValues"></param>
-        public void CreateShunziArray(RulePukeFaceValue[] pukeFaceValues)
+        public void CreateShunziArray(CardFace[] pukeFaceValues)
         {
             ShunziList.Clear();
 
-            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
+            List<CardFace> newPukeFaceValueList = new List<CardFace>();
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateSimpleCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
             CreateShunziArray(cards, laiziCount);
         }
 
@@ -243,13 +243,13 @@ namespace CardRuleNS
             CardsTypeInfo CardsTypeInfo = new CardsTypeInfo();
             CardsTypeInfo.laiziCount = laiziCount;
             CardsTypeInfo.CardsTypeType = CardsTypeType;
-            CardsTypeInfo.cardFaceValues = new RulePukeFaceValue[cardInfos.Length];
+            CardsTypeInfo.cardFaceValues = new CardFace[cardInfos.Length];
 
-            RulePukeFaceValue face;
+            CardFace face;
 
             for (int i=0; i < cardInfos.Length; i++)
             {
-                face = CardsTransform.Instance.GetRulePukeFaceValue(cardInfos[i].value, cardInfos[i].suit);
+                face = CardsTransform.Instance.GetCardFace(cardInfos[i].value, cardInfos[i].suit);
                 CardsTypeInfo.cardFaceValues[i] = face;
             }
 

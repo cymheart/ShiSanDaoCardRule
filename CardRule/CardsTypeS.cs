@@ -128,7 +128,7 @@ namespace CardRuleNS
     // <summary>
     /// 扑克面值
     /// </summary>
-    public enum RulePukeFaceValue
+    public enum CardFace
     {
         /// <summary>
         /// 红方块A
@@ -425,7 +425,7 @@ namespace CardRuleNS
         /// <summary>
         /// 牌型中所有牌的面值组合
         /// </summary>
-        public RulePukeFaceValue[] cardFaceValues;
+        public CardFace[] cardFaceValues;
 
         /// <summary>
         /// 需要的赖子数量

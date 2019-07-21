@@ -13,14 +13,14 @@ namespace CardRuleNS
         /// 检查是否为特殊牌型
         /// </summary>
         /// <param name="pukeFaceValues">手牌数据</param>
-        public SpecCardsType Check(RulePukeFaceValue[] pukeFaceValues, RulePukeFaceValue[] outFaceValues)
+        public SpecCardsType Check(CardFace[] pukeFaceValues, CardFace[] outFaceValues)
         {
             int laiziCount = 0;
             CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
             return IsSpecCards(cards, laiziCount, outFaceValues);
         }
 
-         SpecCardsType IsSpecCards(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+         SpecCardsType IsSpecCards(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             SpecCardsType type = SpecCardsType.Normal;
 
@@ -76,7 +76,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsZhiZunQinLong(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsZhiZunQinLong(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             for (int i= 1; i < cards.Length; i++)
             {
@@ -95,7 +95,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsYiTiaoLong(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsYiTiaoLong(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             int idx;
             for (int i = 2; i < 14; i++)
@@ -110,11 +110,11 @@ namespace CardRuleNS
                     if (laiziCount < 0)
                         return false;
 
-                    outFaceValues[i] = RulePukeFaceValue.Laizi;
+                    outFaceValues[i] = CardFace.Laizi;
                 }
                 else
                 {
-                    outFaceValues[i] = CardsTransform.Instance.GetRulePukeFaceValue(cards[idx].value, cards[idx].suit);
+                    outFaceValues[i] = CardsTransform.Instance.GetCardFace(cards[idx].value, cards[idx].suit);
                 }
             }
 
@@ -128,7 +128,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSanTongHua(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsSanTongHua(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             List<CardInfo>[] suitCards = new List<CardInfo>[]
             {
@@ -175,7 +175,7 @@ namespace CardRuleNS
                 int n = 0;
 
                 for(int i=0; i < suitCards[minIdx].Count; i++)
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
 
                 for (int i = suitCards[minIdx].Count; i < 3; i++)
                 {
@@ -183,7 +183,7 @@ namespace CardRuleNS
                     if (laiziCount < 0)
                         return false;
 
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                 }
 
                 for(int i=0; i<3; i++)
@@ -192,7 +192,7 @@ namespace CardRuleNS
                         continue;
 
                     for (int j = 0; j < suitCards[idx[i]].Count; j++)
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[idx[i]][j].value, suitCards[idx[i]][j].suit);
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[idx[i]][j].value, suitCards[idx[i]][j].suit);
 
                     for (int j = suitCards[idx[i]].Count; j < 5; j++)
                     {
@@ -200,7 +200,7 @@ namespace CardRuleNS
                         if (laiziCount < 0)
                             return false;
 
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
                 }
             }
@@ -230,7 +230,7 @@ namespace CardRuleNS
                         return false;
 
                     for (int i = 0; i < suitCards[minIdx].Count; i++)
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
 
                     for (int i = suitCards[minIdx].Count; i < 3; i++)
                     {
@@ -238,11 +238,11 @@ namespace CardRuleNS
                         if (laiziCount < 0)
                             return false;
 
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
 
                     for (int j = 0; j < suitCards[otherIdx].Count; j++)
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[otherIdx][j].value, suitCards[otherIdx][j].suit);
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[otherIdx][j].value, suitCards[otherIdx][j].suit);
 
                     for (int j = suitCards[otherIdx].Count; j < 10; j++)
                     {
@@ -250,7 +250,7 @@ namespace CardRuleNS
                         if (laiziCount < 0)
                             return false;
 
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
                 }
                 else
@@ -259,7 +259,7 @@ namespace CardRuleNS
                         return false;
 
                     for (int j = 0; j < suitCards[otherIdx].Count; j++)
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[otherIdx][j].value, suitCards[otherIdx][j].suit);
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[otherIdx][j].value, suitCards[otherIdx][j].suit);
 
                     for (int j = suitCards[otherIdx].Count; j < 8; j++)
                     {
@@ -267,11 +267,11 @@ namespace CardRuleNS
                         if (laiziCount < 0)
                             return false;
 
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
 
                     for (int i = 0; i < suitCards[minIdx].Count; i++)
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
 
                     for (int i = suitCards[minIdx].Count; i < 5; i++)
                     {
@@ -279,7 +279,7 @@ namespace CardRuleNS
                         if (laiziCount < 0)
                             return false;
 
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
                 }
             }
@@ -288,7 +288,7 @@ namespace CardRuleNS
                 int n = 0;
 
                 for (int j = 0; j < suitCards[idx[0]].Count; j++)
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(suitCards[idx[0]][j].value, suitCards[idx[0]][j].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[idx[0]][j].value, suitCards[idx[0]][j].suit);
 
                 for (int j = suitCards[idx[0]].Count; j < 13; j++)
                 {
@@ -296,7 +296,7 @@ namespace CardRuleNS
                     if (laiziCount < 0)
                         return false;
 
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                 }
 
             }
@@ -312,7 +312,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSiTaoSan(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsSiTaoSan(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             List<CardInfo> cardList = new List<CardInfo>();
             cardList.AddRange(cards);
@@ -331,9 +331,9 @@ namespace CardRuleNS
                             if (cardList[i].value == cardList[j].value &&
                                 cardList[i].value == cardList[k].value)
                             {
-                                outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[i].value, cardList[i].suit);
-                                outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[j].value, cardList[j].suit);
-                                outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[k].value, cardList[k].suit);
+                                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[j].value, cardList[j].suit);
+                                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[k].value, cardList[k].suit);
                                 cardList.RemoveRange(i, 3);
 
                                 isFind = true;
@@ -354,12 +354,12 @@ namespace CardRuleNS
             {
                 if (cardList.Count > 0)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[0].value, cardList[0].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[0].value, cardList[0].suit);
                     return true;
                 }
                 else if (laiziCount > 0)
                 {
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                     return true;
                 }
                 return false;
@@ -375,15 +375,15 @@ namespace CardRuleNS
                     {
                         if (cardList[i].value == cardList[j].value)
                         {
-                            outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[i].value, cardList[i].suit);
-                            outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[j].value, cardList[j].suit);
+                            outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                            outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[j].value, cardList[j].suit);
                             cardList.RemoveRange(i, 2);
 
                             laiziCount--;
                             if (laiziCount < 0)
                                 return false;
 
-                            outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                            outFaceValues[n++] = CardFace.Laizi;
 
                             isFind = true;
                             j = cardList.Count;
@@ -402,12 +402,12 @@ namespace CardRuleNS
             {
                 if (cardList.Count > 0)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[0].value, cardList[0].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[0].value, cardList[0].suit);
                     return true;
                 }
                 else if (laiziCount > 0)
                 {
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                     return true;
                 }
                 return false;
@@ -420,7 +420,7 @@ namespace CardRuleNS
 
                 for (int i = 0; i < cardList.Count; i++)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[i].value, cardList[i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
                     cardList.RemoveAt(i);
 
                     for (int j = 0; j < 2; j++)
@@ -429,7 +429,7 @@ namespace CardRuleNS
                         if (laiziCount < 0)
                             return false;
 
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
 
                     isFind = true;
@@ -446,12 +446,12 @@ namespace CardRuleNS
             {
                 if (cardList.Count > 0)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[0].value, cardList[0].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[0].value, cardList[0].suit);
                     return true;
                 }
                 else if (laiziCount > 0)
                 {
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                     return true;
                 }
                 return false;
@@ -463,7 +463,7 @@ namespace CardRuleNS
                 if (laiziCount < 0)
                     return false;
 
-                outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                outFaceValues[n++] = CardFace.Laizi;
             }
 
             return true;
@@ -477,7 +477,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsLiuDuiBan(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsLiuDuiBan(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             List<CardInfo> cardList = new List<CardInfo>();
             cardList.AddRange(cards);
@@ -495,8 +495,8 @@ namespace CardRuleNS
                         if (cardList[i].value == cardList[j].value &&
                             cardList[i].value == cardList[j].value)
                         {
-                            outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[i].value, cardList[i].suit);
-                            outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[j].value, cardList[j].suit);
+                            outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                            outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[j].value, cardList[j].suit);
                             cardList.RemoveRange(i, 2);
 
                             isFind = true;
@@ -517,12 +517,12 @@ namespace CardRuleNS
             {
                 if (cardList.Count > 0)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[0].value, cardList[0].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[0].value, cardList[0].suit);
                     return true;
                 }
                 else if (laiziCount > 0)
                 {
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                     return true;
                 }
                 return false;
@@ -534,14 +534,14 @@ namespace CardRuleNS
 
                 for (int i = 0; i < cardList.Count; i++)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[i].value, cardList[i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
                     cardList.RemoveAt(i);
 
                     laiziCount--;
                     if (laiziCount < 0)
                         return false;
 
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
 
                     isFind = true;
                     i = cardList.Count;
@@ -557,12 +557,12 @@ namespace CardRuleNS
             {
                 if (cardList.Count > 0)
                 {
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardList[0].value, cardList[0].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[0].value, cardList[0].suit);
                     return true;
                 }
                 else if (laiziCount > 0)
                 {
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                     return true;
                 }
                 return false;
@@ -574,7 +574,7 @@ namespace CardRuleNS
                 if (laiziCount < 0)
                     return false;
 
-                outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                outFaceValues[n++] = CardFace.Laizi;
             }
 
             return true;
@@ -587,7 +587,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSanShunZi(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsSanShunZi(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             int n = 0;
             List<CardsTypeInfo> shunziList = new List<CardsTypeInfo>();
@@ -624,26 +624,26 @@ namespace CardRuleNS
                         cards3[1].value + 1 == cards3[2].value)
                     {
                         for(int m=0; m<3; m++)
-                            outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cards3[m].value, cards3[m].suit);
+                            outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards3[m].value, cards3[m].suit);
                     }
                     else if(cards3.Length == 2 && laiziCount3 >= 1 && 
                         (cards3[0].value + 1 == cards3[1].value || cards3[0].value + 2 == cards3[1].value))
                     {
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cards3[0].value, cards3[0].suit);
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cards3[1].value, cards3[1].suit);
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards3[0].value, cards3[0].suit);
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards3[1].value, cards3[1].suit);
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
                     else if(cards3.Length == 1 && laiziCount3 >= 2)
                     {
-                        outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cards3[0].value, cards3[0].suit);
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards3[0].value, cards3[0].suit);
+                        outFaceValues[n++] = CardFace.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
                     else if(cards3.Length == 0 && laiziCount3 >= 3)
                     {
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     }
                     else
                     {
@@ -653,12 +653,12 @@ namespace CardRuleNS
                     for(int m = 0; m < shunziList[i].cardFaceValues.Length; m++)
                         outFaceValues[n++] = shunziList[i].cardFaceValues[m];
                     for (int m = shunziList[i].cardFaceValues.Length; m < 5; m++)
-                        outFaceValues[n++] =  RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] =  CardFace.Laizi;
 
                     for (int m = 0; m < shunziList2[i].cardFaceValues.Length; m++)
                         outFaceValues[n++] = shunziList2[i].cardFaceValues[m];
                     for (int m = shunziList2[i].cardFaceValues.Length; m < 5; m++)
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
 
                     return true;
                 }
@@ -674,7 +674,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsZhiZunLei(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsZhiZunLei(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             List<CardInfo>[] cardsList = new List<CardInfo>[]
             {
@@ -718,14 +718,14 @@ namespace CardRuleNS
                     return false;
                 int n = 0;
                 for (int i = 0; i < cardsList[0].Count; i++)
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardsList[0][i].value, cardsList[0][i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[0][i].value, cardsList[0][i].suit);
                 for (int i = cardsList[0].Count; i < 7; i++)
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
 
                 for (int i = 0; i < cardsList[1].Count; i++)
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardsList[1][i].value, cardsList[1][i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[1][i].value, cardsList[1][i].suit);
                 for (int i = cardsList[0].Count; i < 6; i++)
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                 return true;
             }
             else
@@ -735,14 +735,14 @@ namespace CardRuleNS
                     return false;
                 int n = 0;
                 for (int i = 0; i < cardsList[0].Count; i++)
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardsList[0][i].value, cardsList[0][i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[0][i].value, cardsList[0][i].suit);
                 for (int i = cardsList[0].Count; i < 6; i++)
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
 
                 for (int i = 0; i < cardsList[1].Count; i++)
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardsList[1][i].value, cardsList[1][i].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[1][i].value, cardsList[1][i].suit);
                 for (int i = cardsList[0].Count; i < 6; i++)
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
 
                 int max = cardCount[0];
                 int maxIdx = 0;
@@ -758,12 +758,12 @@ namespace CardRuleNS
                 if (max != 0)
                 {
                     int s = CardsTransform.Instance.FindCard(cards, maxIdx);
-                    outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cards[s].value, cards[s].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards[s].value, cards[s].suit);
                 }
                 else 
                 {
                     if (laiziCount - mustLaiziCount >= 1)
-                        outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                        outFaceValues[n++] = CardFace.Laizi;
                     else
                         return false;
                 }
@@ -779,7 +779,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsEightBomb(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsEightBomb(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             return IsNBomb(cards, laiziCount, 8, outFaceValues);
         }
@@ -791,7 +791,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSevenBomb(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsSevenBomb(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             return IsNBomb(cards, laiziCount, 7, outFaceValues);
         }
@@ -803,7 +803,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSixBomb(CardInfo[] cards, int laiziCount, RulePukeFaceValue[] outFaceValues)
+        bool IsSixBomb(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             return IsNBomb(cards, laiziCount, 6, outFaceValues);
         }
@@ -815,7 +815,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsNBomb(CardInfo[] cards, int laiziCount, int bombCount, RulePukeFaceValue[] outFaceValues)
+        bool IsNBomb(CardInfo[] cards, int laiziCount, int bombCount, CardFace[] outFaceValues)
         {
             List<CardInfo> cardsList = new List<CardInfo>();
 
@@ -848,18 +848,18 @@ namespace CardRuleNS
 
             int n = 0;
             for (int i = 0; i < cardsList.Count; i++)
-                outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cardsList[i].value, cardsList[i].suit);
+                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[i].value, cardsList[i].suit);
             for (int i = cardsList.Count; i < bombCount; i++)
-                outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                outFaceValues[n++] = CardFace.Laizi;
 
             CardInfo[] cards2 = CardsTransform.Instance.CreateRemoveCardInfos(cards, cardsList.ToArray());
             for(int i=0; i < cards2.Length; i++)
-                outFaceValues[n++] = CardsTransform.Instance.GetRulePukeFaceValue(cards2[i].value, cards2[i].suit); 
+                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards2[i].value, cards2[i].suit); 
 
             if(13 - n <= laiziCount - mustLaiziCount)
             {
                 for(int i = n; i<13; i++)
-                    outFaceValues[n++] = RulePukeFaceValue.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
             }
             else
             {

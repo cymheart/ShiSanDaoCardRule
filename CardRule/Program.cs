@@ -13,21 +13,21 @@ namespace CardRule
         {
             CardsTypeDict.Instance.CreateDict();
 
-            RulePukeFaceValue[] cardValues = new RulePukeFaceValue[]
+            CardFace[] cardValues = new CardFace[]
             {
-                RulePukeFaceValue.Club_2,
-                RulePukeFaceValue.Club_6,
-                RulePukeFaceValue.Club_5,
-                RulePukeFaceValue.Club_3,
-                RulePukeFaceValue.Club_J,
-                RulePukeFaceValue.Club_J,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Laizi,
-                RulePukeFaceValue.Club_A,
-                RulePukeFaceValue.Spade_3
+                CardFace.Club_2,
+                CardFace.Club_6,
+                CardFace.Club_5,
+                CardFace.Club_3,
+                CardFace.Club_J,
+                CardFace.Club_J,
+                CardFace.Laizi,
+                CardFace.Laizi,
+                CardFace.Laizi,
+                CardFace.Laizi,
+                CardFace.Laizi,
+                CardFace.Club_A,
+                CardFace.Spade_3
             };
 
             //获取普通牌型组合
@@ -40,7 +40,7 @@ namespace CardRule
             SpecCardsCheck specCard = new SpecCardsCheck();
 
             //存储特殊牌型结果（已排好序）
-            RulePukeFaceValue[] outCards = new RulePukeFaceValue[13];
+            CardFace[] outCards = new CardFace[13];
             SpecCardsType type = specCard.Check(cardValues, outCards);
         }
     }

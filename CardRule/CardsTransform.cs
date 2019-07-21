@@ -24,7 +24,7 @@ namespace CardRuleNS
             CreatePukeInfoList();
         }
 
-        public CardInfo[] TransToCardInfo(RulePukeFaceValue[] pukeFaceValues)
+        public CardInfo[] TransToCardInfo(CardFace[] pukeFaceValues)
         {
             CardInfo[] cardInfos = new CardInfo[pukeFaceValues.Length];
 
@@ -37,17 +37,17 @@ namespace CardRuleNS
             return cardInfos;
         }
 
-        public int GetValue(RulePukeFaceValue pukeFaceValue)
+        public int GetValue(CardFace pukeFaceValue)
         {
             return cardInfoList[(int)pukeFaceValue].value;
         }
 
-        public int GetSuit(RulePukeFaceValue pukeFaceValue)
+        public int GetSuit(CardFace pukeFaceValue)
         {
             return cardInfoList[(int)pukeFaceValue].suit;
         }
 
-        public CardInfo[] CreateRemoveFaceValues(CardInfo[] cards, RulePukeFaceValue[] cardFaceValues)
+        public CardInfo[] CreateRemoveFaceValues(CardInfo[] cards, CardFace[] cardFaceValues)
         {
             if (cardFaceValues == null || cardFaceValues.Length == 0)
                 return cards;
@@ -102,14 +102,14 @@ namespace CardRuleNS
             return -1;
         }
 
-        public CardInfo[] CreateFormatCards(RulePukeFaceValue[] pukeFaceValues, ref int laiziCount)
+        public CardInfo[] CreateFormatCards(CardFace[] pukeFaceValues, ref int laiziCount)
         {
-            List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
+            List<CardFace> newPukeFaceValueList = new List<CardFace>();
             laiziCount = 0;
 
             for (int i = 0; i < pukeFaceValues.Length; i++)
             {
-                if (pukeFaceValues[i] == RulePukeFaceValue.Laizi)
+                if (pukeFaceValues[i] == CardFace.Laizi)
                     laiziCount++;
                 else
                     newPukeFaceValueList.Add(pukeFaceValues[i]);
@@ -141,14 +141,14 @@ namespace CardRuleNS
         {
             CardInfo cardInfo;
 
-            for (int i = 0; i < (int)RulePukeFaceValue.Count; i++)
+            for (int i = 0; i < (int)CardFace.Count; i++)
             {
-                cardInfo = CreateCardInfo((RulePukeFaceValue)i);
+                cardInfo = CreateCardInfo((CardFace)i);
                 cardInfoList.Add(cardInfo);
             }
         }
 
-        public CardInfo CreateCardInfo(RulePukeFaceValue pukeFaceValue)
+        public CardInfo CreateCardInfo(CardFace pukeFaceValue)
         {
             CardInfo pukeInfo = new CardInfo();
             int n = (int)pukeFaceValue;
@@ -159,9 +159,9 @@ namespace CardRuleNS
             return pukeInfo;
         }
 
-        public RulePukeFaceValue GetRulePukeFaceValue(int cardValue, int cardSuit)
+        public CardFace GetCardFace(int cardValue, int cardSuit)
         {
-            return (RulePukeFaceValue)(cardSuit * 13 + cardValue - 1);
+            return (CardFace)(cardSuit * 13 + cardValue - 1);
         }
     }
 }
