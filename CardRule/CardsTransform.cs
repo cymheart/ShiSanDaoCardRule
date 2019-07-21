@@ -102,7 +102,7 @@ namespace CardRuleNS
             return -1;
         }
 
-        public CardInfo[] CreateSimpleCards(RulePukeFaceValue[] pukeFaceValues, ref int laiziCount)
+        public CardInfo[] CreateFormatCards(RulePukeFaceValue[] pukeFaceValues, ref int laiziCount)
         {
             List<RulePukeFaceValue> newPukeFaceValueList = new List<RulePukeFaceValue>();
             laiziCount = 0;

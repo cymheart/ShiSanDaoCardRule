@@ -16,7 +16,7 @@ namespace CardRuleNS
         public SpecCardsType Check(RulePukeFaceValue[] pukeFaceValues, RulePukeFaceValue[] outFaceValues)
         {
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateSimpleCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
             return IsSpecCards(cards, laiziCount, outFaceValues);
         }
 
