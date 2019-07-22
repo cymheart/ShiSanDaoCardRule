@@ -829,7 +829,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        public bool IsNBomb(CardInfo[] foramtCards, int laiziCount, int bombCount, CardFace[] outFaceValues)
+        public bool IsNBomb(CardInfo[] formatCards, int laiziCount, int bombCount, CardFace[] outFaceValues)
         {
             CardInfo[] cards = formatCards;
 
