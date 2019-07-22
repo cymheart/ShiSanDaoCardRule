@@ -740,7 +740,7 @@ namespace CardRuleNS
 
                 for (int i = 0; i < cardsList[1].Count; i++)
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[1][i].value, cardsList[1][i].suit);
-                for (int i = cardsList[0].Count; i < 6; i++)
+                for (int i = cardsList[1].Count; i < 6; i++)
                     outFaceValues[n++] = CardFace.Laizi;
                 return true;
             }
@@ -757,7 +757,7 @@ namespace CardRuleNS
 
                 for (int i = 0; i < cardsList[1].Count; i++)
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[1][i].value, cardsList[1][i].suit);
-                for (int i = cardsList[0].Count; i < 6; i++)
+                for (int i = cardsList[1].Count; i < 6; i++)
                     outFaceValues[n++] = CardFace.Laizi;
 
                 int max = cardCount[0];

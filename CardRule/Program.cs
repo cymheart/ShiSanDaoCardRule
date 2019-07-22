@@ -15,19 +15,19 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
             {
+                CardFace.Club_10,
+                CardFace.Club_10,
+                CardFace.Club_10,
+                CardFace.Club_10,
+                CardFace.Club_10,
+                CardFace.Club_10,
+                CardFace.Diamond_7,
+                CardFace.Diamond_9,
                 CardFace.Laizi,
-                CardFace.Spade_2,
+                CardFace.Heart_9,
+                CardFace.Diamond_8,
                 CardFace.Laizi,
-                CardFace.Heart_5,
-                CardFace.Laizi,
-                CardFace.Heart_10,
-                CardFace.Spade_J,
-                CardFace.Laizi,
-                CardFace.Diamond_K,
-                CardFace.Laizi,
-                CardFace.Heart_J,
-                CardFace.Heart_7,
-                CardFace.Laizi,
+                CardFace.Diamond_9,
             };
 
             CardFace[] cardValues2 = new CardFace[]
@@ -56,7 +56,7 @@ namespace CardRule
             int laiziCount = 0;
             bool ret = false;
             CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);
-            ret = specCard.IsSanShunZi(formatCards, laiziCount, outCards);
+            ret = specCard.IsSixBomb(formatCards, laiziCount, outCards);
 
 
         }

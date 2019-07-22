@@ -294,9 +294,7 @@ namespace CardRuleNS
             if (isEqual)
                 tongHuaShunKeyDict[cardkey] = 5 - realCount;
             else
-            {
                 shunziKeyDict[cardkey] = 5 - realCount;
-            }
         }
 
         void CreateHuluDict()
