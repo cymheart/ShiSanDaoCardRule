@@ -50,13 +50,13 @@ namespace CardRule
 
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
-           // SpecCardsType type = specCard.Check(cardValues, outCards);
+            SpecCardsType type = specCard.Check(cardValues, outCards);
 
             //
-            int laiziCount = 0;
-            bool ret = false;
-            CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);
-            ret = specCard.IsSixBomb(formatCards, laiziCount, outCards);
+            //int laiziCount = 0;
+            //bool ret = false;
+            //CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);
+            //ret = specCard.IsSixBomb(formatCards, laiziCount, outCards);
 
 
         }
