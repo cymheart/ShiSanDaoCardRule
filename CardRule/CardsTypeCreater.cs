@@ -57,13 +57,13 @@ namespace CardRuleNS
         /// <summary>
         /// 生成所有牌型组数据
         /// </summary>
-        /// <param name="pukeFaceValues">手牌数据</param>
-        public void CreateAllCardsTypeArray(CardFace[] pukeFaceValues)
+        /// <param name="cardFaces">手牌数据</param>
+        public void CreateAllCardsTypeArray(CardFace[] cardFaces)
         {
             Clear();
 
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -82,35 +82,35 @@ namespace CardRuleNS
         /// <summary>
         /// 生成顺子牌型数组（包括同花顺）
         /// </summary>
-        /// <param name="pukeFaceValues"></param>
-        public void CreateShunziArray(CardFace[] pukeFaceValues)
+        /// <param name="cardFaces"></param>
+        public void CreateShunziArray(CardFace[] cardFaces)
         {
             ShunziList.Clear();
 
             List<CardFace> newPukeFaceValueList = new List<CardFace>();
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, ref laiziCount);
             CreateShunziArray(cards, laiziCount);
         }
 
         /// <summary>
         /// 生成顺子牌型数组（包括同花顺）
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
-        public void CreateShunziArray(CardInfo[] cards, int laiziCount)
+        public void CreateShunziArray(CardInfo[] formatCards, int laiziCount)
         {
-            HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
-            HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
-            HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(cards);
-            HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(cards);
-            HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(cards);
+            HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(formatCards);
+            HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(formatCards);
+            HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(formatCards);
+            HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(formatCards);
+            HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(formatCards);
 
             CreateShunziArrayBySplitGroup(cardkeyHashSet5, laiziCount, 5);
             CreateShunziArrayBySplitGroup(cardkeyHashSet4, laiziCount, 4);
             CreateShunziArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
             CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
-            CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 1);
+            CreateShunziArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
         }
 
         void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)

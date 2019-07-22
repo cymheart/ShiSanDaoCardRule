@@ -295,9 +295,6 @@ namespace CardRuleNS
                 tongHuaShunKeyDict[cardkey] = 5 - realCount;
             else
             {
-                if (realCount <= 2)
-                    return;
-
                 shunziKeyDict[cardkey] = 5 - realCount;
             }
         }

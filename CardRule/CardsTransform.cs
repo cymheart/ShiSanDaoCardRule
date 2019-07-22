@@ -24,14 +24,14 @@ namespace CardRuleNS
             CreatePukeInfoList();
         }
 
-        public CardInfo[] TransToCardInfo(CardFace[] pukeFaceValues)
+        public CardInfo[] TransToCardInfo(CardFace[] cardFaces)
         {
-            CardInfo[] cardInfos = new CardInfo[pukeFaceValues.Length];
+            CardInfo[] cardInfos = new CardInfo[cardFaces.Length];
 
-            for (int i = 0; i < pukeFaceValues.Length; i++)
+            for (int i = 0; i < cardFaces.Length; i++)
             {
-                cardInfos[i].value = GetValue(pukeFaceValues[i]);
-                cardInfos[i].suit = GetSuit(pukeFaceValues[i]);
+                cardInfos[i].value = GetValue(cardFaces[i]);
+                cardInfos[i].suit = GetSuit(cardFaces[i]);
             }
 
             return cardInfos;
@@ -67,12 +67,11 @@ namespace CardRuleNS
 
             for (int i = 0; i < cards.Length; i++)
             {
-                idx = FindCard(cardinfoList, cards[i].value, cards[i].value);
-                if (idx != -1)
-                {
-                    cardinfoList.RemoveAt(idx);
+                idx = FindCard(cardinfoList, cards[i].value, cards[i].suit);
+                if (idx == -1)      
                     newCards.Add(cards[i]);
-                }
+                else
+                    cardinfoList.RemoveAt(idx);
             }
 
             return newCards.ToArray();
@@ -102,24 +101,45 @@ namespace CardRuleNS
             return -1;
         }
 
-        public CardInfo[] CreateFormatCards(CardFace[] pukeFaceValues, ref int laiziCount)
+
+        /// <summary>
+        /// 生成格式化后的手牌信息
+        /// </summary>
+        /// <param name="cardFaces">原始带赖子手牌的cardface信息</param>
+        /// <param name="laiziCount">返回手牌中赖子的数量</param>
+        /// <returns>返回值为移除赖子牌的排序后的牌的cardinfo信息</returns>
+        public CardInfo[] CreateFormatCards(CardFace[] cardFaces, ref int laiziCount)
         {
-            List<CardFace> newPukeFaceValueList = new List<CardFace>();
+            CardFace[] newCardFaces;
             laiziCount = 0;
-
-            for (int i = 0; i < pukeFaceValues.Length; i++)
-            {
-                if (pukeFaceValues[i] == CardFace.Laizi)
-                    laiziCount++;
-                else
-                    newPukeFaceValueList.Add(pukeFaceValues[i]);
-            }
-
-            CardInfo[] cards = TransToCardInfo(newPukeFaceValueList.ToArray());
+            newCardFaces = RemoveLaizi(cardFaces, ref laiziCount);
+            CardInfo[] cards = TransToCardInfo(newCardFaces);
             SortCards(cards);
-
             return cards;
         }
+
+        /// <summary>
+        /// 移除牌中的赖子，获取没有赖子的cardfaces
+        /// </summary>
+        /// <param name="cardFaces"></param>
+        /// <param name="laiziCount"></param>
+        /// <returns></returns>
+        public CardFace[] RemoveLaizi(CardFace[] cardFaces, ref int laiziCount)
+        {
+            List<CardFace> newCardFaceList = new List<CardFace>();
+            laiziCount = 0;
+
+            for (int i = 0; i < cardFaces.Length; i++)
+            {
+                if (cardFaces[i] == CardFace.Laizi)
+                    laiziCount++;
+                else
+                    newCardFaceList.Add(cardFaces[i]);
+            }
+
+            return newCardFaceList.ToArray();
+        }
+
 
         public void SortCards(CardInfo[] cards)
         {
@@ -148,10 +168,18 @@ namespace CardRuleNS
             }
         }
 
-        public CardInfo CreateCardInfo(CardFace pukeFaceValue)
+        public CardInfo[] CreateCardInfos(CardFace[] cardFaces)
+        {
+            CardInfo[] cards = new CardInfo[cardFaces.Length];
+            for (int i = 0; i < cardFaces.Length; i++)
+                cards[i] = CreateCardInfo(cardFaces[i]);
+            return cards;
+        }
+
+        public CardInfo CreateCardInfo(CardFace cardFaces)
         {
             CardInfo pukeInfo = new CardInfo();
-            int n = (int)pukeFaceValue;
+            int n = (int)cardFaces;
             int suit = n / 13;
             int value = n % 13 + 1;
             pukeInfo.suit = suit;

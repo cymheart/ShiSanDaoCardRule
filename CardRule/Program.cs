@@ -15,19 +15,28 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
             {
-                CardFace.Club_2,
-                CardFace.Club_6,
-                CardFace.Club_5,
-                CardFace.Club_3,
-                CardFace.Club_J,
-                CardFace.Club_J,
                 CardFace.Laizi,
+                CardFace.Spade_2,
                 CardFace.Laizi,
+                CardFace.Heart_5,
                 CardFace.Laizi,
+                CardFace.Heart_10,
+                CardFace.Spade_J,
                 CardFace.Laizi,
+                CardFace.Diamond_K,
                 CardFace.Laizi,
-                CardFace.Club_A,
-                CardFace.Spade_3
+                CardFace.Heart_J,
+                CardFace.Heart_7,
+                CardFace.Laizi,
+            };
+
+            CardFace[] cardValues2 = new CardFace[]
+            {
+                CardFace.Laizi,
+                CardFace.Spade_2,
+                CardFace.Laizi,
+                CardFace.Heart_5,
+                CardFace.Laizi,       
             };
 
             //获取普通牌型组合
@@ -41,7 +50,15 @@ namespace CardRule
 
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
-            SpecCardsType type = specCard.Check(cardValues, outCards);
+           // SpecCardsType type = specCard.Check(cardValues, outCards);
+
+            //
+            int laiziCount = 0;
+            bool ret = false;
+            CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);
+            ret = specCard.IsSanShunZi(formatCards, laiziCount, outCards);
+
+
         }
     }
 }

@@ -12,11 +12,11 @@ namespace CardRuleNS
         /// <summary>
         /// 检查是否为特殊牌型
         /// </summary>
-        /// <param name="pukeFaceValues">手牌数据</param>
-        public SpecCardsType Check(CardFace[] pukeFaceValues, CardFace[] outFaceValues)
+        /// <param name="cardFaces">手牌数据</param>
+        public SpecCardsType Check(CardFace[] cardFaces, CardFace[] outFaceValues)
         {
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(pukeFaceValues, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, ref laiziCount);
             return IsSpecCards(cards, laiziCount, outFaceValues);
         }
 
@@ -72,7 +72,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为至尊青龙
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -93,14 +93,14 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为一条龙
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
         public bool IsYiTiaoLong(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
             CardInfo[] cards = formatCards;
-
+            int n = 0;
             int idx;
             for (int i = 2; i < 14; i++)
             {
@@ -114,11 +114,11 @@ namespace CardRuleNS
                     if (laiziCount < 0)
                         return false;
 
-                    outFaceValues[i] = CardFace.Laizi;
+                    outFaceValues[n++] = CardFace.Laizi;
                 }
                 else
                 {
-                    outFaceValues[i] = CardsTransform.Instance.GetCardFace(cards[idx].value, cards[idx].suit);
+                    outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards[idx].value, cards[idx].suit);
                 }
             }
 
@@ -128,7 +128,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为三同花
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -218,17 +218,19 @@ namespace CardRuleNS
 
                 int min = 4;
                 int minIdx = 0;
+                int otherIdx = 0;
+
                 for (int i = 0; i < 2; i++)
                 {
                     if (suitCards[idx[i]].Count <= min)
                     {
                         min = suitCards[idx[i]].Count;
                         minIdx = idx[i];
+                        otherIdx = idx[1 - i];
                     }
                 }
 
                 int n = 0;
-                int otherIdx = 1 - minIdx;
 
                 if (min <= 3)
                 {
@@ -314,7 +316,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为四套三
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -349,7 +351,7 @@ namespace CardRuleNS
                                 j = cardList.Count;
                                 i = cardList.Count;
 
-                                if (n == 11)
+                                if (n == 12)
                                     isFind = false;
                             }
                         }
@@ -358,7 +360,7 @@ namespace CardRuleNS
                     break;
             }
 
-            if (n == 11)
+            if (n == 12)
             {
                 if (cardList.Count > 0)
                 {
@@ -397,7 +399,7 @@ namespace CardRuleNS
                             j = cardList.Count;
                             i = cardList.Count;
 
-                            if (n == 11)
+                            if (n == 12)
                                 isFind = false;
                         }
                     }
@@ -406,7 +408,7 @@ namespace CardRuleNS
                     break;
             }
 
-            if (n == 11)
+            if (n == 12)
             {
                 if (cardList.Count > 0)
                 {
@@ -442,7 +444,7 @@ namespace CardRuleNS
 
                     isFind = true;
                     i = cardList.Count;
-                    if (n == 11)
+                    if (n == 12)
                         isFind = false;
                 }
 
@@ -450,7 +452,7 @@ namespace CardRuleNS
                     break;
             }
 
-            if (n == 11)
+            if (n == 12)
             {
                 if (cardList.Count > 0)
                 {
@@ -481,7 +483,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为六对半
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -513,7 +515,7 @@ namespace CardRuleNS
                             j = cardList.Count;
                             i = cardList.Count;
 
-                            if (n == 11)
+                            if (n == 12)
                                 isFind = false;
                         }
                     }
@@ -523,7 +525,7 @@ namespace CardRuleNS
                     break;
             }
 
-            if (n == 11)
+            if (n == 12)
             {
                 if (cardList.Count > 0)
                 {
@@ -555,7 +557,7 @@ namespace CardRuleNS
 
                     isFind = true;
                     i = cardList.Count;
-                    if (n == 11)
+                    if (n == 12)
                         isFind = false;
                 }
 
@@ -563,7 +565,7 @@ namespace CardRuleNS
                     break;
             }
 
-            if (n == 11)
+            if (n == 12)
             {
                 if (cardList.Count > 0)
                 {
@@ -593,7 +595,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为三顺子
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -659,7 +661,7 @@ namespace CardRuleNS
                     }
                     else
                     {
-                        return false;
+                        continue;
                     }
 
                     for(int m = 0; m < shunziList[i].cardFaceValues.Length; m++)
@@ -682,7 +684,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为至尊雷
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -789,7 +791,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为八炸
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -801,7 +803,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为七炸
         /// </summary>
-        /// <param name="cards"></param>
+        ///<param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -813,7 +815,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为六炸
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
@@ -825,7 +827,7 @@ namespace CardRuleNS
         /// <summary>
         /// 判断是否为N炸
         /// </summary>
-        /// <param name="cards"></param>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
