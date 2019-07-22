@@ -70,10 +70,15 @@ namespace CardRuleNS
         public Dictionary<CardKey, int> duiziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> tonghuaKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
 
+        CardsTypeDict()
+        {
+            CreateDict();
+        }
+
         /// <summary>
         /// 生成牌型查询字典
         /// </summary>
-        public void CreateDict()
+        void CreateDict()
         {
             CreateShunziDict();
             CreateHuluDict();
@@ -84,6 +89,7 @@ namespace CardRuleNS
             CreateDuiZiDict();
             CreateTongHuaDict();
         }
+
 
 
         /// <summary>
@@ -181,6 +187,8 @@ namespace CardRuleNS
 
         void CreateShunziDict()
         {
+            shunziKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[5]
             {
                 new CardInfo(),new CardInfo(),
@@ -299,6 +307,8 @@ namespace CardRuleNS
 
         void CreateHuluDict()
         {
+            huluKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[5]
             {
                 new CardInfo(),new CardInfo(),
@@ -395,6 +405,8 @@ namespace CardRuleNS
 
         void CreateTwoDuiDict()
         {
+            twoduiKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[4]
             {
                 new CardInfo(),new CardInfo(),
@@ -494,6 +506,8 @@ namespace CardRuleNS
 
         void CreateWuTongDict()
         {
+            wutongKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[5]
             {
                 new CardInfo(),new CardInfo(),
@@ -660,6 +674,8 @@ namespace CardRuleNS
 
         void CreateTieZhiDict()
         {
+            tiezhiKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[4]
             {
                 new CardInfo(),new CardInfo(),
@@ -781,6 +797,8 @@ namespace CardRuleNS
 
         void CreateSanTiaoDict()
         {
+            santiaoKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[3]
             {
                 new CardInfo(),new CardInfo(),
@@ -871,6 +889,8 @@ namespace CardRuleNS
 
         void CreateDuiZiDict()
         {
+            duiziKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[2]
             {
                 new CardInfo(),new CardInfo(),
@@ -922,9 +942,10 @@ namespace CardRuleNS
             }
         }
 
-
         void CreateTongHuaDict()
         {
+            tonghuaKeyDict.Clear();
+
             CardInfo[] cards = new CardInfo[5]
             {
                 new CardInfo(),new CardInfo(),
@@ -972,8 +993,7 @@ namespace CardRuleNS
                 }
             }    
         }
-
-    
+ 
         void AddTongHuaKeyToList(CardInfo[] cards)
         {
             CardKey cardkey = new CardKey();

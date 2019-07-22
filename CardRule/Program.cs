@@ -11,8 +11,6 @@ namespace CardRule
     {
         static void Main(string[] args)
         {
-            CardsTypeDict.Instance.CreateDict();
-
             CardFace[] cardValues = new CardFace[]
             {
                 CardFace.Club_10,
