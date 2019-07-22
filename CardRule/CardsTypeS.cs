@@ -126,7 +126,7 @@ namespace CardRuleNS
     }
 
     // <summary>
-    /// 扑克面值
+    /// 牌面
     /// </summary>
     public enum CardFace
     {

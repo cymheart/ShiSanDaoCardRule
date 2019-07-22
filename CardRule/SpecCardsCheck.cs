@@ -20,7 +20,7 @@ namespace CardRuleNS
             return IsSpecCards(cards, laiziCount, outFaceValues);
         }
 
-         SpecCardsType IsSpecCards(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        SpecCardsType IsSpecCards(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {
             SpecCardsType type = SpecCardsType.Normal;
 
@@ -76,8 +76,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsZhiZunQinLong(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsZhiZunQinLong(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             for (int i= 1; i < cards.Length; i++)
             {
                 if (cards[i].suit != cards[0].suit)
@@ -95,8 +97,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsYiTiaoLong(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsYiTiaoLong(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             int idx;
             for (int i = 2; i < 14; i++)
             {
@@ -128,8 +132,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSanTongHua(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsSanTongHua(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             List<CardInfo>[] suitCards = new List<CardInfo>[]
             {
                 new List<CardInfo>(),new List<CardInfo>(),
@@ -312,8 +318,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSiTaoSan(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsSiTaoSan(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             List<CardInfo> cardList = new List<CardInfo>();
             cardList.AddRange(cards);
 
@@ -477,8 +485,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsLiuDuiBan(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsLiuDuiBan(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             List<CardInfo> cardList = new List<CardInfo>();
             cardList.AddRange(cards);
 
@@ -587,8 +597,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSanShunZi(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsSanShunZi(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             int n = 0;
             List<CardsTypeInfo> shunziList = new List<CardsTypeInfo>();
             List<CardsTypeInfo> shunziList2 = new List<CardsTypeInfo>();
@@ -674,8 +686,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsZhiZunLei(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsZhiZunLei(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             List<CardInfo>[] cardsList = new List<CardInfo>[]
             {
                  new List<CardInfo>(), new List<CardInfo>()
@@ -779,9 +793,9 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsEightBomb(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsEightBomb(CardInfo[] foramtCards, int laiziCount, CardFace[] outFaceValues)
         {
-            return IsNBomb(cards, laiziCount, 8, outFaceValues);
+            return IsNBomb(foramtCards, laiziCount, 8, outFaceValues);
         }
 
         /// <summary>
@@ -791,9 +805,9 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSevenBomb(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsSevenBomb(CardInfo[] foramtCards, int laiziCount, CardFace[] outFaceValues)
         {
-            return IsNBomb(cards, laiziCount, 7, outFaceValues);
+            return IsNBomb(foramtCards, laiziCount, 7, outFaceValues);
         }
 
         /// <summary>
@@ -803,9 +817,9 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsSixBomb(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
+        public bool IsSixBomb(CardInfo[] foramtCards, int laiziCount, CardFace[] outFaceValues)
         {
-            return IsNBomb(cards, laiziCount, 6, outFaceValues);
+            return IsNBomb(foramtCards, laiziCount, 6, outFaceValues);
         }
 
         /// <summary>
@@ -815,8 +829,10 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        bool IsNBomb(CardInfo[] cards, int laiziCount, int bombCount, CardFace[] outFaceValues)
+        public bool IsNBomb(CardInfo[] foramtCards, int laiziCount, int bombCount, CardFace[] outFaceValues)
         {
+            CardInfo[] cards = formatCards;
+
             List<CardInfo> cardsList = new List<CardInfo>();
 
             int[] cardCount = new int[13];
