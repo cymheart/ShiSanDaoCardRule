@@ -391,12 +391,20 @@ namespace CardRuleNS
         /// </summary>
         Spade_K,
 
+        /// <summary>
+        /// 小王
+        /// </summary>
+        BlackJoker,
+
+        /// <summary>
+        /// 大王
+        /// </summary>
+        RedJoker,
 
         /// <summary>
         /// 赖子
         /// </summary>
         Laizi,
-
 
         /// <summary>
         /// 数量

@@ -101,6 +101,17 @@ namespace CardRuleNS
             return -1;
         }
 
+        public int FindCardFace(CardFace[] cardfaces, CardFace cardface)
+        {
+            for (int i = 0; i < cardfaces.Length; i++)
+            {
+                if (cardfaces[i] == cardface)
+                    return i;
+            }
+
+            return -1;
+        }
+
 
         /// <summary>
         /// 生成格式化后的手牌信息
@@ -108,11 +119,11 @@ namespace CardRuleNS
         /// <param name="cardFaces">原始带赖子手牌的cardface信息</param>
         /// <param name="laiziCount">返回手牌中赖子的数量</param>
         /// <returns>返回值为移除赖子牌的排序后的牌的cardinfo信息</returns>
-        public CardInfo[] CreateFormatCards(CardFace[] cardFaces, ref int laiziCount)
+        public CardInfo[] CreateFormatCards(CardFace[] cardFaces, CardFace[] laiziCardFaces, ref int laiziCount)
         {
             CardFace[] newCardFaces;
             laiziCount = 0;
-            newCardFaces = RemoveLaizi(cardFaces, ref laiziCount);
+            newCardFaces = RemoveLaizi(cardFaces, laiziCardFaces, ref laiziCount);
             CardInfo[] cards = TransToCardInfo(newCardFaces);
             SortCards(cards);
             return cards;
@@ -124,14 +135,14 @@ namespace CardRuleNS
         /// <param name="cardFaces"></param>
         /// <param name="laiziCount"></param>
         /// <returns></returns>
-        public CardFace[] RemoveLaizi(CardFace[] cardFaces, ref int laiziCount)
+        public CardFace[] RemoveLaizi(CardFace[] cardFaces, CardFace[] laiziCardFaces, ref int laiziCount)
         {
             List<CardFace> newCardFaceList = new List<CardFace>();
             laiziCount = 0;
 
             for (int i = 0; i < cardFaces.Length; i++)
             {
-                if (cardFaces[i] == CardFace.Laizi)
+                if(FindCardFace(laiziCardFaces, cardFaces[i]) != -1)
                     laiziCount++;
                 else
                     newCardFaceList.Add(cardFaces[i]);
@@ -179,6 +190,26 @@ namespace CardRuleNS
         public CardInfo CreateCardInfo(CardFace cardFaces)
         {
             CardInfo pukeInfo = new CardInfo();
+
+            if (cardFaces == CardFace.BlackJoker)
+            {
+                pukeInfo.suit = 0;
+                pukeInfo.value = 14;
+                return pukeInfo;
+            }
+            else if (cardFaces == CardFace.RedJoker)
+            {
+                pukeInfo.suit = 0;
+                pukeInfo.value = 15;
+                return pukeInfo;
+            }
+            else if (cardFaces == CardFace.Laizi)
+            {
+                pukeInfo.suit = 0;
+                pukeInfo.value = 16;
+                return pukeInfo;
+            }
+
             int n = (int)cardFaces;
             int suit = n / 13;
             int value = n % 13 + 1;
@@ -189,6 +220,11 @@ namespace CardRuleNS
 
         public CardFace GetCardFace(int cardValue, int cardSuit)
         {
+            if (cardValue == 14)
+                return CardFace.BlackJoker;
+            else if(cardValue == 15)
+                return CardFace.RedJoker;
+
             return (CardFace)(cardSuit * 13 + cardValue - 1);
         }
     }

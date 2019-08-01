@@ -58,12 +58,15 @@ namespace CardRuleNS
         /// 生成所有牌型组数据
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
-        public void CreateAllCardsTypeArray(CardFace[] cardFaces)
+        public void CreateAllCardsTypeArray(CardFace[] cardFaces, CardFace[] laizi = null)
         {
             Clear();
 
+            if (laizi == null)
+                laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
+
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -83,13 +86,15 @@ namespace CardRuleNS
         /// 生成顺子牌型数组（包括同花顺）
         /// </summary>
         /// <param name="cardFaces"></param>
-        public void CreateShunziArray(CardFace[] cardFaces)
+        public void CreateShunziArray(CardFace[] cardFaces, CardFace[] laizi = null)
         {
             ShunziList.Clear();
+            if (laizi == null)
+                laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
 
             List<CardFace> newPukeFaceValueList = new List<CardFace>();
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
             CreateShunziArray(cards, laiziCount);
         }
 

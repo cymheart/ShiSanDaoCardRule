@@ -21,10 +21,10 @@ namespace CardRule
                 CardFace.Club_10,
                 CardFace.Diamond_7,
                 CardFace.Diamond_9,
-                CardFace.Laizi,
+                CardFace.RedJoker,
                 CardFace.Heart_9,
                 CardFace.Diamond_8,
-                CardFace.Laizi,
+                CardFace.BlackJoker,
                 CardFace.Diamond_9,
             };
 
@@ -39,7 +39,7 @@ namespace CardRule
 
             //获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
-            creater.CreateAllCardsTypeArray(cardValues);
+            creater.CreateAllCardsTypeArray(cardValues, new[] {CardFace.BlackJoker, CardFace.RedJoker });
             //获取cardValues牌中的顺子组合
             List<CardsTypeInfo> shunziList = creater.ShunziList;
 
@@ -48,7 +48,7 @@ namespace CardRule
 
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
-            SpecCardsType type = specCard.Check(cardValues, outCards);
+            SpecCardsType type = specCard.Check(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker }, outCards);
 
             //
             //int laiziCount = 0;

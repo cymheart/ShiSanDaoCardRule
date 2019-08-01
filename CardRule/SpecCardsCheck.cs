@@ -13,10 +13,10 @@ namespace CardRuleNS
         /// 检查是否为特殊牌型
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
-        public SpecCardsType Check(CardFace[] cardFaces, CardFace[] outFaceValues)
+        public SpecCardsType Check(CardFace[] cardFaces, CardFace[] laizi, CardFace[] outFaceValues)
         {
             int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, ref laiziCount);
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
             return IsSpecCards(cards, laiziCount, outFaceValues);
         }
 
