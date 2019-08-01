@@ -89,6 +89,7 @@ namespace CardRuleNS
         public void CreateShunziArray(CardFace[] cardFaces, CardFace[] laizi = null)
         {
             ShunziList.Clear();
+
             if (laizi == null)
                 laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
 

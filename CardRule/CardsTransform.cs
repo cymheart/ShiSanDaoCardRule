@@ -193,19 +193,19 @@ namespace CardRuleNS
 
             if (cardFaces == CardFace.BlackJoker)
             {
-                pukeInfo.suit = 0;
+                pukeInfo.suit = -1;
                 pukeInfo.value = 14;
                 return pukeInfo;
             }
             else if (cardFaces == CardFace.RedJoker)
             {
-                pukeInfo.suit = 0;
+                pukeInfo.suit = -1;
                 pukeInfo.value = 15;
                 return pukeInfo;
             }
             else if (cardFaces == CardFace.Laizi)
             {
-                pukeInfo.suit = 0;
+                pukeInfo.suit = -1;
                 pukeInfo.value = 16;
                 return pukeInfo;
             }

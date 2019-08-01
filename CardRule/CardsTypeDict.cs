@@ -70,6 +70,9 @@ namespace CardRuleNS
         public Dictionary<CardKey, int> duiziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> tonghuaKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
 
+        public bool isCheckSuitCount = false;
+        public int limitSameSuitCount = 2;
+
         CardsTypeDict()
         {
             CreateDict();
@@ -359,12 +362,15 @@ namespace CardRuleNS
 
         void AddHuluKeyToList(CardInfo[] cards)
         {
-            int[] suitCount = new int[4] { 0, 0, 0, 0 };
-            for (int i = 0; i < cards.Length; i++)
+            if (isCheckSuitCount)
             {
-                suitCount[cards[i].suit]++;
-                if (suitCount[cards[i].suit] > 2)
-                    return;
+                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    suitCount[cards[i].suit]++;
+                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                        return;
+                }
             }
 
             if (cards[0].value == cards[1].value &&
@@ -450,12 +456,15 @@ namespace CardRuleNS
 
         void AddTwoDuiKeyToList(CardInfo[] cards)
         {
-            int[] suitCount = new int[4] { 0, 0, 0, 0 };
-            for (int i = 0; i < cards.Length; i++)
+            if (isCheckSuitCount)
             {
-                suitCount[cards[i].suit]++;
-                if (suitCount[cards[i].suit] > 2)
-                    return;
+                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    suitCount[cards[i].suit]++;
+                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                        return;
+                }
             }
 
             if (cards[0].value == cards[1].value &&
@@ -563,12 +572,15 @@ namespace CardRuleNS
                 return;
             }
 
-            int[] suitCount = new int[4] { 0, 0, 0, 0 };
-            for (int i = 0; i < cards.Length; i++)
+            if (isCheckSuitCount)
             {
-                suitCount[cards[i].suit]++;
-                if (suitCount[cards[i].suit] > 2)
-                    return;
+                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    suitCount[cards[i].suit]++;
+                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                        return;
+                }
             }
 
 
@@ -723,12 +735,15 @@ namespace CardRuleNS
                 return;
             }
 
-            int[] suitCount = new int[4] { 0, 0, 0, 0 };
-            for (int i = 0; i < cards.Length; i++)
+            if (isCheckSuitCount)
             {
-                suitCount[cards[i].suit]++;
-                if (suitCount[cards[i].suit] > 2)
-                    return;
+                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    suitCount[cards[i].suit]++;
+                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                        return;
+                }
             }
 
 
@@ -840,12 +855,15 @@ namespace CardRuleNS
                 return;
             }
 
-            int[] suitCount = new int[4] { 0, 0, 0, 0 };
-            for (int i = 0; i < cards.Length; i++)
+            if (isCheckSuitCount)
             {
-                suitCount[cards[i].suit]++;
-                if (suitCount[cards[i].suit] > 2)
-                    return;
+                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    suitCount[cards[i].suit]++;
+                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                        return;
+                }
             }
 
 
