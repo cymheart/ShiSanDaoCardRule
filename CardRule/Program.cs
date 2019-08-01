@@ -16,15 +16,15 @@ namespace CardRule
                 CardFace.Club_10,
                 CardFace.Club_10,
                 CardFace.Club_10,
-                CardFace.Club_10,
-                CardFace.Club_10,
-                CardFace.Club_10,
+                CardFace.Diamond_10,
+                CardFace.Club_4,
+                CardFace.Club_5,
                 CardFace.Diamond_7,
-                CardFace.Diamond_9,
-                CardFace.RedJoker,
+                CardFace.Diamond_2,
+                CardFace.Diamond_2,
                 CardFace.Heart_9,
                 CardFace.Diamond_8,
-                CardFace.BlackJoker,
+                CardFace.Heart_3,
                 CardFace.Diamond_9,
             };
 
@@ -41,7 +41,7 @@ namespace CardRule
             CardsTypeCreater creater = new CardsTypeCreater();
             creater.CreateAllCardsTypeArray(cardValues, new[] {CardFace.BlackJoker, CardFace.RedJoker });
             //获取cardValues牌中的顺子组合
-            List<CardsTypeInfo> shunziList = creater.ShunziList;
+            List<CardsTypeInfo> santiaos = creater.SantiaoList;
 
             //特殊牌型检查
             SpecCardsCheck specCard = new SpecCardsCheck();

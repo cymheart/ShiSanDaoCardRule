@@ -70,7 +70,7 @@ namespace CardRuleNS
         public Dictionary<CardKey, int> duiziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, int> tonghuaKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
 
-        public bool isCheckSuitCount = false;
+        public bool isCheckSuitCount = true;
         public int limitSameSuitCount = 2;
 
         CardsTypeDict()
