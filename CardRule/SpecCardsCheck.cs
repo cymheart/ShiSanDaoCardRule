@@ -628,8 +628,8 @@ namespace CardRuleNS
 
                 for (int j = 0; j < shunziList2.Count; j++)
                 {
-                    CardInfo[] cards3 = CardsTransform.Instance.CreateRemoveFaceValues(cards2, shunziList2[i].cardFaceValues);
-                    int laiziCount3 = laiziCount2 - shunziList2[i].laiziCount;
+                    CardInfo[] cards3 = CardsTransform.Instance.CreateRemoveFaceValues(cards2, shunziList2[j].cardFaceValues);
+                    int laiziCount3 = laiziCount2 - shunziList2[j].laiziCount;
                     if (laiziCount3 < 0)
                         continue;
 
@@ -697,7 +697,7 @@ namespace CardRuleNS
                  new List<CardInfo>(), new List<CardInfo>()
             };
 
-            int[] cardCount = new int[13];
+            int[] cardCount = new int[14];
             for(int i=0; i < cards.Length; i++)
                 cardCount[cards[i].value]++;
 
@@ -837,7 +837,7 @@ namespace CardRuleNS
 
             List<CardInfo> cardsList = new List<CardInfo>();
 
-            int[] cardCount = new int[13];
+            int[] cardCount = new int[14];
             for (int i = 0; i < cards.Length; i++)
                 cardCount[cards[i].value]++;
 
