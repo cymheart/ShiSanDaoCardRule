@@ -12,7 +12,7 @@ namespace CardRuleNS
         /// <summary>
         /// 不存在
         /// </summary>
-        None,
+        None = 0,
 
         /// <summary>
         /// 单张
@@ -63,7 +63,6 @@ namespace CardRuleNS
         /// 五同
         /// </summary>
         WuTong,
-
     }
 
 
@@ -439,6 +438,11 @@ namespace CardRuleNS
         /// 需要的赖子数量
         /// </summary>
         public int laiziCount;
+
+        /// <summary>
+        /// 分值
+        /// </summary>
+        public float score;
     }
 
 }

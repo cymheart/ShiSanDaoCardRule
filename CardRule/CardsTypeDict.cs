@@ -44,6 +44,18 @@ namespace CardRuleNS
         }
     }
 
+    public struct CardsTypeCombInfo
+    {
+        public int laiziCount;
+        public float baseScore;
+
+        public CardsTypeCombInfo(int laiziCount, float baseScore)
+        {
+            this.laiziCount = laiziCount;
+            this.baseScore = baseScore;
+        }
+    }
+
     /// <summary>
     /// 十三道赖子牌型字典
     /// </summary>
@@ -60,15 +72,15 @@ namespace CardRuleNS
             }
         }
 
-        public Dictionary<CardKey, int> shunziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> tongHuaShunKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> huluKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> twoduiKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> wutongKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> tiezhiKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> santiaoKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> duiziKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
-        public Dictionary<CardKey, int> tonghuaKeyDict = new Dictionary<CardKey, int>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> shunziKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> tongHuaShunKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> huluKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> twoduiKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> wutongKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> tiezhiKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> santiaoKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> duiziKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+        public Dictionary<CardKey, CardsTypeCombInfo> tonghuaKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
 
         //
         bool isCheckSuitCount = true;
@@ -94,7 +106,20 @@ namespace CardRuleNS
             CreateTongHuaDict();
         }
 
-
+        void AddToDict(Dictionary<CardKey, CardsTypeCombInfo> dict, CardKey cardkey, int count, float score)
+        {
+            CardsTypeCombInfo old;
+            if (dict.TryGetValue(cardkey, out old))
+            {
+                if (old.baseScore < score)
+                    old.baseScore = score;
+                dict[cardkey] = old;
+            }
+            else
+            {
+                dict[cardkey] = new CardsTypeCombInfo(count, score);
+            }
+        }
 
         /// <summary>
         /// 添加牌数据到现有cardkey
@@ -200,17 +225,20 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            AddShunziKeyToList(null, 0);
+            float score = CardsTypeCmp.Instance.GetShunZiBaseScore(10);
+            AddShunziKeyToList(null, 0, score);
 
             for (int i = 1; i <= 10; i++)
             {
+                score = CardsTypeCmp.Instance.GetShunZiBaseScore(i);
+
                 for (int s0 = -1; s0 < 4; s0++)
-                {
+                {            
                     if (s0 != -1)
                     {
                         cards[0].value = i;
-                        cards[0].suit = s0;
-                        AddShunziKeyToList(cards, 1);
+                        cards[0].suit = s0;                   
+                        AddShunziKeyToList(cards, 1, score);
                     }
                     else
                         cards[0].value = -1;
@@ -221,7 +249,7 @@ namespace CardRuleNS
                         {
                             cards[1].value = i + 1;
                             cards[1].suit = s1;
-                            AddShunziKeyToList(cards, 2);
+                            AddShunziKeyToList(cards, 2, score);
                         }
                         else
                             cards[1].value = -1;
@@ -232,7 +260,7 @@ namespace CardRuleNS
                             {
                                 cards[2].value = i + 2;
                                 cards[2].suit = s2;
-                                AddShunziKeyToList(cards, 3);
+                                AddShunziKeyToList(cards, 3, score);
                             }
                             else
                                 cards[2].value = -1;
@@ -243,7 +271,7 @@ namespace CardRuleNS
                                 {
                                     cards[3].value = i + 3;
                                     cards[3].suit = s3;
-                                    AddShunziKeyToList(cards, 4);
+                                    AddShunziKeyToList(cards, 4, score);
                                 }
                                 else
                                     cards[3].value = -1;
@@ -257,7 +285,7 @@ namespace CardRuleNS
                                     else
                                         cards[4].value = i + 4;
 
-                                    AddShunziKeyToList(cards, 5);
+                                    AddShunziKeyToList(cards, 5, score);
                                 }
                             }
                         }
@@ -266,12 +294,12 @@ namespace CardRuleNS
             }
         }
 
-        void AddShunziKeyToList(CardInfo[] cards, int count)
+        void AddShunziKeyToList(CardInfo[] cards, int count, float score)
         {
             if (cards == null)
             {
                 CardKey key = new CardKey();
-                tongHuaShunKeyDict[key] = 5;
+                tongHuaShunKeyDict[key] = new CardsTypeCombInfo(5, score);
                 return;
             }
 
@@ -304,9 +332,13 @@ namespace CardRuleNS
             }
 
             if (isEqual)
-                tongHuaShunKeyDict[cardkey] = 5 - realCount;
+            {
+                AddToDict(tongHuaShunKeyDict, cardkey, 5 - realCount, score);        
+            }
             else
-                shunziKeyDict[cardkey] = 5 - realCount;
+            {
+                AddToDict(shunziKeyDict, cardkey, 5 - realCount, score);
+            }
         }
 
         void CreateHuluDict()
@@ -319,6 +351,9 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
                 new CardInfo()
             };
+
+            float score = 0;
+            float a, b;
 
             for (int i = 1; i <= 13; i++)
             {
@@ -343,6 +378,14 @@ namespace CardRuleNS
                                 cards[3].value = j;
                                 cards[4].value = j;
 
+                                if (i == 1) a = 14;
+                                else a = i;
+
+                                if (j == 1) b = 14;
+                                else b = j;
+
+                                score = CardsTypeCmp.Instance.GetHuLuBaseScore(i, j);
+
                                 for (int m0 = 0; m0 < 4; m0++)
                                 {
                                     cards[3].suit = m0;
@@ -351,7 +394,7 @@ namespace CardRuleNS
                                     {
                                         cards[4].suit = m1;
 
-                                        AddHuluKeyToList(cards);
+                                        AddHuluKeyToList(cards, score);
                                     }
                                 }
                             }
@@ -361,7 +404,7 @@ namespace CardRuleNS
             }
         }
 
-        void AddHuluKeyToList(CardInfo[] cards)
+        void AddHuluKeyToList(CardInfo[] cards, float score)
         {
             if (isCheckSuitCount)
             {
@@ -380,18 +423,22 @@ namespace CardRuleNS
                cards[0].value == cards[4].value)
                 return;
 
-
             CardKey cardkey = new CardKey();
             for (int i = 0; i < cards.Length; i++)
             {
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            huluKeyDict[cardkey] = 0;
-
+            AddToDict(huluKeyDict, cardkey, 0, score);
+       
             //
             int tmp1;
-            for (int i = 0; i < 3; i++)
+            float score2 = score;
+            float tmpScore;
+            if (cards[0].value < cards[3].value)
+                score2 = CardsTypeCmp.Instance.GetHuLuBaseScore(cards[3].value, cards[0].value);
+
+            for (int i = 0; i < 4; i++)
             {
                 tmp1 = cards[i].value;
                 cards[i].value = -1;
@@ -405,7 +452,10 @@ namespace CardRuleNS
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                huluKeyDict[cardkey] = 1;
+                if (i > 2) { tmpScore = score2; }
+                else { tmpScore = score; }
+
+                AddToDict(huluKeyDict, cardkey, 1, tmpScore); 
                 cards[i].value = tmp1;
             }
         }
@@ -420,10 +470,14 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
+            float score;
+            float a, b;
+
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
                 cards[1].value = i;
+
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -433,10 +487,18 @@ namespace CardRuleNS
                     {
                         cards[1].suit = s1;
 
-                        for (int j = 0; j <= 13; j++)
+                        for (int j = 1; j <= 13; j++)
                         {
                             cards[2].value = j;
                             cards[3].value = j;
+
+                            if (i == 1) a = 14;
+                            else a = i;
+
+                            if (j == 1) b = 14;
+                            else b = j;
+
+                            score = CardsTypeCmp.Instance.GetTwoDuiBaseScore(a, b);
 
                             for (int m0 = 0; m0 < 4; m0++)
                             {
@@ -446,7 +508,7 @@ namespace CardRuleNS
                                 {
                                     cards[3].suit = m1;
 
-                                    AddTwoDuiKeyToList(cards);
+                                    AddTwoDuiKeyToList(cards, score);
                                 }
                             }
                         }
@@ -455,7 +517,7 @@ namespace CardRuleNS
             }
         }
 
-        void AddTwoDuiKeyToList(CardInfo[] cards)
+        void AddTwoDuiKeyToList(CardInfo[] cards, float score)
         {
             if (isCheckSuitCount)
             {
@@ -480,7 +542,7 @@ namespace CardRuleNS
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            twoduiKeyDict[cardkey] = 0;
+            AddToDict(twoduiKeyDict, cardkey, 0, score);
 
             //
             int tmp1;
@@ -498,7 +560,7 @@ namespace CardRuleNS
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                twoduiKeyDict[cardkey] = 1;
+                AddToDict(twoduiKeyDict, cardkey, 1, score);
                 cards[i].value = tmp1;
             }
 
@@ -510,7 +572,7 @@ namespace CardRuleNS
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[m[i]].value, cards[m[i]].suit);
                 cardkey = AppendCardToCardKey(cardkey, cards[m[i+1]].value, cards[m[i+1]].suit);
-                twoduiKeyDict[cardkey] = 2;
+                AddToDict(twoduiKeyDict, cardkey, 2, score);
             }
         }
 
@@ -525,7 +587,8 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            AddWuTongKeyToList(null);
+            float score = CardsTypeCmp.Instance.GetWuTongBaseScore(14);
+            AddWuTongKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
             {
@@ -534,6 +597,11 @@ namespace CardRuleNS
                 cards[2].value = i;
                 cards[3].value = i;
                 cards[4].value = i;
+
+                if (i == 1)
+                    score = CardsTypeCmp.Instance.GetWuTongBaseScore(14);
+                else
+                    score = CardsTypeCmp.Instance.GetWuTongBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -555,7 +623,7 @@ namespace CardRuleNS
                                 {
                                     cards[4].suit = s4;
 
-                                    AddWuTongKeyToList(cards);
+                                    AddWuTongKeyToList(cards, score);
                                 }
                             }
                         }
@@ -564,12 +632,12 @@ namespace CardRuleNS
             }
         }
 
-        void AddWuTongKeyToList(CardInfo[] cards)
+        void AddWuTongKeyToList(CardInfo[] cards, float score)
         {
             if(cards == null)
             {
                 CardKey key = new CardKey();
-                wutongKeyDict[key] = 5;
+                AddToDict(wutongKeyDict, key, 5, score);
                 return;
             }
 
@@ -591,8 +659,7 @@ namespace CardRuleNS
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            wutongKeyDict[cardkey] = 0;
-
+            AddToDict(wutongKeyDict, cardkey, 0, score);
             //
             int tmp1, tmp2, tmp3;
             for (int i = 0; i < 5; i++)
@@ -609,7 +676,7 @@ namespace CardRuleNS
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                wutongKeyDict[cardkey] = 1;
+                AddToDict(wutongKeyDict, cardkey, 1, score);
                 cards[i].value = tmp1;
             }
 
@@ -632,7 +699,7 @@ namespace CardRuleNS
                         cardkey = AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
                     }
 
-                    wutongKeyDict[cardkey] = 2;
+                    AddToDict(wutongKeyDict, cardkey, 2, score);
                     cards[j].value = tmp2;
                 }
 
@@ -664,7 +731,7 @@ namespace CardRuleNS
                             cardkey = AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
                         }
 
-                        wutongKeyDict[cardkey] = 3;
+                        AddToDict(wutongKeyDict, cardkey, 3, score);
                         cards[m].value = tmp3;
                     }
 
@@ -680,7 +747,7 @@ namespace CardRuleNS
             {
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                wutongKeyDict[cardkey] = 4;
+                AddToDict(wutongKeyDict, cardkey, 4, score);
             }
         }
 
@@ -695,7 +762,8 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
-            AddTieZhiKeyToList(null);
+            float score = CardsTypeCmp.Instance.GetTieZhiBaseScore(14);
+            AddTieZhiKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
             {
@@ -703,7 +771,12 @@ namespace CardRuleNS
                 cards[1].value = i;
                 cards[2].value = i;
                 cards[3].value = i;
-     
+
+                if (i == 1)
+                    score = CardsTypeCmp.Instance.GetTieZhiBaseScore(14);
+                else
+                    score = CardsTypeCmp.Instance.GetTieZhiBaseScore(i);
+
                 for (int s0 = 0; s0 < 4; s0++)
                 {
                     cards[0].suit = s0;
@@ -719,7 +792,7 @@ namespace CardRuleNS
                             for (int s3 = 0; s3 < 4; s3++)
                             {
                                 cards[3].suit = s3;
-                                AddTieZhiKeyToList(cards);
+                                AddTieZhiKeyToList(cards, score);
                             }
                         }
                     }
@@ -727,12 +800,12 @@ namespace CardRuleNS
             }
         }
 
-        void AddTieZhiKeyToList(CardInfo[] cards)
+        void AddTieZhiKeyToList(CardInfo[] cards, float score)
         {
             if (cards == null)
             {
                 CardKey key = new CardKey();
-                tiezhiKeyDict[key] = 4;
+                AddToDict(tiezhiKeyDict, key, 4, score);
                 return;
             }
 
@@ -754,7 +827,7 @@ namespace CardRuleNS
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            tiezhiKeyDict[cardkey] = 0;
+            AddToDict(tiezhiKeyDict, cardkey, 0, score);
 
             //
             int tmp1, tmp2;
@@ -772,7 +845,8 @@ namespace CardRuleNS
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                tiezhiKeyDict[cardkey] = 1;
+                AddToDict(tiezhiKeyDict, cardkey, 1, score);
+
                 cards[i].value = tmp1;
             }
 
@@ -795,7 +869,7 @@ namespace CardRuleNS
                         cardkey = AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
                     }
 
-                    tiezhiKeyDict[cardkey] = 2;
+                    AddToDict(tiezhiKeyDict, cardkey, 2, score);
                     cards[j].value = tmp2;
                 }
 
@@ -807,7 +881,7 @@ namespace CardRuleNS
             {
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                tiezhiKeyDict[cardkey] = 3;
+                AddToDict(tiezhiKeyDict, cardkey, 3, score);
             }
         }
 
@@ -821,13 +895,19 @@ namespace CardRuleNS
                 new CardInfo(),
             };
 
-            AddSanTiaoKeyToList(null);
+            float score = CardsTypeCmp.Instance.GetSanTiaoBaseScore(14);
+            AddSanTiaoKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
                 cards[1].value = i;
                 cards[2].value = i;
+
+                if(i == 1)
+                    score = CardsTypeCmp.Instance.GetSanTiaoBaseScore(14);
+                else
+                    score = CardsTypeCmp.Instance.GetSanTiaoBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -840,19 +920,19 @@ namespace CardRuleNS
                         for (int s2 = 0; s2 < 4; s2++)
                         {
                             cards[2].suit = s2;
-                            AddSanTiaoKeyToList(cards);  
+                            AddSanTiaoKeyToList(cards, score);  
                         }
                     }
                 }
             }
         }
 
-        void AddSanTiaoKeyToList(CardInfo[] cards)
+        void AddSanTiaoKeyToList(CardInfo[] cards, float score)
         {
             if (cards == null)
             {
                 CardKey key = new CardKey();
-                santiaoKeyDict[key] = 3;
+                AddToDict(santiaoKeyDict, key, 3, score);
                 return;
             }
 
@@ -874,7 +954,7 @@ namespace CardRuleNS
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            santiaoKeyDict[cardkey] = 0;
+            AddToDict(santiaoKeyDict, cardkey, 0, score);
 
             //
             int tmp1;
@@ -892,7 +972,7 @@ namespace CardRuleNS
                     cardkey = AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
                 }
 
-                santiaoKeyDict[cardkey] = 1;
+                AddToDict(santiaoKeyDict, cardkey, 1, score);
                 cards[i].value = tmp1;
             }
 
@@ -902,7 +982,7 @@ namespace CardRuleNS
             {
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                santiaoKeyDict[cardkey] = 2;
+                AddToDict(santiaoKeyDict, cardkey, 2, score);
             }
         }
 
@@ -915,12 +995,18 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
-            AddDuiZiKeyToList(null);
+            float score = CardsTypeCmp.Instance.GetDuiziBaseScore(14);
+            AddDuiZiKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
                 cards[1].value = i;
+
+                if(i == 1)
+                    score = CardsTypeCmp.Instance.GetDuiziBaseScore(14);
+                else
+                    score = CardsTypeCmp.Instance.GetDuiziBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -929,18 +1015,18 @@ namespace CardRuleNS
                     for (int s1 = 0; s1 < 4; s1++)
                     {
                         cards[1].suit = s1;
-                        AddDuiZiKeyToList(cards);
+                        AddDuiZiKeyToList(cards, score);
                     }
                 }
             }
         }
 
-        void AddDuiZiKeyToList(CardInfo[] cards)
+        void AddDuiZiKeyToList(CardInfo[] cards, float score)
         {
             if (cards == null)
             {
                 CardKey key = new CardKey();
-                duiziKeyDict[key] = 2;
+                AddToDict(duiziKeyDict, key, 2, score);
                 return;
             }
 
@@ -950,14 +1036,14 @@ namespace CardRuleNS
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            duiziKeyDict[cardkey] = 0;
+            AddToDict(duiziKeyDict, cardkey, 0, score);
 
             //
             for (int i = 0; i < 2; i++)
             {
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-                duiziKeyDict[cardkey] = 1;
+                AddToDict(duiziKeyDict, cardkey, 1, score);
             }
         }
 
@@ -971,6 +1057,8 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
                 new CardInfo()
             };
+
+            float score;
 
             for (int i = 1; i <= 9; i++)
             {
@@ -996,6 +1084,8 @@ namespace CardRuleNS
                                     k == m + 1 && m == n + 1)
                                     continue;
 
+                                score = CardsTypeCmp.Instance.GetTongHuaBaseScore(new float[] {i, j, k, m, n });
+
                                 cards[4].value = n;
 
                                 for (int y = 0; y < 4; y++)
@@ -1003,7 +1093,7 @@ namespace CardRuleNS
                                     for (int x = 0; x < 5; x++)
                                         cards[x].suit = y;
 
-                                    AddTongHuaKeyToList(cards);
+                                    AddTongHuaKeyToList(cards, score);
                                 }
 
                             }
@@ -1013,7 +1103,7 @@ namespace CardRuleNS
             }    
         }
  
-        void AddTongHuaKeyToList(CardInfo[] cards)
+        void AddTongHuaKeyToList(CardInfo[] cards, float score)
         {
             CardKey cardkey = new CardKey();
             for (int i = 0; i < cards.Length; i++)
@@ -1021,7 +1111,7 @@ namespace CardRuleNS
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
             }
 
-            tonghuaKeyDict[cardkey] = 0;
+            AddToDict(tonghuaKeyDict, cardkey, 0, score);
 
             //
             int tmp1, tmp2;
@@ -1040,7 +1130,9 @@ namespace CardRuleNS
                 }
 
                 if (!tongHuaShunKeyDict.ContainsKey(cardkey))
-                    tonghuaKeyDict[cardkey] = 1;
+                {
+                    AddToDict(tonghuaKeyDict, cardkey, 1, score);
+                }
     
                 cards[i].value = tmp1;
             }
@@ -1066,7 +1158,9 @@ namespace CardRuleNS
                     }
 
                     if (!tongHuaShunKeyDict.ContainsKey(cardkey))
-                        tonghuaKeyDict[cardkey] = 2;
+                    {
+                        AddToDict(tonghuaKeyDict, cardkey, 2, score);
+                    }
 
                     cards[j].value = tmp2;
                 }

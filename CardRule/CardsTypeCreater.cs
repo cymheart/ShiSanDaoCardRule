@@ -54,6 +54,10 @@ namespace CardRuleNS
         /// </summary>
         public List<CardsTypeInfo> TonghuaList = new List<CardsTypeInfo>();
 
+
+        int laiziCount;
+        CardInfo[] cards;
+
         /// <summary>
         /// 生成所有牌型组数据
         /// </summary>
@@ -65,8 +69,7 @@ namespace CardRuleNS
             if (laizi == null)
                 laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
 
-            int laiziCount = 0;
-            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+            cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -119,28 +122,106 @@ namespace CardRuleNS
             CreateShunziArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
         }
 
+
+
+        public CardsTypeInfo GetMaxScoreSingleCardsType()
+        {
+            if(WutongList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(WutongList);
+                return WutongList[WutongList.Count - 1];
+            }
+            else if(TonghuashunList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(TonghuashunList);
+                return TonghuashunList[TonghuashunList.Count - 1];
+            }
+            else if (TiezhiList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(TiezhiList);
+                return TiezhiList[TiezhiList.Count - 1];
+            }
+            else if (HuluList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(HuluList);
+                return HuluList[HuluList.Count - 1];
+            }
+            else if (TonghuaList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(TonghuaList);
+                return TonghuaList[TonghuaList.Count - 1];
+            }
+            else if (ShunziList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(ShunziList);
+                return ShunziList[ShunziList.Count - 1];
+            }
+            else if (SantiaoList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(SantiaoList);
+                return SantiaoList[SantiaoList.Count - 1];
+            }
+            else if (TwoduiList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(TwoduiList);
+                return TwoduiList[TwoduiList.Count - 1];
+            }
+            else if (DuiziList.Count > 0)
+            {
+                CardsTypeCmp.Instance.SortCardsTypes(DuiziList);
+                return DuiziList[DuiziList.Count - 1];
+            }
+
+            CardsTypeInfo info;
+            if (laiziCount > 0)
+            {
+                info = new CardsTypeInfo();
+                info.CardsTypeType = CardsType.Single;
+                info.cardFaceValues = new CardFace[] { CardFace.Club_A };
+                return info;
+            }
+            else if (cards.Length > 0)
+            {
+                info = new CardsTypeInfo();
+                info.CardsTypeType = CardsType.Single;
+                if (cards[0].value == 1)
+                    info.cardFaceValues = new CardFace[] { CardFace.Club_A };
+                else
+                {
+                    CardFace face = CardsTransform.Instance.GetCardFace(cards[cards.Length - 1].value, cards[cards.Length - 1].suit);
+                    info.cardFaceValues = new CardFace[] { face };
+                }
+                return info;
+            }
+
+            info = new CardsTypeInfo();
+            info.CardsTypeType = CardsType.None;
+            return info;
+        }
+
+
         void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
         {
             bool ret;
-            int mustLaziCount;
+            CardsTypeCombInfo combInfo;
             CardInfo[] cardInfos;
             CardsTypeInfo CardsTypeInfo;
 
             foreach (var cardkey in cardkeyHashSet)
             {
-                ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out mustLaziCount);
-                if (ret == true && mustLaziCount <= laiziCount)
+                ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+                if (ret == true && combInfo.laiziCount <= laiziCount)
                 {
                     cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHuaShun, mustLaziCount);
+                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHuaShun, combInfo.laiziCount, combInfo.baseScore);
                     TonghuashunList.Add(CardsTypeInfo);
                 }
 
-                ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out mustLaziCount);
-                if (ret == true && mustLaziCount <= laiziCount)
+                ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
+                if (ret == true && combInfo.laiziCount <= laiziCount)
                 {
                     cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.ShunZi, mustLaziCount);
+                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.ShunZi, combInfo.laiziCount, combInfo.baseScore);
                     ShunziList.Add(CardsTypeInfo);
                 }
             }
@@ -158,108 +239,109 @@ namespace CardRuleNS
         void _CreateCardsTypeArray(CardKey cardkey, int laiziCount, int splitGroup)
         {
             bool ret;
-            int mustLaziCount;
+            CardsTypeCombInfo combInfo;
             CardInfo[] cardInfos;
             CardsTypeInfo CardsTypeInfo;
 
-            ret = CardsTypeDict.Instance.wutongKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.wutongKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.WuTong, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.WuTong, combInfo.laiziCount, combInfo.baseScore);
                 WutongList.Add(CardsTypeInfo);
             }
 
-            ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHuaShun, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHuaShun, combInfo.laiziCount, combInfo.baseScore);
                 TonghuashunList.Add(CardsTypeInfo);
             }
 
-            ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.ShunZi, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.ShunZi, combInfo.laiziCount, combInfo.baseScore);
                 ShunziList.Add(CardsTypeInfo);
             }
 
-            ret = CardsTypeDict.Instance.huluKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.huluKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.HuLu, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.HuLu, combInfo.laiziCount, combInfo.baseScore);
                 HuluList.Add(CardsTypeInfo);
             }
 
-            ret = CardsTypeDict.Instance.tonghuaKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.tonghuaKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHua, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHua, combInfo.laiziCount, combInfo.baseScore);
                 TonghuaList.Add(CardsTypeInfo);
             }
 
             if (splitGroup == 5)
                 return;
 
-            ret = CardsTypeDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.Bomb, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.Bomb, combInfo.laiziCount, combInfo.baseScore);
                 TiezhiList.Add(CardsTypeInfo);
             }
 
-            ret = CardsTypeDict.Instance.twoduiKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.twoduiKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TwoDui, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TwoDui, combInfo.laiziCount, combInfo.baseScore);
                 TwoduiList.Add(CardsTypeInfo);
             }
 
             if (splitGroup == 4)
                 return;
 
-            ret = CardsTypeDict.Instance.santiaoKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.santiaoKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.SanTiao, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.SanTiao, combInfo.laiziCount, combInfo.baseScore);
                 SantiaoList.Add(CardsTypeInfo);
             }
 
             if (splitGroup == 3)
                 return;
 
-            ret = CardsTypeDict.Instance.duiziKeyDict.TryGetValue(cardkey, out mustLaziCount);
-            if (ret == true && mustLaziCount <= laiziCount)
+            ret = CardsTypeDict.Instance.duiziKeyDict.TryGetValue(cardkey, out combInfo);
+            if (ret == true && combInfo.laiziCount <= laiziCount)
             {
                 cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.DuiZi, mustLaziCount);
+                CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.DuiZi, combInfo.laiziCount, combInfo.baseScore);
                 DuiziList.Add(CardsTypeInfo);
             }
         }
 
-        CardsTypeInfo CreateCardsTypeInfo(CardInfo[] cardInfos, CardsType CardsTypeType, int laiziCount)
+        CardsTypeInfo CreateCardsTypeInfo(CardInfo[] cardInfos, CardsType CardsTypeType, int laiziCount, float score)
         {
-            CardsTypeInfo CardsTypeInfo = new CardsTypeInfo();
-            CardsTypeInfo.laiziCount = laiziCount;
-            CardsTypeInfo.CardsTypeType = CardsTypeType;
-            CardsTypeInfo.cardFaceValues = new CardFace[cardInfos.Length];
+            CardsTypeInfo cardsTypeInfo = new CardsTypeInfo();
+            cardsTypeInfo.laiziCount = laiziCount;
+            cardsTypeInfo.score = score;
+            cardsTypeInfo.CardsTypeType = CardsTypeType;
+            cardsTypeInfo.cardFaceValues = new CardFace[cardInfos.Length];
 
             CardFace face;
 
             for (int i=0; i < cardInfos.Length; i++)
             {
                 face = CardsTransform.Instance.GetCardFace(cardInfos[i].value, cardInfos[i].suit);
-                CardsTypeInfo.cardFaceValues[i] = face;
+                cardsTypeInfo.cardFaceValues[i] = face;
             }
 
-            return CardsTypeInfo;
+            return cardsTypeInfo;
         }
 
 
