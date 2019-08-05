@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CardsTypeDict.cs" />
     <Compile Include="CardsTypeCreater.cs" />
+    <Compile Include="CardsTypeEvaluation.cs" />
     <Compile Include="CardsTypeS.cs" />
     <Compile Include="CardsTransform.cs" />
     <Compile Include="Program.cs" />

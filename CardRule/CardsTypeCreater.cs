@@ -55,8 +55,8 @@ namespace CardRuleNS
         public List<CardsTypeInfo> TonghuaList = new List<CardsTypeInfo>();
 
 
-        int laiziCount;
-        CardInfo[] cards;
+        public int laiziCount;
+        public CardInfo[] cards;
 
         /// <summary>
         /// 生成所有牌型组数据
@@ -82,6 +82,9 @@ namespace CardRuleNS
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
+
+            //
+            SortDictCardsTypeInfo();
         }
 
 
@@ -120,55 +123,49 @@ namespace CardRuleNS
             CreateShunziArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
             CreateShunziArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreateShunziArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
+
+            //
+            SortDictCardsTypeInfo();
         }
 
 
 
-        public CardsTypeInfo GetMaxScoreSingleCardsType()
+        public CardsTypeInfo GetMaxScoreCardsTypeInfo()
         {
             if(WutongList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(WutongList);
                 return WutongList[WutongList.Count - 1];
             }
             else if(TonghuashunList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(TonghuashunList);
                 return TonghuashunList[TonghuashunList.Count - 1];
             }
             else if (TiezhiList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(TiezhiList);
                 return TiezhiList[TiezhiList.Count - 1];
             }
             else if (HuluList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(HuluList);
                 return HuluList[HuluList.Count - 1];
             }
             else if (TonghuaList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(TonghuaList);
                 return TonghuaList[TonghuaList.Count - 1];
             }
             else if (ShunziList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(ShunziList);
                 return ShunziList[ShunziList.Count - 1];
             }
             else if (SantiaoList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(SantiaoList);
                 return SantiaoList[SantiaoList.Count - 1];
             }
             else if (TwoduiList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(TwoduiList);
                 return TwoduiList[TwoduiList.Count - 1];
             }
             else if (DuiziList.Count > 0)
             {
-                CardsTypeCmp.Instance.SortCardsTypes(DuiziList);
                 return DuiziList[DuiziList.Count - 1];
             }
 
@@ -199,6 +196,19 @@ namespace CardRuleNS
             return info;
         }
 
+
+        void SortDictCardsTypeInfo()
+        {
+            CardsTypeEvaluation.Instance.SortCardsTypes(WutongList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(TonghuashunList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(TiezhiList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(HuluList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(TonghuaList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(ShunziList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(SantiaoList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(TwoduiList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(DuiziList);
+        }
 
         void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
         {

@@ -47,12 +47,22 @@ namespace CardRuleNS
             return cardInfoList[(int)pukeFaceValue].suit;
         }
 
-        public CardInfo[] CreateRemoveFaceValues(CardInfo[] cards, CardFace[] cardFaceValues)
+        public CardInfo[] CreateRemoveFaceValues(CardFace[] cardFaces, CardFace[] removeCardFaceValues)
         {
-            if (cardFaceValues == null || cardFaceValues.Length == 0)
+            CardInfo[] cards = TransToCardInfo(cardFaces);
+            if (removeCardFaceValues == null || removeCardFaceValues.Length == 0)
                 return cards;
 
-            CardInfo[] cardinfo = TransToCardInfo(cardFaceValues);
+            CardInfo[] cardinfo = TransToCardInfo(removeCardFaceValues);
+            return CreateRemoveCardInfos(cards, cardinfo);
+        }
+
+        public CardInfo[] CreateRemoveFaceValues(CardInfo[] cards, CardFace[] removeCardFaceValues)
+        {
+            if (removeCardFaceValues == null || removeCardFaceValues.Length == 0)
+                return cards;
+
+            CardInfo[] cardinfo = TransToCardInfo(removeCardFaceValues);
             return CreateRemoveCardInfos(cards, cardinfo);
         }
 

@@ -50,7 +50,7 @@ namespace CardRuleNS
         HuLu,
 
         /// <summary>
-        /// 炸弹
+        /// 炸弹(铁枝)
         /// </summary>
         Bomb,
 
@@ -63,6 +63,61 @@ namespace CardRuleNS
         /// 五同
         /// </summary>
         WuTong,
+
+        /// <summary>
+        /// 六对半
+        /// </summary>
+        LiuDuiBan,
+
+        /// <summary>
+        /// 四套三条
+        /// </summary>
+        SiTaoSan,
+
+        /// <summary>
+        /// 三同花
+        /// </summary>
+        SanTongHua,
+
+        /// <summary>
+        /// 三顺子
+        /// </summary>
+        SanShunZi,
+
+        /// <summary>
+        /// 六炸
+        /// </summary>
+        SixBomb,
+
+        /// <summary>
+        /// 七炸
+        /// </summary>
+        SevenBomb,
+
+        /// <summary>
+        /// 八炸
+        /// </summary>
+        EightBomb,
+
+        /// <summary>
+        /// 至尊雷
+        /// </summary>
+        ZhiZunLei,
+ 
+        /// <summary>
+        /// 一条龙
+        /// </summary>
+        YiTiaoLong,
+
+        /// <summary>
+        /// 至尊一条龙
+        /// </summary>
+        ZhiZunQinLong,
+
+        /// <summary>
+        /// 数量
+        /// </summary>
+        Count
     }
 
 
