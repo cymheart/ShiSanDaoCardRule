@@ -6,11 +6,13 @@ using System.Text;
 namespace CardRuleNS
 {
 
-    public struct SlotCardsEvalInfo
+    public class SlotCardsEvalInfo
     {
-        public CardFace[] slot1CardFaces;
-        public CardFace[] slot2CardFaces;
-        public CardFace[] slot3CardFaces;
+        public List<CardFace>[] slotCardFaceList = new List<CardFace>[3]
+        {
+            new List<CardFace>(),new List<CardFace>(),new List<CardFace>()
+        };
+
         public float[] slotEval;
         public float totalEval;
     }
@@ -39,67 +41,266 @@ namespace CardRuleNS
 
         public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
         {
-            List<SlotCardsEvalInfo> slotCardsEval = new List<SlotCardsEvalInfo>(); 
-            int count;
+            List<SlotCardsEvalInfo> slotCardsEvalGroup = new List<SlotCardsEvalInfo>();
+            int evalGroupIdx = 0;
+            int slotIdx = 0;
 
-            CardsTypeCreater creater1 = new CardsTypeCreater();
-            creater1.CreateAllCardsTypeArray(cardFaces, laizi);
-            CardsTypeInfo[] info1;
-            if (creater1.IsExistNotSingleCardsType())
-                info1 = creater1.GetAllCardsTypeInfo();
+            CardsTypeCreater creater = new CardsTypeCreater();
+            creater.CreateAllCardsTypeArray(cardFaces, laizi);
+            CardsTypeInfo[] info;
+            if (creater.IsExistNotSingleCardsType())
+                info = creater.GetAllCardsTypeInfo();
             else
-                info1 = creater1.GetAllCardsTypeInfo(false);
+                info = creater.GetAllCardsTypeInfo(false);
 
-            for (int i=0; i<info1.Length; i++)
+            for (int i=0; i<info.Length; i++)
             {
-                count = GetCardsTypeBaseCount(info1[i].type);
-
-                if(count == 4)
-                {
-                    CardFace[] cardFaces2 = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, laizi, info1[i].laiziCount);
-                    CardInfo[] tmpCardInfos2 = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces2, info1[i].cardFaceValues);
-                    CardInfo[] cardInfos2;
-
-                    for (int m = 0; m < tmpCardInfos2.Length; m++)
-                    {
-                        cardInfos2 = CardsTransform.Instance.CreateRemoveCardInfos(tmpCardInfos2, new CardInfo[] { tmpCardInfos2[m] });
-                        cardFaces2 = CardsTransform.Instance.CreateCardFaces(cardInfos2);
-                        CardsTypeCreater creater2 = new CardsTypeCreater();
-                        creater2.CreateAllCardsTypeArray(cardFaces2, laizi);
-
-                        CardsTypeInfo[] info2;
-                        if (creater2.IsExistNotSingleCardsType())
-                            info2 = creater1.GetAllCardsTypeInfo();
-                        else
-                            info2 = creater1.GetAllCardsTypeInfo(false);
-
-                        for (int j = 0; j < info2.Length; j++)
-                        {
-
-                            //cardsEvalInfo.slot2CardFacesList.Add(info2[i].cardFaceValues);
-
-                        }
-                    }
-                }
-                else if(count == 3)
-                {
-
-
-                }
-                else if(count == 2)
-                {
-
-                }
-                else
-                {
-
-
-                }
+                evalGroupIdx++;
+                slotIdx = 0;
+                CreateEvalInfo(cardFaces, info[i], slotCardsEvalGroup, evalGroupIdx, slotIdx, 3, laizi);
             }
 
             return null;
         }
 
+
+        void CreateEvalInfo(
+            CardFace[] richCardFaces, 
+            CardsTypeInfo curtSlotCardTypeInfo,
+            List<SlotCardsEvalInfo> slotCardsEvalGroup, int evalGroupIdx, int slotIdx,
+            int depth,
+            CardFace[] refLaizi)
+        {
+            //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
+            CardFace[] removeLaizi = new CardFace[5];
+            CardFace[] cardFaces = CardsTransform.Instance.RemoveLaiziByCount(richCardFaces, refLaizi, curtSlotCardTypeInfo.laiziCount, removeLaizi);
+
+            //移除当前槽已使用的牌型牌
+            CardInfo[] tmpCardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, curtSlotCardTypeInfo.cardFaceValues);
+
+            //添加数据
+            slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(curtSlotCardTypeInfo.cardFaceValues);
+            slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(removeLaizi);
+
+            if (depth == 0)
+                return;
+
+            //为下一个槽准备数据
+            CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+            nextSlotCreater.CreateAllCardsTypeArray(cardFaces, refLaizi);
+
+            CardsTypeInfo[] info;
+            if (nextSlotCreater.IsExistNotSingleCardsType())
+                info = nextSlotCreater.GetAllCardsTypeInfo();
+            else
+                info = nextSlotCreater.GetAllCardsTypeInfo(false);
+
+            for (int i = 0; i < info.Length; i++)
+            {
+                CreateEvalInfo(cardFaces, info[i], slotCardsEvalGroup, evalGroupIdx, slotIdx + 1, depth - 1, refLaizi);
+            }
+        }
+
+       
+        //public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
+        //{
+        //    List<SlotCardsEvalInfo> slotCardsEvalGroup = new List<SlotCardsEvalInfo>();
+        //    SlotCardsEvalInfo evalInfo;
+        //    int count;
+        //    CardFace[] laiziCardFaces = CardsTransform.Instance.GetLaiziCardFaces(cardFaces, laizi);
+        //    int laiziIdx = 0;
+
+
+        //    CardsTypeCreater creater1 = new CardsTypeCreater();
+        //    creater1.CreateAllCardsTypeArray(cardFaces, laizi);
+        //    CardsTypeInfo[] info1;
+        //    if (creater1.IsExistNotSingleCardsType())
+        //        info1 = creater1.GetAllCardsTypeInfo();
+        //    else
+        //        info1 = creater1.GetAllCardsTypeInfo(false);
+
+        //    for (int i = 0; i < info1.Length; i++)
+        //    {
+        //        count = GetCardsTypeBaseCount(info1[i].type);
+
+        //        if (count == 4)
+        //        {
+        //            CardFace[] cardFaces2 = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, laizi, info1[i].laiziCount);
+        //            CardInfo[] tmpCardInfos2 = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces2, info1[i].cardFaceValues);
+        //            CardInfo[] cardInfos2;
+
+        //            for (int m = 0; m < tmpCardInfos2.Length; m++)
+        //            {
+        //                cardInfos2 = CardsTransform.Instance.CreateRemoveCardInfos(tmpCardInfos2, new CardInfo[] { tmpCardInfos2[m] });
+        //                cardFaces2 = CardsTransform.Instance.CreateCardFaces(cardInfos2);
+        //                CardsTypeCreater creater2 = new CardsTypeCreater();
+        //                creater2.CreateAllCardsTypeArray(cardFaces2, laizi);
+
+        //                CardsTypeInfo[] info2;
+        //                if (creater2.IsExistNotSingleCardsType())
+        //                    info2 = creater1.GetAllCardsTypeInfo();
+        //                else
+        //                    info2 = creater1.GetAllCardsTypeInfo(false);
+
+        //                for (int j = 0; j < info2.Length; j++)
+        //                {
+        //                    count = GetCardsTypeBaseCount(info2[i].type);
+
+        //                    if (count == 4)
+        //                    {
+        //                        CardFace[] cardFaces3 = CardsTransform.Instance.RemoveLaiziByCount(cardFaces2, laizi, info2[i].laiziCount);
+        //                        CardInfo[] tmpCardInfos3 = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces2, info2[i].cardFaceValues);
+        //                        CardInfo[] cardInfos3;
+
+        //                        for (int n = 0; n < tmpCardInfos2.Length; n++)
+        //                        {
+        //                            cardInfos3 = CardsTransform.Instance.CreateRemoveCardInfos(tmpCardInfos3, new CardInfo[] { tmpCardInfos3[n] });
+        //                            cardFaces3 = CardsTransform.Instance.CreateCardFaces(cardInfos3);
+        //                            CardsTypeCreater creater3 = new CardsTypeCreater();
+        //                            creater3.CreateAllCardsTypeArray(cardFaces3, laizi);
+
+        //                        }
+        //                    }
+
+
+
+        //                    //cardsEvalInfo.slot2CardFacesList.Add(info2[i].cardFaceValues);
+
+
+        //                }
+        //            }
+        //        }
+        //        else if (count == 3)
+        //        {
+
+
+        //        }
+        //        else if (count == 2)
+        //        {
+
+        //        }
+        //        else
+        //        {
+
+
+        //        }
+        //    }
+
+        //    return null;
+        //}
+
+
+        //void CreateEvalInfoByCount4(
+        //    CardFace[] richCardFaces,
+        //    CardsTypeInfo curtSlotCardTypeInfo,
+        //    List<SlotCardsEvalInfo> slotCardsEvalGroup, int evalGroupIdx, int slotIdx,
+        //    CardFace[] refLaizi)
+        //{
+
+        //    //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
+        //    CardFace[] removeLaizi = new CardFace[5];
+        //    CardFace[] cardFaces = CardsTransform.Instance.RemoveLaiziByCount(richCardFaces, refLaizi, curtSlotCardTypeInfo.laiziCount, removeLaizi);
+
+        //    //移除当前槽已使用的牌型牌
+        //    CardInfo[] tmpCardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, curtSlotCardTypeInfo.cardFaceValues);
+        //    CardInfo[] cardInfos;
+
+        //    for (int i = 0; i < tmpCardInfos.Length; i++)
+        //    {
+        //        //移除一个牌作为当前槽的组合牌
+        //        cardInfos = CardsTransform.Instance.CreateRemoveCardInfos(tmpCardInfos, new CardInfo[] { tmpCardInfos[i] });
+        //        cardFaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+
+        //        //添加数据
+        //        slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(curtSlotCardTypeInfo.cardFaceValues);
+        //        slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(removeLaizi);
+        //        slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].Add(CardsTransform.Instance.GetCardFace(tmpCardInfos[i]));
+
+        //        //为下一个槽准备数据
+        //        CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+        //        nextSlotCreater.CreateAllCardsTypeArray(cardFaces, refLaizi);
+
+        //        CardsTypeInfo[] info;
+        //        if (nextSlotCreater.IsExistNotSingleCardsType())
+        //            info = nextSlotCreater.GetAllCardsTypeInfo();
+        //        else
+        //            info = nextSlotCreater.GetAllCardsTypeInfo(false);
+
+        //        for (int j = 0; j < info.Length; j++)
+        //        {
+        //            SwitchCreateEvalInfoByCount(cardFaces, info[j], slotCardsEvalGroup, evalGroupIdx, slotIdx + 1, refLaizi);
+        //        }
+        //    }
+        //}
+
+        //void CreateEvalInfoByCount3(
+        //    CardFace[] richCardFaces,
+        //    CardsTypeInfo curtSlotCardTypeInfo,
+        //    List<SlotCardsEvalInfo> slotCardsEvalGroup, int evalGroupIdx, int slotIdx,
+        //    CardFace[] refLaizi)
+        //{
+        //    //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
+        //    CardFace[] removeLaizi = new CardFace[5];
+        //    CardFace[] cardFaces = CardsTransform.Instance.RemoveLaiziByCount(richCardFaces, refLaizi, curtSlotCardTypeInfo.laiziCount, removeLaizi);
+
+        //    //移除当前槽已使用的牌型牌
+        //    CardInfo[] tmpCardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, curtSlotCardTypeInfo.cardFaceValues);
+        //    CardInfo[] cardInfos;
+        //    CardInfo[] removeCardInfos = new CardInfo[2];
+
+        //    for (int i = 0; i < tmpCardInfos.Length - 1; i++)
+        //    {
+        //        for (int j = i + 1; j < tmpCardInfos.Length; j++)
+        //        {
+        //            removeCardInfos[0] = tmpCardInfos[i];
+        //            removeCardInfos[1] = tmpCardInfos[j];
+
+        //            //移除两个牌作为当前槽的组合牌
+        //            cardInfos = CardsTransform.Instance.CreateRemoveCardInfos(tmpCardInfos, removeCardInfos);
+        //            cardFaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+
+        //            //添加数据
+        //            slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(curtSlotCardTypeInfo.cardFaceValues);
+        //            slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(removeLaizi);
+        //            slotCardsEvalGroup[evalGroupIdx].slotCardFaceList[slotIdx].AddRange(CardsTransform.Instance.CreateCardFaces(removeCardInfos));
+
+        //            //为下一个槽准备数据
+        //            CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+        //            nextSlotCreater.CreateAllCardsTypeArray(cardFaces, refLaizi);
+
+        //            CardsTypeInfo[] info;
+        //            if (nextSlotCreater.IsExistNotSingleCardsType())
+        //                info = nextSlotCreater.GetAllCardsTypeInfo();
+        //            else
+        //                info = nextSlotCreater.GetAllCardsTypeInfo(false);
+
+        //            for (int k = 0; k < info.Length; k++)
+        //            {
+        //                SwitchCreateEvalInfoByCount(cardFaces, info[k], slotCardsEvalGroup, evalGroupIdx, slotIdx + 1, refLaizi);
+        //            }
+        //        }
+        //    }
+        //}
+
+        //void SwitchCreateEvalInfoByCount(
+        //    CardFace[] cardFaces,
+        //    CardsTypeInfo curtSlotCardTypeInfo,
+        //    List<SlotCardsEvalInfo> slotCardsEvalGroup, int evalGroupIdx, int slotIdx,
+        //    CardFace[] refLaizi)
+        //{
+        //    int count = GetCardsTypeBaseCount(curtSlotCardTypeInfo.type);
+
+        //    switch (count)
+        //    {
+        //        case 4:
+        //            CreateEvalInfoByCount4(cardFaces, curtSlotCardTypeInfo, slotCardsEvalGroup, evalGroupIdx, slotIdx, refLaizi);
+        //            break;
+
+        //        case 3:
+        //            CreateEvalInfoByCount3(cardFaces, curtSlotCardTypeInfo, slotCardsEvalGroup, evalGroupIdx, slotIdx, refLaizi);
+        //            break;
+        //    }
+        //}
         int GetCardsTypeBaseCount(CardsType type)
         {
             switch(type)

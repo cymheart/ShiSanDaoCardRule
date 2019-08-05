@@ -47,7 +47,7 @@ namespace CardRuleNS
             return cardInfoList[(int)pukeFaceValue].suit;
         }
 
-        public CardFace[] RemoveLaiziByCount(CardFace[] cardFaces,  CardFace[] laizi, int removeCount)
+        public CardFace[] RemoveLaiziByCount(CardFace[] cardFaces,  CardFace[] laizi, int removeCount, CardFace[] outRemoveLaizis)
         {
             List<CardFace> newCardFaces = new List<CardFace>();
             int n = 0;
@@ -55,7 +55,11 @@ namespace CardRuleNS
             {
                 if (FindCardFace(laizi, cardFaces[i]) != -1)
                 {
+                    if(outRemoveLaizis!= null)
+                        outRemoveLaizis[n] = cardFaces[i];
+
                     n++;
+
                     if (n == removeCount)
                         break;
                     continue;
@@ -182,6 +186,21 @@ namespace CardRuleNS
             return newCardFaceList.ToArray();
         }
 
+        public CardFace[] GetLaiziCardFaces(CardFace[] cardfaces, CardFace[] laizi)
+        {
+            List<CardFace> laiziCardFaceList = new List<CardFace>();
+
+            for (int i = 0; i < cardfaces.Length; i++)
+            {
+                if (FindCardFace(laizi, cardfaces[i]) != -1)
+                {
+                    laiziCardFaceList.Add(cardfaces[i]);
+                }
+            }
+
+            return laiziCardFaceList.ToArray();
+        }
+
 
         public void SortCards(CardInfo[] cards)
         {
@@ -249,11 +268,16 @@ namespace CardRuleNS
             return pukeInfo;
         }
 
+        public CardFace GetCardFace(CardInfo cardinfo)
+        {
+            return GetCardFace(cardinfo.value, cardinfo.suit);
+        }
+
         public CardFace GetCardFace(int cardValue, int cardSuit)
         {
             if (cardValue == 14)
                 return CardFace.BlackJoker;
-            else if(cardValue == 15)
+            else if (cardValue == 15)
                 return CardFace.RedJoker;
 
             return (CardFace)(cardSuit * 13 + cardValue - 1);
