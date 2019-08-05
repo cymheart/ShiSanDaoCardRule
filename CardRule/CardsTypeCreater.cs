@@ -54,6 +54,11 @@ namespace CardRuleNS
         /// </summary>
         public List<CardsTypeInfo> TonghuaList = new List<CardsTypeInfo>();
 
+        /// <summary>
+        /// 单牌组
+        /// </summary>
+        public List<CardsTypeInfo> Single5List = new List<CardsTypeInfo>();
+
 
         public int laiziCount;
         public CardInfo[] cards;
@@ -82,6 +87,9 @@ namespace CardRuleNS
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
+
+            //
+            CreateSingle5Dict();
 
             //
             SortDictCardsTypeInfo();
@@ -128,7 +136,25 @@ namespace CardRuleNS
             SortDictCardsTypeInfo();
         }
 
+        /// <summary>
+        /// 获取所有能生成的牌型信息
+        /// </summary>
+        /// <returns></returns>
+        public CardsTypeInfo[] GetAllCardsTypeInfo()
+        {
+            List<CardsTypeInfo> infoList = new List<CardsTypeInfo>();
+            infoList.AddRange(WutongList);
+            infoList.AddRange(TonghuashunList);
+            infoList.AddRange(TiezhiList);
+            infoList.AddRange(HuluList);
+            infoList.AddRange(TonghuaList);
+            infoList.AddRange(ShunziList);
+            infoList.AddRange(SantiaoList);
+            infoList.AddRange(TwoduiList);
+            infoList.AddRange(DuiziList);
 
+            return infoList.ToArray();
+        }
 
         public CardsTypeInfo GetMaxScoreCardsTypeInfo()
         {
@@ -173,14 +199,14 @@ namespace CardRuleNS
             if (laiziCount > 0)
             {
                 info = new CardsTypeInfo();
-                info.CardsTypeType = CardsType.Single;
+                info.type = CardsType.Single;
                 info.cardFaceValues = new CardFace[] { CardFace.Club_A };
                 return info;
             }
             else if (cards.Length > 0)
             {
                 info = new CardsTypeInfo();
-                info.CardsTypeType = CardsType.Single;
+                info.type = CardsType.Single;
                 if (cards[0].value == 1)
                     info.cardFaceValues = new CardFace[] { CardFace.Club_A };
                 else
@@ -192,7 +218,7 @@ namespace CardRuleNS
             }
 
             info = new CardsTypeInfo();
-            info.CardsTypeType = CardsType.None;
+            info.type = CardsType.None;
             return info;
         }
 
@@ -293,6 +319,14 @@ namespace CardRuleNS
                 TonghuaList.Add(CardsTypeInfo);
             }
 
+            //ret = CardsTypeDict.Instance.single5KeyDict.TryGetValue(cardkey, out combInfo);
+            //if (ret == true && combInfo.laiziCount <= laiziCount)
+            //{
+            //    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+            //    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.Single, combInfo.laiziCount, combInfo.baseScore);
+            //    Single5List.Add(CardsTypeInfo);
+            //}
+
             if (splitGroup == 5)
                 return;
 
@@ -340,7 +374,7 @@ namespace CardRuleNS
             CardsTypeInfo cardsTypeInfo = new CardsTypeInfo();
             cardsTypeInfo.laiziCount = laiziCount;
             cardsTypeInfo.score = score;
-            cardsTypeInfo.CardsTypeType = CardsTypeType;
+            cardsTypeInfo.type = CardsTypeType;
             cardsTypeInfo.cardFaceValues = new CardFace[cardInfos.Length];
 
             CardFace face;
@@ -352,6 +386,73 @@ namespace CardRuleNS
             }
 
             return cardsTypeInfo;
+        }
+
+        void CreateSingle5Dict()
+        {
+            float _score;
+            CardKey cardkey;
+            HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>();
+            CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cards);
+
+            for (int i = 0; i < cards.Length - 4; i++)
+                for (int j = i + 1; j < cards.Length - 3; j++)
+                {
+                    if (cards[j].value == cards[i].value)
+                        continue;
+
+                    for (int k = j + 1; k < cards.Length - 2; k++)
+                    {
+                        if (cards[k].value == cards[j].value)
+                            continue;
+
+                        for (int m = k + 1; m < cards.Length - 1; m++)
+                        {
+                            if (cards[m].value == cards[k].value)
+                                continue;
+
+                            for (int n = m + 1; n < cards.Length; n++)
+                            {
+                                if (cards[n].value == cards[m].value)
+                                    continue;
+
+                                cardkey = new CardKey();
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[m].value, cards[m].suit);
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[n].value, cards[n].suit);
+
+                                if (CardsTypeDict.Instance.tongHuaShunKeyDict.ContainsKey(cardkey))
+                                    continue;
+
+                                if (CardsTypeDict.Instance.tonghuaKeyDict.ContainsKey(cardkey))
+                                    continue;
+
+                                if (CardsTypeDict.Instance.shunziKeyDict.ContainsKey(cardkey))
+                                    continue;
+
+                                if (cardkeyHashSet.Contains(cardkey))
+                                    continue;
+
+                                if (cards[i].value == 1) _score = 14;
+                                else _score = cards[n].value;
+
+                                CardsTypeInfo info = new CardsTypeInfo()
+                                {
+                                    type = CardsType.Single,
+                                    cardFaceValues = new CardFace[] { cardfaces[i], cardfaces[j], cardfaces[k], cardfaces[m], cardfaces[n] },
+                                    laiziCount = 0,
+                                    score = _score
+                                };
+
+                                
+                                cardkeyHashSet.Add(cardkey);
+                                Single5List.Add(info);
+                            }
+                        }
+                    }
+                }
         }
 
 

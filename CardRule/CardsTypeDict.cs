@@ -81,7 +81,8 @@ namespace CardRuleNS
         public Dictionary<CardKey, CardsTypeCombInfo> santiaoKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, CardsTypeCombInfo> duiziKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
         public Dictionary<CardKey, CardsTypeCombInfo> tonghuaKeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
-
+        public Dictionary<CardKey, CardsTypeCombInfo> single5KeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
+      
         //
         bool isCheckSuitCount = true;
         int limitSameSuitCount = 2;
@@ -104,6 +105,7 @@ namespace CardRuleNS
             CreateSanTiaoDict();
             CreateDuiZiDict();
             CreateTongHuaDict();
+           // CreateSingle5Dict();
         }
 
         void AddToDict(Dictionary<CardKey, CardsTypeCombInfo> dict, CardKey cardkey, int count, float score)
@@ -1168,6 +1170,89 @@ namespace CardRuleNS
                 cards[i].value = tmp1;
             }
         }
+
+        void CreateSingle5Dict()
+        {
+            single5KeyDict.Clear();
+
+            CardInfo[] cards = new CardInfo[5]
+            {
+                new CardInfo(),new CardInfo(),new CardInfo(),new CardInfo(),new CardInfo(),
+            };
+
+            float score;
+
+            for (int i = 1; i <= 13 - 4; i++)
+            {
+                cards[0].value = i;
+                for (int s0 = 0; s0 < 4; s0++)
+                {
+                    cards[0].suit = s0;
+                    for (int j = i + 1; j <= 13 - 3; j++)
+                    {
+                        cards[1].value = j;
+                        for (int s1 = 0; s1 < 4; s1++)
+                        {
+                            cards[1].suit = s1;
+                            for (int k = j + 1; k <= 13 - 2; k++)
+                            {
+                                cards[2].value = k;
+                                for (int s2 = 0; s2 < 4; s2++)
+                                {
+                                    cards[2].suit = s2;
+                                    for (int m = k + 1; m <= 13 - 1; m++)
+                                    {
+                                        cards[3].value = m;
+
+                                        for (int s3 = 0; s3 < 4; s3++)
+                                        {
+                                            cards[3].suit = s3;
+                                            for (int n = m + 1; n <= 13; n++)
+                                            {
+                                                cards[4].value = n;
+
+                                                for (int s4 = 0; s4 < 4; s4++)
+                                                {
+                                                    cards[4].suit = s4;
+
+                                                    if (i == 1) score = 14;
+                                                    else score = n;
+
+                                                    AddSingle5KeyToList(cards, score);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        void AddSingle5KeyToList(CardInfo[] cards, float score)
+        {
+            CardKey cardkey = new CardKey();
+            for (int i = 0; i < cards.Length; i++)
+            {
+                cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+            }
+
+            if (tongHuaShunKeyDict.ContainsKey(cardkey))
+                return;
+
+            if (tonghuaKeyDict.ContainsKey(cardkey))
+                return;
+
+            if (shunziKeyDict.ContainsKey(cardkey))
+                return;
+
+        
+            AddToDict(single5KeyDict, cardkey, 0, score);
+        }
+
+
 
         uint FlagKeyBit(uint key, int n, int m)
         {

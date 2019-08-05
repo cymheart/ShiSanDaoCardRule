@@ -482,7 +482,7 @@ namespace CardRuleNS
         /// <summary>
         /// 牌型
         /// </summary>
-        public CardsType CardsTypeType;
+        public CardsType type;
 
         /// <summary>
         /// 牌型中所有牌的面值组合

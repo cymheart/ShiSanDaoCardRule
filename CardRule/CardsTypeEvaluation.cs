@@ -5,6 +5,15 @@ using System.Text;
 
 namespace CardRuleNS
 {
+    public class CardsEvalInfo
+    {
+        public List<CardFace[]> slot1CardFacesList = new List<CardFace[]>();
+        public List<CardFace[]> slot2CardFacesList = new List<CardFace[]>();
+        public List<CardFace[]> slot3CardFacesList = new List<CardFace[]>();
+        public List<float> slot1EvalList;
+        public List<float> slot2EvalList;
+        public List<float> slot3EvalList;
+    }
     public class CardsTypeEvaluation
     {
         private static CardsTypeEvaluation instance = null;
@@ -25,6 +34,76 @@ namespace CardRuleNS
                 return instance.Cmp(c1, null, c2, null);
             }
         }
+
+
+        public CardsEvalInfo Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
+        {
+            CardsEvalInfo cardsEvalInfo = new CardsEvalInfo();
+            int count;
+
+            CardsTypeCreater creater1 = new CardsTypeCreater();
+            creater1.CreateAllCardsTypeArray(cardFaces, laizi);
+            CardsTypeInfo[] info1 = creater1.GetAllCardsTypeInfo();
+
+
+
+            for(int i=0; i<info1.Length; i++)
+            {
+                count = GetCardsTypeBaseCount(info1[i].type);
+
+                if(count == 4)
+                {
+
+                }
+
+
+                cardsEvalInfo.slot1CardFacesList.Add(info1[i].cardFaceValues);
+
+
+
+                CardsTypeCreater creater2 = new CardsTypeCreater();
+                creater2.CreateAllCardsTypeArray(cardFaces, laizi);
+                CardsTypeInfo[] info2 = creater2.GetAllCardsTypeInfo();
+
+                for (int j = 0; j < info2.Length; j++)
+                {
+                    cardsEvalInfo.slot2CardFacesList.Add(info2[i].cardFaceValues);
+
+                }
+
+            }
+
+            return null;
+        }
+
+        int GetCardsTypeBaseCount(CardsType type)
+        {
+            switch(type)
+            {
+                case CardsType.TongHuaShun:
+                case CardsType.ShunZi:
+                case CardsType.WuTong:
+                case CardsType.HuLu:
+                case CardsType.TongHua:
+                    return 5;
+
+                case CardsType.Bomb:
+                case CardsType.TwoDui:
+                    return 4;
+
+                case CardsType.SanTiao:
+                    return 3;
+
+                case CardsType.DuiZi:
+                    return 2;
+
+                case CardsType.Single:
+                    return 1;
+            }
+
+            return 0;
+        }
+
 
         public void SortCardsTypes(List<CardsTypeInfo> cardsTypeInfoList)
         {
@@ -49,7 +128,7 @@ namespace CardRuleNS
 
         public float CalCardsScore(CardsTypeInfo cardsTypeInfo, int[] otherCardValue)
         {
-            float score = ((float)cardsTypeInfo.CardsTypeType - 1) * 100;
+            float score = ((float)cardsTypeInfo.type - 1) * 100;
             score += cardsTypeInfo.score;
 
             if (otherCardValue != null && otherCardValue.Length > 0)
@@ -93,6 +172,7 @@ namespace CardRuleNS
 
             return CalCardsScore(info, otherCards);
         }
+
 
         public float GetShunZiBaseScore(float startCardValue)
         {

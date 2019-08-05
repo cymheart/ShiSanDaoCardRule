@@ -37,6 +37,8 @@ namespace CardRule
                 CardFace.Laizi,       
             };
 
+            CardsTypeDict dict = CardsTypeDict.Instance;
+
             //获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
             creater.CreateAllCardsTypeArray(cardValues, new[] {CardFace.BlackJoker, CardFace.RedJoker });

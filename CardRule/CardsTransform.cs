@@ -237,5 +237,21 @@ namespace CardRuleNS
 
             return (CardFace)(cardSuit * 13 + cardValue - 1);
         }
+
+        public CardFace[] CreateCardFaces(CardInfo[] cardinfos)
+        {
+            CardFace cardface;
+            List<CardFace> cardFaceList = new List<CardFace>();
+            if (cardinfos == null)
+                return null;
+
+            for (int i = 0; i < cardinfos.Length; i++)
+            {
+                cardface = GetCardFace(cardinfos[i].value, cardinfos[i].suit);
+                cardFaceList.Add(cardface);
+            }
+
+            return cardFaceList.ToArray();
+        }
     }
 }
