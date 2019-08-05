@@ -47,6 +47,27 @@ namespace CardRuleNS
             return cardInfoList[(int)pukeFaceValue].suit;
         }
 
+        public CardFace[] RemoveLaiziByCount(CardFace[] cardFaces,  CardFace[] laizi, int removeCount)
+        {
+            List<CardFace> newCardFaces = new List<CardFace>();
+            int n = 0;
+            for(int i=0; i<cardFaces.Length; i++)
+            {
+                if (FindCardFace(laizi, cardFaces[i]) != -1)
+                {
+                    n++;
+                    if (n == removeCount)
+                        break;
+                    continue;
+                }
+
+                newCardFaces.Add(cardFaces[i]);
+            }
+
+            return newCardFaces.ToArray();
+        }
+
+
         public CardInfo[] CreateRemoveFaceValues(CardFace[] cardFaces, CardFace[] removeCardFaceValues)
         {
             CardInfo[] cards = TransToCardInfo(cardFaces);
@@ -111,11 +132,11 @@ namespace CardRuleNS
             return -1;
         }
 
-        public int FindCardFace(CardFace[] cardfaces, CardFace cardface)
+        public int FindCardFace(CardFace[] cardfaces, CardFace findCardface)
         {
             for (int i = 0; i < cardfaces.Length; i++)
             {
-                if (cardfaces[i] == cardface)
+                if (cardfaces[i] == findCardface)
                     return i;
             }
 

@@ -59,9 +59,8 @@ namespace CardRuleNS
         /// </summary>
         public List<CardsTypeInfo> Single5List = new List<CardsTypeInfo>();
 
-
-        public int laiziCount;
-        public CardInfo[] cards;
+        int laiziCount;
+        CardInfo[] cards;
 
         /// <summary>
         /// 生成所有牌型组数据
@@ -140,9 +139,10 @@ namespace CardRuleNS
         /// 获取所有能生成的牌型信息
         /// </summary>
         /// <returns></returns>
-        public CardsTypeInfo[] GetAllCardsTypeInfo()
+        public CardsTypeInfo[] GetAllCardsTypeInfo(bool isExcludeSingle5 = true)
         {
             List<CardsTypeInfo> infoList = new List<CardsTypeInfo>();
+
             infoList.AddRange(WutongList);
             infoList.AddRange(TonghuashunList);
             infoList.AddRange(TiezhiList);
@@ -153,9 +153,33 @@ namespace CardRuleNS
             infoList.AddRange(TwoduiList);
             infoList.AddRange(DuiziList);
 
+            if(!isExcludeSingle5)
+                infoList.AddRange(Single5List);
+
             return infoList.ToArray();
         }
 
+        /// <summary>
+        /// 存在非单张的牌型组合
+        /// </summary>
+        /// <returns></returns>
+        public bool IsExistNotSingleCardsType()
+        {
+            if (WutongList.Count > 0 || TonghuashunList.Count > 0 ||
+                TiezhiList.Count > 0 || HuluList.Count > 0 ||
+                TonghuaList.Count > 0 || ShunziList.Count > 0 ||
+                SantiaoList.Count > 0 || TwoduiList.Count > 0 ||
+                DuiziList.Count > 0)
+                return true;
+
+            return false;
+        }
+
+        public CardInfo[] GetFormatCards()
+        {
+            return cards;
+        }
+  
         public CardsTypeInfo GetMaxScoreCardsTypeInfo()
         {
             if(WutongList.Count > 0)
@@ -234,6 +258,7 @@ namespace CardRuleNS
             CardsTypeEvaluation.Instance.SortCardsTypes(SantiaoList);
             CardsTypeEvaluation.Instance.SortCardsTypes(TwoduiList);
             CardsTypeEvaluation.Instance.SortCardsTypes(DuiziList);
+            CardsTypeEvaluation.Instance.SortCardsTypes(Single5List);
         }
 
         void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
@@ -319,14 +344,6 @@ namespace CardRuleNS
                 TonghuaList.Add(CardsTypeInfo);
             }
 
-            //ret = CardsTypeDict.Instance.single5KeyDict.TryGetValue(cardkey, out combInfo);
-            //if (ret == true && combInfo.laiziCount <= laiziCount)
-            //{
-            //    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-            //    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.Single, combInfo.laiziCount, combInfo.baseScore);
-            //    Single5List.Add(CardsTypeInfo);
-            //}
-
             if (splitGroup == 5)
                 return;
 
@@ -396,6 +413,7 @@ namespace CardRuleNS
             CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cards);
 
             for (int i = 0; i < cards.Length - 4; i++)
+            {
                 for (int j = i + 1; j < cards.Length - 3; j++)
                 {
                     if (cards[j].value == cards[i].value)
@@ -446,15 +464,14 @@ namespace CardRuleNS
                                     score = _score
                                 };
 
-                                
                                 cardkeyHashSet.Add(cardkey);
                                 Single5List.Add(info);
                             }
                         }
                     }
                 }
+            }
         }
-
 
         HashSet<CardKey> SplitCardsGroup5(CardInfo[] cards)
         {
@@ -720,6 +737,7 @@ namespace CardRuleNS
             SantiaoList.Clear();
             DuiziList.Clear();
             TonghuaList.Clear();
+            Single5List.Clear();
         }
     }
 }

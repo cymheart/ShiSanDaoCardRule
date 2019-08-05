@@ -5,15 +5,16 @@ using System.Text;
 
 namespace CardRuleNS
 {
-    public class CardsEvalInfo
+
+    public struct SlotCardsEvalInfo
     {
-        public List<CardFace[]> slot1CardFacesList = new List<CardFace[]>();
-        public List<CardFace[]> slot2CardFacesList = new List<CardFace[]>();
-        public List<CardFace[]> slot3CardFacesList = new List<CardFace[]>();
-        public List<float> slot1EvalList;
-        public List<float> slot2EvalList;
-        public List<float> slot3EvalList;
+        public CardFace[] slot1CardFaces;
+        public CardFace[] slot2CardFaces;
+        public CardFace[] slot3CardFaces;
+        public float[] slotEval;
+        public float totalEval;
     }
+
     public class CardsTypeEvaluation
     {
         private static CardsTypeEvaluation instance = null;
@@ -36,41 +37,64 @@ namespace CardRuleNS
         }
 
 
-        public CardsEvalInfo Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
+        public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
         {
-            CardsEvalInfo cardsEvalInfo = new CardsEvalInfo();
+            List<SlotCardsEvalInfo> slotCardsEval = new List<SlotCardsEvalInfo>(); 
             int count;
 
             CardsTypeCreater creater1 = new CardsTypeCreater();
             creater1.CreateAllCardsTypeArray(cardFaces, laizi);
-            CardsTypeInfo[] info1 = creater1.GetAllCardsTypeInfo();
+            CardsTypeInfo[] info1;
+            if (creater1.IsExistNotSingleCardsType())
+                info1 = creater1.GetAllCardsTypeInfo();
+            else
+                info1 = creater1.GetAllCardsTypeInfo(false);
 
-
-
-            for(int i=0; i<info1.Length; i++)
+            for (int i=0; i<info1.Length; i++)
             {
                 count = GetCardsTypeBaseCount(info1[i].type);
 
                 if(count == 4)
                 {
+                    CardFace[] cardFaces2 = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, laizi, info1[i].laiziCount);
+                    CardInfo[] tmpCardInfos2 = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces2, info1[i].cardFaceValues);
+                    CardInfo[] cardInfos2;
 
+                    for (int m = 0; m < tmpCardInfos2.Length; m++)
+                    {
+                        cardInfos2 = CardsTransform.Instance.CreateRemoveCardInfos(tmpCardInfos2, new CardInfo[] { tmpCardInfos2[m] });
+                        cardFaces2 = CardsTransform.Instance.CreateCardFaces(cardInfos2);
+                        CardsTypeCreater creater2 = new CardsTypeCreater();
+                        creater2.CreateAllCardsTypeArray(cardFaces2, laizi);
+
+                        CardsTypeInfo[] info2;
+                        if (creater2.IsExistNotSingleCardsType())
+                            info2 = creater1.GetAllCardsTypeInfo();
+                        else
+                            info2 = creater1.GetAllCardsTypeInfo(false);
+
+                        for (int j = 0; j < info2.Length; j++)
+                        {
+
+                            //cardsEvalInfo.slot2CardFacesList.Add(info2[i].cardFaceValues);
+
+                        }
+                    }
                 }
-
-
-                cardsEvalInfo.slot1CardFacesList.Add(info1[i].cardFaceValues);
-
-
-
-                CardsTypeCreater creater2 = new CardsTypeCreater();
-                creater2.CreateAllCardsTypeArray(cardFaces, laizi);
-                CardsTypeInfo[] info2 = creater2.GetAllCardsTypeInfo();
-
-                for (int j = 0; j < info2.Length; j++)
+                else if(count == 3)
                 {
-                    cardsEvalInfo.slot2CardFacesList.Add(info2[i].cardFaceValues);
+
 
                 }
+                else if(count == 2)
+                {
 
+                }
+                else
+                {
+
+
+                }
             }
 
             return null;
