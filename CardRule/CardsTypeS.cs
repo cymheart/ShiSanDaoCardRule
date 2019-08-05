@@ -500,4 +500,6 @@ namespace CardRuleNS
         public float score;
     }
 
+    
+
 }
