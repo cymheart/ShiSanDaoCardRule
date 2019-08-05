@@ -131,7 +131,7 @@ namespace CardRuleNS
                 int valueIdx = 0;
                 int[] value = new int[5];
 
-                //
+                //尾槽
                 SlotCardsEvalInfo evalInfo = new SlotCardsEvalInfo();
                 evalInfo.slotCardFaceList[0].AddRange(evalDatas[0]);
                 for (int i = 0; i < 5 - evalDatas[0].Count; i++)
@@ -142,7 +142,7 @@ namespace CardRuleNS
                 evalInfo.slotEval[0] = CalCardsScore(cardsTypeInfos[0].Value, value);
 
 
-                //
+                //中槽
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
                 evalInfo.slotCardFaceList[1].AddRange(evalDatas[1]);
@@ -154,7 +154,7 @@ namespace CardRuleNS
                 evalInfo.slotEval[1] = CalCardsScore(cardsTypeInfos[1].Value, value);
 
 
-                //
+                //头槽
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
                 evalInfo.slotCardFaceList[2].AddRange(evalDatas[2]);
