@@ -13,7 +13,7 @@ namespace CardRuleNS
             new List<CardFace>(),new List<CardFace>(),new List<CardFace>()
         };
 
-        public float[] slotEval;
+        public float[] slotEval = new float[3];
         public float totalEval;
     }
 
@@ -109,7 +109,9 @@ namespace CardRuleNS
             {
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
-                cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, refLaizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
+
+                if(curtSlotCardTypeInfo.Value.laiziCount > 0)
+                    cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, refLaizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
 
                 //移除当前槽已使用的牌型牌
                 CardInfo[] cardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, curtSlotCardTypeInfo.Value.cardFaceValues);
@@ -117,7 +119,9 @@ namespace CardRuleNS
 
                 //添加数据
                 evalDatas[slotDepth].AddRange(curtSlotCardTypeInfo.Value.cardFaceValues);
-                evalDatas[slotDepth].AddRange(removeLaizi);
+                for(int i=0; i< curtSlotCardTypeInfo.Value.laiziCount; i++)
+                    evalDatas[slotDepth].Add(removeLaizi[i]);
+
                 cardsTypeInfos[slotDepth] = curtSlotCardTypeInfo;
             }
 
@@ -139,7 +143,7 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[0].Add(cardFaces[n++]);
                 }
-                evalInfo.slotEval[0] = CalCardsScore(cardsTypeInfos[0].Value, value);
+                evalInfo.slotEval[0] = CalCardsScore(cardsTypeInfos[0], value);
 
 
                 //
@@ -151,7 +155,7 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[1].Add(cardFaces[n++]);
                 }
-                evalInfo.slotEval[1] = CalCardsScore(cardsTypeInfos[1].Value, value);
+                evalInfo.slotEval[1] = CalCardsScore(cardsTypeInfos[1], value);
 
 
                 //
@@ -163,7 +167,7 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[2].Add(cardFaces[n++]);
                 }
-                evalInfo.slotEval[2] = CalCardsScore(cardsTypeInfos[2].Value, value);
+                evalInfo.slotEval[2] = CalCardsScore(cardsTypeInfos[2], value);
 
                 //
                 evalInfo.totalEval = evalInfo.slotEval[0] + evalInfo.slotEval[1] + evalInfo.slotEval[2];
@@ -177,10 +181,40 @@ namespace CardRuleNS
             nextSlotCreater.CreateAllCardsTypeArray(cardFaces, refLaizi);
 
             CardsTypeInfo[] info;
-            if (nextSlotCreater.IsExistNotSingleCardsType())
-                info = nextSlotCreater.GetAllCardsTypeInfo();
+
+            if (slotDepth < 1)
+            {
+                if (nextSlotCreater.IsExistNotSingleCardsType())
+                    info = nextSlotCreater.GetAllCardsTypeInfo();
+                else
+                    info = nextSlotCreater.GetAllCardsTypeInfo(false);
+            }
             else
-                info = nextSlotCreater.GetAllCardsTypeInfo(false);
+            {
+                List<CardsTypeInfo> tmpInfo = new List<CardsTypeInfo>();
+                tmpInfo.AddRange(nextSlotCreater.SantiaoList);
+                tmpInfo.AddRange(nextSlotCreater.DuiziList);
+                info = tmpInfo.ToArray();
+
+                if(info.Length == 0)
+                {
+                    EvalFuncParamDatas paramDatas2 = new EvalFuncParamDatas()
+                    {
+                        cardFaces = cardFaces,
+                        curtSlotCardTypeInfo = null,
+                        slotCardsEvalGroup = slotCardsEvalGroup,
+                        evalDatas = evalDatas,
+                        cardsTypeInfos = cardsTypeInfos,
+                        slotDepth = slotDepth + 1,
+                        refLaizi = refLaizi
+                    };
+
+                    CreateEvalInfo(paramDatas2);
+                    evalDatas[slotDepth + 1].Clear();
+                    cardsTypeInfos[slotDepth + 1] = null;
+                    return;
+                }
+            }
 
             for (int i = 0; i < info.Length; i++)
             {
@@ -200,7 +234,6 @@ namespace CardRuleNS
                 cardsTypeInfos[slotDepth + 1] = null;
             }
         }
-
       
         public void SortCardsTypes(List<CardsTypeInfo> cardsTypeInfoList)
         {
@@ -223,10 +256,14 @@ namespace CardRuleNS
             return 0;
         }
 
-        public float CalCardsScore(CardsTypeInfo cardsTypeInfo, int[] otherCardValue)
+        public float CalCardsScore(CardsTypeInfo? cardsTypeInfo, int[] otherCardValue)
         {
-            float score = ((float)cardsTypeInfo.type - 1) * 100;
-            score += cardsTypeInfo.score;
+            float score = 0;
+            if (cardsTypeInfo != null)
+            {
+                score = ((float)cardsTypeInfo.Value.type - 1) * 100;
+                score += cardsTypeInfo.Value.score;
+            }
 
             if (otherCardValue != null && otherCardValue.Length > 0)
             {

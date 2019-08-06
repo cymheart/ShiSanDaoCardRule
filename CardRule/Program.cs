@@ -14,7 +14,7 @@ namespace CardRule
             CardFace[] cardValues = new CardFace[]
             {
                 CardFace.Club_10,
-                CardFace.Club_10,
+                CardFace.Heart_10,
                 CardFace.Club_10,
                 CardFace.Diamond_10,
                 CardFace.Club_4,
@@ -28,14 +28,6 @@ namespace CardRule
                 CardFace.Diamond_9,
             };
 
-            CardFace[] cardValues2 = new CardFace[]
-            {
-                CardFace.Laizi,
-                CardFace.Spade_2,
-                CardFace.Laizi,
-                CardFace.Heart_5,
-                CardFace.Laizi,       
-            };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
 
@@ -52,12 +44,11 @@ namespace CardRule
             CardFace[] outCards = new CardFace[13];
             SpecCardsType type = specCard.Check(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker }, outCards);
 
-            //
-            //int laiziCount = 0;
-            //bool ret = false;
-            //CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);
-            //ret = specCard.IsSixBomb(formatCards, laiziCount, outCards);
 
+            //
+            CardsTypeEvaluation.Instance.Evaluation(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker });
+
+           
 
         }
     }

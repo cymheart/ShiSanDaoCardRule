@@ -159,6 +159,7 @@ namespace CardRuleNS
             return infoList.ToArray();
         }
 
+    
         /// <summary>
         /// 存在非单张的牌型组合
         /// </summary>
