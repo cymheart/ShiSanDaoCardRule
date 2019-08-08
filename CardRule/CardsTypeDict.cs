@@ -182,6 +182,19 @@ namespace CardRuleNS
             return false;
         }
 
+        public bool IsEqual(CardKey cardkeyA, CardKey cardkeyB)
+        {
+            if (cardkeyA.bit_31_0 == cardkeyB.bit_31_0 &&
+                cardkeyA.bit_63_32 == cardkeyB.bit_63_32 &&
+                cardkeyA.bit_95_64 == cardkeyB.bit_95_64 &&
+                cardkeyA.bit_103_96 == cardkeyB.bit_103_96)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// 通过CardInfo[]生成CardKey
         /// </summary>
@@ -386,7 +399,7 @@ namespace CardRuleNS
                                 if (j == 1) b = 14;
                                 else b = j;
 
-                                score = CardsTypeEvaluation.Instance.GetHuLuBaseScore(i, j);
+                                score = CardsTypeEvaluation.Instance.GetHuLuBaseScore(a, b);
 
                                 for (int m0 = 0; m0 < 4; m0++)
                                 {
@@ -410,14 +423,20 @@ namespace CardRuleNS
         {
             if (isCheckSuitCount)
             {
-                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                int[] value = new int[14];
+                List<int>[] suitCounts = new List<int>[4]
+                {
+                    new List<int>(value), new List<int>(value), new List<int>(value),new List<int>(value)
+                };
+
                 for (int i = 0; i < cards.Length; i++)
                 {
-                    suitCount[cards[i].suit]++;
-                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                    suitCounts[cards[i].suit][cards[i].value]++;
+                    if (suitCounts[cards[i].suit][cards[i].value] > limitSameSuitCount)
                         return;
                 }
             }
+
 
             if (cards[0].value == cards[1].value &&
                cards[0].value == cards[2].value &&
@@ -523,11 +542,16 @@ namespace CardRuleNS
         {
             if (isCheckSuitCount)
             {
-                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                int[] value = new int[14];
+                List<int>[] suitCounts = new List<int>[4]
+                {
+                    new List<int>(value), new List<int>(value), new List<int>(value),new List<int>(value)
+                };
+
                 for (int i = 0; i < cards.Length; i++)
                 {
-                    suitCount[cards[i].suit]++;
-                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                    suitCounts[cards[i].suit][cards[i].value]++;
+                    if (suitCounts[cards[i].suit][cards[i].value] > limitSameSuitCount)
                         return;
                 }
             }

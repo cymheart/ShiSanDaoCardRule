@@ -565,6 +565,7 @@ namespace CardRuleNS
                                 cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
                                 cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[m].value, cards[m].suit);
                                 cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[n].value, cards[n].suit);
+
                                 if (!cardkeyHashSet.Contains(cardkey))
                                     cardkeyHashSet.Add(cardkey);
                             }

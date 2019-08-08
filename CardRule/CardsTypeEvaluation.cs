@@ -109,7 +109,6 @@ namespace CardRuleNS
             {
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
-
                 if(curtSlotCardTypeInfo.Value.laiziCount > 0)
                     cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, refLaizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
 
