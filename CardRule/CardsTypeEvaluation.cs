@@ -29,8 +29,9 @@ namespace CardRuleNS
         /// <summary>
         /// 分值水数权重，1:偏向牌型分值加权， 0：偏向水数加权
         /// </summary>
-        float scoreAndShuiWeight = 0.9f;
-        float varianceLimit = 1.5f;
+        float scoreAndShuiWeight = 0.8f;
+        float varianceLimit = 2f;
+        float varianceRange = 0.2f;
 
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
@@ -199,8 +200,8 @@ namespace CardRuleNS
 
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
 
-                float noramlVar = evalInfo.variance / varianceLimit;
-                float v = 1 - InOutCubic(noramlVar, 0.3f, 0.7f, 1);
+                float normalVar = evalInfo.variance / varianceLimit;
+                float v = 1 - InOutCubic(normalVar, 0f, varianceRange, 1);
                 evalInfo.variance_eval = v * evalInfo.eval;
 
                 //

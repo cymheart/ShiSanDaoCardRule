@@ -17,7 +17,7 @@ namespace CardRule
 
 
             //0, 0.3f, 1f, 1
-            float val = InOutCubic(2, 0.3f, 1, 1);
+            float val = InOutCubic(0.3f, 0, 1, 1);
 
 
 
