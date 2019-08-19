@@ -11,6 +11,7 @@ namespace CardRule
     {
         static void Main(string[] args)
         {
+  
             CardFace[] cardValues = new CardFace[]
             {
                 CardFace.Club_10,
@@ -43,7 +44,6 @@ namespace CardRule
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
             SpecCardsType type = specCard.Check(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker }, outCards);
-
 
             //
             CardsTypeEvaluation.Instance.Evaluation(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker });

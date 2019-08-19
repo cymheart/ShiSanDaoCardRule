@@ -13,8 +13,15 @@ namespace CardRuleNS
             new List<CardFace>(),new List<CardFace>(),new List<CardFace>()
         };
 
-        public float[] slotEval = new float[3];
-        public float totalEval;
+        public float[] slotScore = new float[3];
+        public float totalScore;
+
+        public float[] slotShuiScore = new float[3];
+        public float totalShuiScore;
+
+        public float eval;
+        public float variance;
+        public float variance_eval;
     }
 
     public class CardsTypeEvaluation
@@ -29,7 +36,7 @@ namespace CardRuleNS
                 return instance;
             }
         }
-        private  struct EvalFuncParamDatas
+        private struct EvalFuncParamDatas
         {
             public CardFace[] cardFaces;
             public CardsTypeInfo? curtSlotCardTypeInfo;
@@ -48,13 +55,13 @@ namespace CardRuleNS
             }
         }
 
-        private class Comparer2 : IComparer<SlotCardsEvalInfo>
+        private class CardEvalComparer : IComparer<SlotCardsEvalInfo>
         {
             public int Compare(SlotCardsEvalInfo info1, SlotCardsEvalInfo info2)
             {
-                if (info1.totalEval > info2.totalEval)
+                if (info1.variance_eval > info2.variance_eval)
                     return -1;
-                else if (info1.totalEval < info2.totalEval)
+                else if (info1.variance_eval < info2.variance_eval)
                     return 1;
 
                 return 0;
@@ -62,13 +69,18 @@ namespace CardRuleNS
         }
 
 
+        float scoreWeight = 0.9f;
+        float varianceLimit = 2f;
+
+
         public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
         {
             List<SlotCardsEvalInfo> slotCardsEvalGroup = new List<SlotCardsEvalInfo>();
+
             List<CardFace>[] evalDatas = new List<CardFace>[3]
             {
-                new List<CardFace>(),
-                 new List<CardFace>(),
+                  new List<CardFace>(),
+                  new List<CardFace>(),
                   new List<CardFace>(),
             };
 
@@ -89,7 +101,7 @@ namespace CardRuleNS
 
 
             //
-            slotCardsEvalGroup.Sort(new Comparer2());
+            slotCardsEvalGroup.Sort(new CardEvalComparer());
 
             return slotCardsEvalGroup;
         }
@@ -109,7 +121,7 @@ namespace CardRuleNS
             {
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
-                if(curtSlotCardTypeInfo.Value.laiziCount > 0)
+                if (curtSlotCardTypeInfo.Value.laiziCount > 0)
                     cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, refLaizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
 
                 //移除当前槽已使用的牌型牌
@@ -118,7 +130,7 @@ namespace CardRuleNS
 
                 //添加数据
                 evalDatas[slotDepth].AddRange(curtSlotCardTypeInfo.Value.cardFaceValues);
-                for(int i=0; i< curtSlotCardTypeInfo.Value.laiziCount; i++)
+                for (int i = 0; i < curtSlotCardTypeInfo.Value.laiziCount; i++)
                     evalDatas[slotDepth].Add(removeLaizi[i]);
 
                 cardsTypeInfos[slotDepth] = curtSlotCardTypeInfo;
@@ -142,7 +154,8 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[0].Add(cardFaces[n++]);
                 }
-                evalInfo.slotEval[0] = CalCardsScore(cardsTypeInfos[0], value);
+                evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
+                evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0].Value.type, 0);
 
 
                 //
@@ -154,8 +167,8 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[1].Add(cardFaces[n++]);
                 }
-                evalInfo.slotEval[1] = CalCardsScore(cardsTypeInfos[1], value);
-
+                evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
+                evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1].Value.type, 1);
 
                 //
                 valueIdx = 0;
@@ -166,12 +179,24 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[2].Add(cardFaces[n++]);
                 }
-                evalInfo.slotEval[2] = CalCardsScore(cardsTypeInfos[2], value);
+                evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
+                evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2].Value.type, 2);
 
                 //
-                evalInfo.totalEval = evalInfo.slotEval[0] + evalInfo.slotEval[1] + evalInfo.slotEval[2];
+                evalInfo.totalScore = evalInfo.slotScore[0] + evalInfo.slotScore[1] + evalInfo.slotScore[2];
+                evalInfo.totalShuiScore = evalInfo.slotShuiScore[0] + evalInfo.slotShuiScore[1] + evalInfo.slotShuiScore[2];
 
+                //
+                evalInfo.eval = evalInfo.totalScore / 2200f * scoreWeight + evalInfo.totalShuiScore / 24f * (1 - evalInfo.totalShuiScore);
+                evalInfo.variance = SolveVariance(evalInfo.slotScore);
+
+                float noramlVar = evalInfo.variance / varianceLimit;
+                float v = 1 - InOutCubic(noramlVar, 0.3f, 0.7f, 1);
+                evalInfo.variance_eval = v * evalInfo.eval;
+
+                //
                 slotCardsEvalGroup.Add(evalInfo);
+
                 return;
             }
 
@@ -195,7 +220,7 @@ namespace CardRuleNS
                 tmpInfo.AddRange(nextSlotCreater.DuiziList);
                 info = tmpInfo.ToArray();
 
-                if(info.Length == 0)
+                if (info.Length == 0)
                 {
                     EvalFuncParamDatas paramDatas2 = new EvalFuncParamDatas()
                     {
@@ -233,10 +258,45 @@ namespace CardRuleNS
                 cardsTypeInfos[slotDepth + 1] = null;
             }
         }
-      
+
+        float SolveVariance(float[] nums)
+        {
+            float score = 0;
+            for (int i = 0; i < nums.Length; i++)
+                score += nums[i];
+
+            float avg = score / nums.Length;
+            float sub;
+            float var = 0;
+            for (int i = 0; i < nums.Length; i++)
+            {
+                sub = (nums[i] - avg) / avg;
+                var += sub * sub;
+            }
+
+            float variance = var / nums.Length;
+            variance = (float)Math.Sqrt(variance);
+            return variance;
+        }
+
+
+        //1f, 0.3f, 0.7f, 1
+        float InOutCubic(float t, float b, float c, float d)
+        {
+            if (t > 1) { t = 1; }
+            else if (t < 0) { t = 0; }
+
+            t /= d / 2;
+
+            if (t < 1)
+                return c / 2 * (float)Math.Pow(t, 3) + b;
+
+            return c / 2 * ((float)Math.Pow(t - 2, 3) + 2) + b;
+        }
+
         public void SortCardsTypes(List<CardsTypeInfo> cardsTypeInfoList)
         {
-            if(cardsTypeInfoList != null && cardsTypeInfoList.Count > 0)
+            if (cardsTypeInfoList != null && cardsTypeInfoList.Count > 0)
                 cardsTypeInfoList.Sort(new Comparer());
         }
 
@@ -255,6 +315,13 @@ namespace CardRuleNS
             return 0;
         }
 
+
+        /// <summary>
+        /// 计算牌的分值
+        /// </summary>
+        /// <param name="cardsTypeInfo">牌的牌型详细信息</param>
+        /// <param name="otherCardValue">包含的其它杂牌</param>
+        /// <returns></returns>
         public float CalCardsScore(CardsTypeInfo? cardsTypeInfo, int[] otherCardValue)
         {
             float score = 0;
@@ -279,6 +346,12 @@ namespace CardRuleNS
             return score;
         }
 
+        /// <summary>
+        /// 计算牌的分值
+        /// </summary>
+        /// <param name="cardsTypeInfo">牌的牌型详细信息</param>
+        /// <param name="otherCardValue">包含的其它杂牌</param>
+        /// <returns></returns>
         public float CalCardsScore(CardsTypeInfo cardsTypeInfo, CardInfo[] otherCardInfos)
         {
             int[] values = null;
@@ -296,6 +369,12 @@ namespace CardRuleNS
             return CalCardsScore(cardsTypeInfo, values);
         }
 
+
+        /// <summary>
+        /// 计算牌的分值
+        /// </summary>
+        /// <param name="cardFaces">手牌</param>
+        /// <returns></returns>
         public float CalCardsScore(CardFace[] cardFaces)
         {
             CardsTypeCreater cardCreater = new CardsTypeCreater();
@@ -304,6 +383,57 @@ namespace CardRuleNS
             CardInfo[] otherCards = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, info.cardFaceValues);
 
             return CalCardsScore(info, otherCards);
+        }
+
+        /// <summary>
+        /// 获取牌型所在对应槽位的水数
+        /// </summary>
+        /// <param name="cardsType"></param>
+        /// <param name="slotIdx"></param>
+        /// <returns></returns>
+        public float GetCardsTypeShuiScore(CardsType cardsType, int slotIdx)
+        {
+            switch (cardsType)
+            {
+                case CardsType.Single:
+                case CardsType.DuiZi:
+                case CardsType.TwoDui:
+                case CardsType.SanTiao:
+                case CardsType.ShunZi:
+                case CardsType.TongHua:
+                    return 1;
+
+                case CardsType.HuLu:
+                    if (slotIdx == 0)
+                        return 1;
+                    else if (slotIdx == 1)
+                        return 2;
+                    break;
+
+                case CardsType.Bomb:
+                    if (slotIdx == 0)
+                        return 4;
+                    else if (slotIdx == 1)
+                        return 8;
+                    break;
+
+                case CardsType.TongHuaShun:
+                    if (slotIdx == 0)
+                        return 5;
+                    else if (slotIdx == 1)
+                        return 10;
+                    break;
+
+                case CardsType.WuTong:
+                    if (slotIdx == 0)
+                        return 10;
+                    else if (slotIdx == 1)
+                        return 20;
+                    break;
+
+            }
+
+            return 1;
         }
 
 
