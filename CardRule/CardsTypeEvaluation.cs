@@ -180,7 +180,13 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[2].Add(cardFaces[n++]);
                 }
+
                 evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
+                if (cardsTypeInfos[2] != null && cardsTypeInfos[2].Value.type == CardsType.SanTiao)
+                {
+                    evalInfo.slotScore[2] += 600;
+                }
+
                 evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
 
                 //
