@@ -11,24 +11,32 @@ namespace CardRule
     {
         static void Main(string[] args)
         {
-  
+            float var = SolveVariance(new float[] { 860, 610.02f, 0.0009f });
+
+            float var2 = SolveVariance(new float[] { 860, 310, 102 });
+
+
+            //0, 0.3f, 1f, 1
+            float val = InOutCubic(2, 0.3f, 1, 1);
+
+
+
             CardFace[] cardValues = new CardFace[]
-            {
+              {
                 CardFace.Club_10,
                 CardFace.Heart_10,
                 CardFace.Club_10,
                 CardFace.Diamond_10,
-                CardFace.Club_4,
-                CardFace.Club_5,
-                CardFace.Diamond_7,
+                CardFace.Club_J,
+                CardFace.Club_Q,
+                CardFace.Club_K,
                 CardFace.Diamond_2,
                 CardFace.Diamond_2,
                 CardFace.Heart_9,
                 CardFace.Diamond_8,
                 CardFace.Heart_3,
-                CardFace.Diamond_9,
-            };
-
+                CardFace.Club_A,
+              };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
 
@@ -45,11 +53,43 @@ namespace CardRule
             CardFace[] outCards = new CardFace[13];
             SpecCardsType type = specCard.Check(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker }, outCards);
 
+
             //
             CardsTypeEvaluation.Instance.Evaluation(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker });
 
            
 
         }
+
+        static float SolveVariance(float[] nums)
+        {
+            float score = 0;
+            for (int i = 0; i < nums.Length; i++)
+                score += nums[i];
+
+            float avg = score / nums.Length;
+            float sub;
+            float var = 0;
+            for (int i = 0; i < nums.Length; i++)
+            {
+                sub = (nums[i] - avg) / avg;
+                var += sub * sub;
+            }
+
+            float variance = var / nums.Length;
+            variance = (float)Math.Sqrt(variance);
+            return variance;
+        }
+
+        static float InOutCubic(float t, float b, float c, float d)
+        {
+            t /= d / 2;
+
+            if (t < 1)
+                return c / 2 * (float)Math.Pow(t, 3) + b;
+
+            return c / 2 * ((float)Math.Pow(t - 2, 3) + 2) + b;
+        }
+
     }
 }

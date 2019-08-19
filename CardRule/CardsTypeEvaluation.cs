@@ -26,6 +26,12 @@ namespace CardRuleNS
 
     public class CardsTypeEvaluation
     {
+        /// <summary>
+        /// 分值水数权重，1:偏向牌型分值加权， 0：偏向水数加权
+        /// </summary>
+        float scoreAndShuiWeight = 0.9f;
+        float varianceLimit = 1.5f;
+
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
         {
@@ -67,11 +73,6 @@ namespace CardRuleNS
                 return 0;
             }
         }
-
-
-        float scoreWeight = 0.9f;
-        float varianceLimit = 2f;
-
 
         public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
         {
@@ -155,7 +156,7 @@ namespace CardRuleNS
                     evalInfo.slotCardFaceList[0].Add(cardFaces[n++]);
                 }
                 evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
-                evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0].Value.type, 0);
+                evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
 
 
                 //
@@ -168,7 +169,7 @@ namespace CardRuleNS
                     evalInfo.slotCardFaceList[1].Add(cardFaces[n++]);
                 }
                 evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
-                evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1].Value.type, 1);
+                evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
 
                 //
                 valueIdx = 0;
@@ -180,14 +181,16 @@ namespace CardRuleNS
                     evalInfo.slotCardFaceList[2].Add(cardFaces[n++]);
                 }
                 evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
-                evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2].Value.type, 2);
+                evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
 
                 //
                 evalInfo.totalScore = evalInfo.slotScore[0] + evalInfo.slotScore[1] + evalInfo.slotScore[2];
                 evalInfo.totalShuiScore = evalInfo.slotShuiScore[0] + evalInfo.slotShuiScore[1] + evalInfo.slotShuiScore[2];
 
-                //
-                evalInfo.eval = evalInfo.totalScore / 2200f * scoreWeight + evalInfo.totalShuiScore / 24f * (1 - evalInfo.totalShuiScore);
+                evalInfo.eval = 
+                    evalInfo.totalScore / 2200f * scoreAndShuiWeight +
+                    evalInfo.totalShuiScore / 24f * (1 - scoreAndShuiWeight);
+
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
 
                 float noramlVar = evalInfo.variance / varianceLimit;
@@ -385,24 +388,39 @@ namespace CardRuleNS
             return CalCardsScore(info, otherCards);
         }
 
-        /// <summary>
-        /// 获取牌型所在对应槽位的水数
-        /// </summary>
-        /// <param name="cardsType"></param>
-        /// <param name="slotIdx"></param>
-        /// <returns></returns>
-        public float GetCardsTypeShuiScore(CardsType cardsType, int slotIdx)
+        public float GetCardsTypeShuiScore(CardsTypeInfo? cardsTypeInfo, int slotIdx)
+        {
+            if(cardsTypeInfo == null)
+            {
+               return GetCardsTypeShuiScore(CardsType.Single, slotIdx);
+            }
+
+            return GetCardsTypeShuiScore(cardsTypeInfo.Value.type, slotIdx);
+        }
+
+
+            /// <summary>
+            /// 获取牌型所在对应槽位的水数
+            /// </summary>
+            /// <param name="cardsType"></param>
+            /// <param name="slotIdx"></param>
+            /// <returns></returns>
+            public float GetCardsTypeShuiScore(CardsType cardsType, int slotIdx)
         {
             switch (cardsType)
             {
                 case CardsType.Single:
                 case CardsType.DuiZi:
                 case CardsType.TwoDui:
-                case CardsType.SanTiao:
                 case CardsType.ShunZi:
                 case CardsType.TongHua:
                     return 1;
 
+                case CardsType.SanTiao:
+                    if (slotIdx == 2)
+                        return 3;
+                    return 1;
+ 
                 case CardsType.HuLu:
                     if (slotIdx == 0)
                         return 1;
