@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CardRuleNS
 {
@@ -30,8 +28,17 @@ namespace CardRuleNS
         /// 分值水数权重，1:偏向牌型分值加权， 0：偏向水数加权
         /// </summary>
         float scoreAndShuiWeight = 0.8f;
+
+        /// <summary>
+        /// 每道牌型偏离方差倍率的上限
+        /// </summary>
         float varianceLimit = 2f;
-        float varianceRange = 0.2f;
+
+        /// <summary>
+        /// 方差在InOutCubic曲线上的取值范围
+        /// 例:0~0.2
+        /// </summary>
+        float varianceCubicRange = 0.2f;
 
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
@@ -201,7 +208,7 @@ namespace CardRuleNS
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
 
                 float normalVar = evalInfo.variance / varianceLimit;
-                float v = 1 - InOutCubic(normalVar, 0f, varianceRange, 1);
+                float v = 1 - InOutCubic(normalVar, 0f, varianceCubicRange, 1);
                 evalInfo.variance_eval = v * evalInfo.eval;
 
                 //
