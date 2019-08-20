@@ -167,7 +167,7 @@ namespace CardRuleNS
                     evalDatas[slotDepth].Add(removeLaizi[i]);
 
 
-                //排除非最大牌型的可能性
+                //排除非最大牌型(针对补全赖子牌后的牌型歧义)
                 CardsTypeCreater cardCreater = new CardsTypeCreater();
                 cardCreater.CreateAllCardsTypeArray(evalDatas[slotDepth].ToArray());
                 CardsTypeInfo infox = cardCreater.GetMaxScoreCardsTypeInfo();

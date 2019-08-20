@@ -30,10 +30,10 @@ namespace CardRule
                 CardFace.Club_J,
                 CardFace.Club_Q,
                 CardFace.Club_K,
-                CardFace.Diamond_9,
-                CardFace.BlackJoker,
+                CardFace.Diamond_2,
+                CardFace.Diamond_10,
                 CardFace.Heart_9,
-                CardFace.Diamond_9,
+                CardFace.Diamond_8,
                 CardFace.Club_A,
                 CardFace.Heart_10,
               };
