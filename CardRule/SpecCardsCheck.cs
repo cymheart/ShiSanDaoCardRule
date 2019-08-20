@@ -9,6 +9,8 @@ namespace CardRuleNS
     /// </summary>
     public class SpecCardsCheck
     {
+        HashSet<SpecCardsType> checkSpeckCardSet = new HashSet<SpecCardsType>();
+
         struct SpecCardsInfo
         {
             public SpecCardsType specCardsType;
@@ -25,6 +27,41 @@ namespace CardRuleNS
                     return 1;
 
                 return 0;
+            }
+        }
+
+        public SpecCardsCheck()
+        {
+            ReSetCheckSpecCardTypesDefault();
+        }
+
+        public void SetCheckSpecCardTypes(SpecCardsType[] specCardsTypes)
+        {
+            checkSpeckCardSet.Clear();
+            for (int i = 0; i < specCardsTypes.Length; i++)
+                checkSpeckCardSet.Add(specCardsTypes[i]);
+        }
+
+        /// <summary>
+        /// 设置只检查这些特殊牌型: 6炸、7炸、8炸、至尊雷、一条龙、至尊一条龙
+        /// </summary>
+        public void PreSetCheckSpecCardTypes1()
+        {
+            SpecCardsType[] specCardsTypes = new SpecCardsType[]
+            {
+                 SpecCardsType.SixBomb, SpecCardsType.SevenBomb, SpecCardsType.EightBomb,
+                SpecCardsType.ZhiZunLei, SpecCardsType.YiTiaoLong, SpecCardsType.ZhiZunQinLong
+            };
+
+            SetCheckSpecCardTypes(specCardsTypes);
+        }
+
+        public void ReSetCheckSpecCardTypesDefault()
+        {
+            checkSpeckCardSet.Clear();
+            for (SpecCardsType i = SpecCardsType.Normal + 1; i < SpecCardsType.Count; i++)
+            {
+                checkSpeckCardSet.Add(i);
             }
         }
 
@@ -115,43 +152,53 @@ namespace CardRuleNS
         {
             SpecCardsType type = SpecCardsType.Normal;
 
-            if (IsZhiZunQinLong(cards, laiziCount, outFaceValues))
+            if (checkSpeckCardSet.Contains(SpecCardsType.ZhiZunQinLong) &&
+                IsZhiZunQinLong(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.ZhiZunQinLong;
             }
-            else if (IsYiTiaoLong(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.YiTiaoLong) && 
+                IsYiTiaoLong(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.YiTiaoLong;
             }
-            else if (IsZhiZunLei(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.ZhiZunLei) &&
+                IsZhiZunLei(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.ZhiZunLei;
             }
-            else if (IsEightBomb(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.EightBomb) &&
+                IsEightBomb(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.EightBomb;
             }
-            else if (IsSevenBomb(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.SevenBomb) &&
+                IsSevenBomb(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.SevenBomb;
             }
-            else if (IsSixBomb(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.SixBomb) &&
+                IsSixBomb(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.SixBomb;
             }
-            else if (IsSanShunZi(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.SanShunZi) &&
+                IsSanShunZi(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.SanShunZi;
             }
-            else if (IsSanTongHua(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.SanTongHua) &&
+                IsSanTongHua(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.SanTongHua;
             }
-            else if (IsSiTaoSan(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.SiTaoSan) &&
+                IsSiTaoSan(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.SiTaoSan;
             }
-            else if (IsLiuDuiBan(cards, laiziCount, outFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.LiuDuiBan) &&
+                IsLiuDuiBan(cards, laiziCount, outFaceValues))
             {
                 type = SpecCardsType.LiuDuiBan;
             }

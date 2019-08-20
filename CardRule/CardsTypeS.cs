@@ -177,6 +177,11 @@ namespace CardRuleNS
         /// 至尊一条龙
         /// </summary>
         ZhiZunQinLong,
+
+        /// <summary>
+        /// 数量
+        /// </summary>
+        Count
     }
 
     // <summary>
