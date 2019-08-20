@@ -189,6 +189,9 @@ namespace CardRuleNS
         /// <returns></returns>
         public CardFace[] RemoveLaizi(CardFace[] cardFaces, CardFace[] laiziCardFaces, ref int laiziCount)
         {
+            if (laiziCardFaces == null || laiziCardFaces.Length == 0)
+                return cardFaces;
+
             List<CardFace> newCardFaceList = new List<CardFace>();
             laiziCount = 0;
 

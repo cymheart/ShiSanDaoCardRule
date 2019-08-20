@@ -94,7 +94,7 @@ namespace CardRuleNS
 
             //
             CreateSingle5Dict();
-        //    CreateSingle3Dict();
+            //CreateSingle3Dict();
 
             //
             SortDictCardsTypeInfo();
@@ -528,6 +528,9 @@ namespace CardRuleNS
                     }
                 }
             }
+
+
+
         }
 
 
@@ -797,6 +800,7 @@ namespace CardRuleNS
             DuiziList.Clear();
             TonghuaList.Clear();
             Single5List.Clear();
+            Single3List.Clear();
         }
     }
 }

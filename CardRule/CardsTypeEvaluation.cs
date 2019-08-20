@@ -56,6 +56,8 @@ namespace CardRuleNS
         /// </summary>
         float maxShui = 33f;
 
+        CardFace[] newCardFaces = new CardFace[13];
+
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
         {
@@ -108,6 +110,12 @@ namespace CardRuleNS
         /// <returns></returns>
         public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
         {
+            //排序
+            int laiziCount = 0;
+            CardInfo[] cardInfos = CardsTransform.Instance.CreateFormatCards(cardFaces, null, ref laiziCount);
+            cardFaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+
+            //
             List<SlotCardsEvalInfo> slotCardsEvalGroup = new List<SlotCardsEvalInfo>();
 
             List<CardFace>[] evalDatas = new List<CardFace>[3]
@@ -188,12 +196,15 @@ namespace CardRuleNS
                 int valueIdx = 0;
                 int[] value = new int[5];
 
-                //
+                //尾道
                 SlotCardsEvalInfo evalInfo = new SlotCardsEvalInfo();
                 evalInfo.slotCardFaceList[0].AddRange(evalDatas[0]);
                 for (int i = 0; i < 5 - evalDatas[0].Count; i++)
                 {
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
+                    if (value[valueIdx - 1] == 1)
+                        value[valueIdx - 1] = 14;
+
                     evalInfo.slotCardFaceList[0].Add(cardFaces[n++]);
                 }
 
@@ -204,15 +215,17 @@ namespace CardRuleNS
 
                 evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
                 evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
-
-             
-                //
+            
+                //中道
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
                 evalInfo.slotCardFaceList[1].AddRange(evalDatas[1]);
                 for (int i = 0; i < 5 - evalDatas[1].Count; i++)
                 {
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
+                    if (value[valueIdx - 1] == 1)
+                        value[valueIdx - 1] = 14;
+
                     evalInfo.slotCardFaceList[1].Add(cardFaces[n++]);
                 }
 
@@ -224,14 +237,40 @@ namespace CardRuleNS
                 evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
 
-                //
+                //头道
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
                 evalInfo.slotCardFaceList[2].AddRange(evalDatas[2]);
-                for (int i = 0; i < 3 - evalDatas[2].Count; i++)
+                CardFace cf;
+
+                if (3 - evalDatas[2].Count > 0 &&
+                    CardsTransform.Instance.GetValue(cardFaces[n]) == 1)
                 {
-                    value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
-                    evalInfo.slotCardFaceList[2].Add(cardFaces[n++]);
+                    int m = newCardFaces.Length - 1;
+                    newCardFaces[m--] = cardFaces[n];
+                    for (int i = cardFaces.Length - 1; i > n; i--)
+                    {
+                        newCardFaces[m--] = cardFaces[i];
+                    }
+
+                    for (int i = 0; i < 3 - evalDatas[2].Count; i++)
+                    {
+                        cf = newCardFaces[newCardFaces.Length - i - 1];
+                        value[valueIdx++] = CardsTransform.Instance.GetValue(cf);
+                        if (value[valueIdx - 1] == 1)
+                            value[valueIdx - 1] = 14;
+
+                        evalInfo.slotCardFaceList[2].Add(cf);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 3 - evalDatas[2].Count; i++)
+                    {
+                        cf = cardFaces[cardFaces.Length - i - 1];
+                        value[valueIdx++] = CardsTransform.Instance.GetValue(cf);
+                        evalInfo.slotCardFaceList[2].Add(cf);
+                    }
                 }
 
                 if (cardsTypeInfos[2] == null)
@@ -251,8 +290,9 @@ namespace CardRuleNS
                 }
 
                 evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
+
      
-                //
+                //综合估值
                 evalInfo.totalScore = evalInfo.slotScore[0] + evalInfo.slotScore[1] + evalInfo.slotScore[2];
                 evalInfo.totalShuiScore = evalInfo.slotShuiScore[0] + evalInfo.slotShuiScore[1] + evalInfo.slotShuiScore[2];
 
@@ -290,7 +330,6 @@ namespace CardRuleNS
                 List<CardsTypeInfo> tmpInfo = new List<CardsTypeInfo>();
                 tmpInfo.AddRange(nextSlotCreater.SantiaoList);
                 tmpInfo.AddRange(nextSlotCreater.DuiziList);
-                tmpInfo.AddRange(nextSlotCreater.Single3List);
                 info = tmpInfo.ToArray();
 
                 if (info.Length == 0)
@@ -388,7 +427,6 @@ namespace CardRuleNS
 
             return 0;
         }
-
 
         /// <summary>
         /// 计算牌的分值
