@@ -11,6 +11,8 @@ namespace CardRuleNS
             new List<CardFace>(),new List<CardFace>(),new List<CardFace>()
         };
 
+        public CardsType[] slotCardsType = new CardsType[3];
+
         public float[] slotScore = new float[3];
         public float totalScore;
 
@@ -181,8 +183,7 @@ namespace CardRuleNS
                 int mustSingleCardCount = 5 - evalDatas[0].Count + 5 - evalDatas[1].Count + 3 - evalDatas[2].Count;
                 if (cardFaces.Length < mustSingleCardCount)
                     return;
-
-                
+             
                 int n = 0;
                 int valueIdx = 0;
                 int[] value = new int[5];
@@ -195,11 +196,16 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[0].Add(cardFaces[n++]);
                 }
+
+                if (cardsTypeInfos[0] == null)
+                    evalInfo.slotCardsType[0] = CardsType.Single;
+                else
+                    evalInfo.slotCardsType[0] = cardsTypeInfos[0].Value.type;
+
                 evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
                 evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
 
              
-
                 //
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
@@ -209,6 +215,12 @@ namespace CardRuleNS
                     value[valueIdx++] = CardsTransform.Instance.GetValue(cardFaces[n]);
                     evalInfo.slotCardFaceList[1].Add(cardFaces[n++]);
                 }
+
+                if (cardsTypeInfos[1] == null)
+                    evalInfo.slotCardsType[1] = CardsType.Single;
+                else
+                    evalInfo.slotCardsType[1] = cardsTypeInfos[1].Value.type;
+
                 evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
 
@@ -222,8 +234,12 @@ namespace CardRuleNS
                     evalInfo.slotCardFaceList[2].Add(cardFaces[n++]);
                 }
 
-                evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
+                if (cardsTypeInfos[2] == null)
+                    evalInfo.slotCardsType[2] = CardsType.Single;
+                else
+                    evalInfo.slotCardsType[2] = cardsTypeInfos[2].Value.type;
 
+                evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
 
                 if (evalInfo.slotScore[1] > evalInfo.slotScore[0] || 
                     evalInfo.slotScore[2] > evalInfo.slotScore[1])
