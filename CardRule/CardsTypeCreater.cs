@@ -55,9 +55,14 @@ namespace CardRuleNS
         public List<CardsTypeInfo> TonghuaList = new List<CardsTypeInfo>();
 
         /// <summary>
-        /// 单牌组
+        /// 5张单牌组
         /// </summary>
         public List<CardsTypeInfo> Single5List = new List<CardsTypeInfo>();
+
+        /// <summary>
+        /// 3张单牌组
+        /// </summary>
+        public List<CardsTypeInfo> Single3List = new List<CardsTypeInfo>();
 
         int laiziCount;
         CardInfo[] cards;
@@ -89,6 +94,7 @@ namespace CardRuleNS
 
             //
             CreateSingle5Dict();
+        //    CreateSingle3Dict();
 
             //
             SortDictCardsTypeInfo();
@@ -473,6 +479,57 @@ namespace CardRuleNS
                 }
             }
         }
+
+
+        void CreateSingle3Dict()
+        {
+            float _score;
+            CardKey cardkey;
+            HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>();
+            CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cards);
+
+            for (int i = 0; i < cards.Length - 2; i++)
+            {
+                for (int j = i + 1; j < cards.Length - 1; j++)
+                {
+                    if (cards[j].value == cards[i].value)
+                        continue;
+
+                    for (int k = j + 1; k < cards.Length; k++)
+                    {
+                        if (cards[k].value == cards[j].value)
+                            continue;
+
+                        cardkey = new CardKey();
+                        cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                        cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[j].value, cards[j].suit);
+                        cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[k].value, cards[k].suit);
+
+                        if (CardsTypeDict.Instance.santiaoKeyDict.ContainsKey(cardkey))
+                            continue;
+
+                        if (cardkeyHashSet.Contains(cardkey))
+                            continue;
+
+                        if (cards[i].value == 1) _score = 14;
+                        else _score = cards[k].value;
+
+                        CardsTypeInfo info = new CardsTypeInfo()
+                        {
+                            type = CardsType.Single,
+                            cardFaceValues = new CardFace[] { cardfaces[i], cardfaces[j], cardfaces[k]},
+                            laiziCount = 0,
+                            score = _score
+                        };
+
+                        cardkeyHashSet.Add(cardkey);
+                        Single3List.Add(info);
+
+                    }
+                }
+            }
+        }
+
 
         HashSet<CardKey> SplitCardsGroup5(CardInfo[] cards)
         {

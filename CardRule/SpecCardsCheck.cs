@@ -90,15 +90,15 @@ namespace CardRuleNS
 
             List<CardFace[]> cardFacesList = new List<CardFace[]>();
 
-            for (int i = 0; i < cardFaces.Length - 3; i++)
+            for (int i = 0; i < cardFaces.Length - 2; i++)
             {
-                for (int j = 0; j < cardFaces.Length - 2; j++)
+                for (int j = i + 1; j < cardFaces.Length - 1; j++)
                 {
-                    for (int k = 0; k < cardFaces.Length; k++)
+                    for (int k = j + 1; k < cardFaces.Length; k++)
                     {
                         CardFace[] tmpCardFaces = new CardFace[3]
                         {
-                            cardFaces[i],  cardFaces[j], cardFaces[k]
+                            cardFaces[i], cardFaces[j], cardFaces[k]
                         };
                             
                         cardFacesList.Add(tmpCardFaces);

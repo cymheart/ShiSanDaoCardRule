@@ -290,6 +290,7 @@ namespace CardRuleNS
                 List<CardsTypeInfo> tmpInfo = new List<CardsTypeInfo>();
                 tmpInfo.AddRange(nextSlotCreater.SantiaoList);
                 tmpInfo.AddRange(nextSlotCreater.DuiziList);
+                tmpInfo.AddRange(nextSlotCreater.Single3List);
                 info = tmpInfo.ToArray();
 
                 if (info.Length == 0)
