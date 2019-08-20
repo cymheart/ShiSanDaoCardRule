@@ -413,7 +413,7 @@ namespace CardRuleNS
                         max = otherCardValue[i];
                 }
 
-                score += max * 0.0001f;
+                score += max * 0.001f;
             }
 
             return score;
