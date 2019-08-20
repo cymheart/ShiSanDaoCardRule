@@ -5,19 +5,28 @@ using System.Text;
 
 namespace CardRuleNS
 {
+
     /// <summary>
     /// 用于把手牌数据打包成紧凑的cardkey类型
     /// </summary>
     public struct CardKey
     {
-        public uint bit_103_96;
+        public uint bit_207_192;
+        public uint bit_191_160;
+        public uint bit_159_128;
+        public uint bit_127_96;
         public uint bit_95_64;
         public uint bit_63_32;
         public uint bit_31_0;
 
-        public CardKey(uint bit_103_96, uint bit_95_64, uint bit_63_32, uint bit_31_0)
+        public CardKey(
+            uint bit_207_192, uint bit_191_160, uint bit_159_128,
+            uint bit_127_96, uint bit_95_64, uint bit_63_32, uint bit_31_0)
         {
-            this.bit_103_96 = bit_103_96;
+            this.bit_207_192 = bit_207_192;
+            this.bit_191_160 = bit_191_160;
+            this.bit_159_128 = bit_159_128;
+            this.bit_127_96 = bit_127_96;
             this.bit_95_64 = bit_95_64;
             this.bit_63_32 = bit_63_32;
             this.bit_31_0 = bit_31_0;
@@ -30,7 +39,10 @@ namespace CardRuleNS
                 return x.bit_31_0 == y.bit_31_0 &&
                     x.bit_63_32 == y.bit_63_32 &&
                      x.bit_95_64 == y.bit_95_64 &&
-                     x.bit_103_96 == y.bit_103_96;
+                     x.bit_127_96 == y.bit_127_96 &&
+                    x.bit_159_128 == y.bit_159_128 &&
+                    x.bit_191_160 == y.bit_191_160 &&
+                     x.bit_207_192 == y.bit_207_192;
             }
 
             public int GetHashCode(CardKey obj)
@@ -38,7 +50,10 @@ namespace CardRuleNS
                 int hash = (int)obj.bit_31_0;
                 hash = hash * 31 + (int)obj.bit_63_32;
                 hash = hash * 31 + (int)obj.bit_95_64;
-                hash = hash * 31 + (int)obj.bit_103_96;
+                hash = hash * 31 + (int)obj.bit_127_96;
+                hash = hash * 31 + (int)obj.bit_159_128;
+                hash = hash * 31 + (int)obj.bit_191_160;
+                hash = hash * 31 + (int)obj.bit_207_192;
                 return hash;
             }
         }
@@ -84,7 +99,7 @@ namespace CardRuleNS
         public Dictionary<CardKey, CardsTypeCombInfo> single5KeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
       
         //
-        bool isCheckSuitCount = true;
+        bool isCheckSuitCount = false;
         int limitSameSuitCount = 2;
 
         CardsTypeDict()
@@ -132,8 +147,8 @@ namespace CardRuleNS
         /// <returns></returns>
         public CardKey AppendCardToCardKey(CardKey cardkey, int cardValue, int cardSuit)
         {
-            int n = (cardValue - 1) * 8;
-            int m = cardSuit * 2;
+            int n = (cardValue - 1) * 16;
+            int m = cardSuit * 4;
 
             if (n <= 31)
             {
@@ -149,45 +164,48 @@ namespace CardRuleNS
                 n -= 64;
                 cardkey.bit_95_64 = FlagKeyBit(cardkey.bit_95_64, n, m);
             }
-            else
+            else if (n <= 127)
             {
                 n -= 96;
-                cardkey.bit_103_96 = FlagKeyBit(cardkey.bit_103_96, n, m);
+                cardkey.bit_127_96 = FlagKeyBit(cardkey.bit_127_96, n, m);
+            }
+            else if (n <= 159)
+            {
+                n -= 128;
+                cardkey.bit_159_128 = FlagKeyBit(cardkey.bit_159_128, n, m);
+            }
+            else if (n <= 191)
+            {
+                n -= 160;
+                cardkey.bit_191_160 = FlagKeyBit(cardkey.bit_191_160, n, m);
+            }
+            else if (n <= 207)
+            {
+                n -= 192;
+                cardkey.bit_207_192 = FlagKeyBit(cardkey.bit_207_192, n, m);
             }
 
             return cardkey;
         }
 
-        /// <summary>
-        /// 检查cardkey是否包含checkCardKey的牌数据
-        /// </summary>
-        /// <param name="cardkey"></param>
-        /// <param name="checkCardKey"></param>
-        /// <returns></returns>
-        public bool IsContains(CardKey cardkey, CardKey checkCardKey)
+        uint FlagKeyBit(uint key, int n, int m)
         {
-            uint a = cardkey.bit_31_0 & checkCardKey.bit_31_0;
-            uint b = cardkey.bit_63_32 & checkCardKey.bit_63_32;
-            uint c = cardkey.bit_95_64 & checkCardKey.bit_95_64;
-            uint d = cardkey.bit_103_96 & checkCardKey.bit_103_96;
+            uint bitflag = (uint)(0xF << n);
+            bitflag <<= m;
+            uint result = key & bitflag;
+            result = (result >> m) >> n;
+            result++;
 
-            if (a == checkCardKey.bit_31_0 &&
-                b == checkCardKey.bit_63_32 &&
-                c == checkCardKey.bit_95_64 &&
-                d == checkCardKey.bit_103_96)
-            {
-                return true;
-            }
+            uint zeroMask = 0xFFFFFFFF ^ bitflag;
+            key &= zeroMask;
+            key |= ((result << n) << m);
 
-            return false;
+            return key;
         }
 
         public bool IsEqual(CardKey cardkeyA, CardKey cardkeyB)
         {
-            if (cardkeyA.bit_31_0 == cardkeyB.bit_31_0 &&
-                cardkeyA.bit_63_32 == cardkeyB.bit_63_32 &&
-                cardkeyA.bit_95_64 == cardkeyB.bit_95_64 &&
-                cardkeyA.bit_103_96 == cardkeyB.bit_103_96)
+            if(cardkeyA.Equals(cardkeyB))
             {
                 return true;
             }
@@ -223,10 +241,41 @@ namespace CardRuleNS
         {
             List<CardInfo> cardInfoList = new List<CardInfo>();
             CreateCardInfoToList((int)cardkey.bit_31_0, 0, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_63_32, 4, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_95_64, 8, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_103_96, 12, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_63_32, 2, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_95_64, 4, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_127_96, 6, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_159_128, 8, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_191_160, 10, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_207_192, 12, cardInfoList);
             return cardInfoList.ToArray();
+        }
+
+
+        void CreateCardInfoToList(int key, int baseValue, List<CardInfo> cardInfoList)
+        {
+            int count;
+            int _value, _suit;
+            CardInfo cardinfo;
+
+            for (int i = 0; i <= 31; i += 4)
+            {
+                count = key & (0xF << i);
+                count >>= i;
+
+                _value = baseValue + i / 16 + 1;
+                _suit = i % 16 / 4;
+
+                for (int j = 0; j < count; j++)
+                {
+                    cardinfo = new CardInfo()
+                    {
+                        value = _value,
+                        suit = _suit
+                    };
+
+                    cardInfoList.Add(cardinfo);
+                }
+            }
         }
 
         void CreateShunziDict()
@@ -1274,53 +1323,6 @@ namespace CardRuleNS
 
         
             AddToDict(single5KeyDict, cardkey, 0, score);
-        }
-
-
-
-        uint FlagKeyBit(uint key, int n, int m)
-        {
-            uint bitflag = (uint)(1 << n);
-            bitflag <<= m;
-            uint result = key & bitflag;
-
-            if (result == 0)
-            {
-                key |= bitflag;
-            }
-            else
-            {
-                bitflag <<= 1;
-                key |= bitflag;
-            }
-
-            return key;
-        }
-  
-        void CreateCardInfoToList(int key, int baseValue, List<CardInfo> cardInfoList)
-        {
-            int mask = 0x1;
-            int flag;
-            int _value, _suit;
-            CardInfo cardinfo;
-
-            for (int i = 0; i <= 31; i++)
-            {
-                flag = key & (mask << i);
-                if (flag == 0)
-                    continue;
-
-                _value = baseValue + i / 8 + 1;
-                _suit = i % 8 / 2;
-
-                cardinfo = new CardInfo()
-                {
-                    value = _value,
-                    suit = _suit
-                };
-
-                cardInfoList.Add(cardinfo);
-            }
         }
     }
 
