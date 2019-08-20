@@ -398,6 +398,34 @@ namespace CardRuleNS
         /// <returns></returns>
         public float CalCardsScore(CardsTypeInfo? cardsTypeInfo, int[] otherCardValue)
         {
+            if(cardsTypeInfo == null)
+            {
+                if (otherCardValue != null && otherCardValue.Length > 0)
+                {
+                    int max = otherCardValue[0];
+                    for (int i = 1; i < otherCardValue.Length; i++)
+                    {
+                        if (otherCardValue[i] > max)
+                            max = otherCardValue[i];
+                    }
+                    return max;
+                }
+            }
+            else if(cardsTypeInfo != null && cardsTypeInfo.Value.type == CardsType.Single)
+            {
+                float max = cardsTypeInfo.Value.score;
+                if (otherCardValue != null && otherCardValue.Length > 0)
+                {
+                    for (int i = 1; i < otherCardValue.Length; i++)
+                    {
+                        if (otherCardValue[i] > max)
+                            max = otherCardValue[i];
+                    }
+                }
+
+                return max;
+            }
+
             float score = 0;
             if (cardsTypeInfo != null)
             {
