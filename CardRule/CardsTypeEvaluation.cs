@@ -17,13 +17,13 @@ namespace CardRuleNS
         public float[] slotShuiScore = new float[3];
         public float totalShuiScore;
 
-        public float eval;
+        public float scoreAndShuiEval;
         public float variance;
 
         /// <summary>
-        /// 综合比较值
+        /// 综合估值
         /// </summary>
-        public float variance_eval;
+        public float compEval;
     }
 
     public class CardsTypeEvaluation
@@ -87,15 +87,23 @@ namespace CardRuleNS
         {
             public int Compare(SlotCardsEvalInfo info1, SlotCardsEvalInfo info2)
             {
-                if (info1.variance_eval > info2.variance_eval)
+                if (info1.compEval > info2.compEval)
                     return -1;
-                else if (info1.variance_eval < info2.variance_eval)
+                else if (info1.compEval < info2.compEval)
                     return 1;
 
                 return 0;
             }
         }
 
+
+
+        /// <summary>
+        /// 手牌估值
+        /// </summary>
+        /// <param name="cardFaces"></param>
+        /// <param name="laizi"></param>
+        /// <returns></returns>
         public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
         {
             List<SlotCardsEvalInfo> slotCardsEvalGroup = new List<SlotCardsEvalInfo>();
@@ -232,15 +240,15 @@ namespace CardRuleNS
                 evalInfo.totalScore = evalInfo.slotScore[0] + evalInfo.slotScore[1] + evalInfo.slotScore[2];
                 evalInfo.totalShuiScore = evalInfo.slotShuiScore[0] + evalInfo.slotShuiScore[1] + evalInfo.slotShuiScore[2];
 
-                evalInfo.eval = 
+                evalInfo.scoreAndShuiEval = 
                     evalInfo.totalScore / maxScore * scoreAndShuiWeight +
                     evalInfo.totalShuiScore / maxShui * (1 - scoreAndShuiWeight);
 
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
 
                 float normalVar = evalInfo.variance / varianceLimit;
-                float v = 1 - InOutCubic(normalVar, 0f, varianceCubicRange, 1);
-                evalInfo.variance_eval = v * evalInfo.eval;
+                float weight = 1 - InOutCubic(normalVar, 0f, varianceCubicRange, 1);
+                evalInfo.compEval = weight * evalInfo.scoreAndShuiEval;
 
                 //
                 slotCardsEvalGroup.Add(evalInfo);
