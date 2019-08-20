@@ -51,7 +51,8 @@ namespace CardRuleNS
         {
             List<CardFace> newCardFaces = new List<CardFace>();
             int n = 0;
-            for(int i=0; i<cardFaces.Length; i++)
+            int i = 0;
+            for (; i<cardFaces.Length; i++)
             {
                 if (FindCardFace(laizi, cardFaces[i]) != -1)
                 {
@@ -60,13 +61,19 @@ namespace CardRuleNS
 
                     n++;
 
-                    if (n == removeCount)
+                    if (n == removeCount){
+                        i++;
                         break;
+                    }
+
                     continue;
                 }
 
                 newCardFaces.Add(cardFaces[i]);
             }
+
+            for(; i < cardFaces.Length; i++)
+                newCardFaces.Add(cardFaces[i]);
 
             return newCardFaces.ToArray();
         }

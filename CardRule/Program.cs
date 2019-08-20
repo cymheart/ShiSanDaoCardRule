@@ -26,16 +26,16 @@ namespace CardRule
                 CardFace.Club_10,
                 CardFace.Heart_10,
                 CardFace.Club_10,
-                CardFace.Diamond_10,
+                CardFace.RedJoker,
                 CardFace.Club_J,
                 CardFace.Club_Q,
                 CardFace.Club_K,
-                CardFace.Diamond_2,
-                CardFace.Diamond_2,
+                CardFace.RedJoker,
+                CardFace.BlackJoker,
                 CardFace.Heart_9,
-                CardFace.Diamond_8,
-                CardFace.Heart_3,
+                CardFace.Diamond_9,
                 CardFace.Club_A,
+                CardFace.Heart_10,
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;

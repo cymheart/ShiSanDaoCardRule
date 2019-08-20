@@ -27,7 +27,7 @@ namespace CardRuleNS
         /// <summary>
         /// 分值水数权重，1:偏向牌型分值加权， 0：偏向水数加权
         /// </summary>
-        float scoreAndShuiWeight = 0.8f;
+        float scoreAndShuiWeight = 0.9f;
 
         /// <summary>
         /// 每道牌型偏离方差倍率的上限
@@ -36,9 +36,9 @@ namespace CardRuleNS
 
         /// <summary>
         /// 方差在InOutCubic曲线上的取值范围
-        /// 例:0~0.2
+        /// 例:0~0.3
         /// </summary>
-        float varianceCubicRange = 0.2f;
+        float varianceCubicRange = 0.3f;
 
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
@@ -151,6 +151,7 @@ namespace CardRuleNS
                 if (cardFaces.Length < mustSingleCardCount)
                     return;
 
+                
                 int n = 0;
                 int valueIdx = 0;
                 int[] value = new int[5];
@@ -166,6 +167,7 @@ namespace CardRuleNS
                 evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
                 evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
 
+             
 
                 //
                 valueIdx = 0;
@@ -190,19 +192,26 @@ namespace CardRuleNS
                 }
 
                 evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
+
+
+                if (evalInfo.slotScore[1] > evalInfo.slotScore[0] || 
+                    evalInfo.slotScore[2] > evalInfo.slotScore[1])
+                    return;
+
                 if (cardsTypeInfos[2] != null && cardsTypeInfos[2].Value.type == CardsType.SanTiao)
                 {
                     evalInfo.slotScore[2] += 600;
                 }
 
                 evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
+     
 
                 //
                 evalInfo.totalScore = evalInfo.slotScore[0] + evalInfo.slotScore[1] + evalInfo.slotScore[2];
                 evalInfo.totalShuiScore = evalInfo.slotShuiScore[0] + evalInfo.slotShuiScore[1] + evalInfo.slotShuiScore[2];
 
                 evalInfo.eval = 
-                    evalInfo.totalScore / 2200f * scoreAndShuiWeight +
+                    evalInfo.totalScore / 2700f * scoreAndShuiWeight +
                     evalInfo.totalShuiScore / 24f * (1 - scoreAndShuiWeight);
 
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
@@ -276,6 +285,7 @@ namespace CardRuleNS
             }
         }
 
+
         float SolveVariance(float[] nums)
         {
             float score = 0;
@@ -297,7 +307,7 @@ namespace CardRuleNS
         }
 
 
-        //1f, 0.3f, 0.7f, 1
+        //
         float InOutCubic(float t, float b, float c, float d)
         {
             if (t > 1) { t = 1; }
