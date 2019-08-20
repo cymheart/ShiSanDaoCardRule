@@ -36,6 +36,9 @@ namespace CardRule
                 CardFace.RedJoker,
                 CardFace.RedJoker,
                 CardFace.RedJoker,
+                CardFace.Spade_10,
+                CardFace.Spade_J,
+                CardFace.Heart_7
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;

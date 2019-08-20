@@ -84,15 +84,15 @@ namespace CardRuleNS
                 int laiziCount = 0;
                 CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(newCardFaces, laizi, ref laiziCount);
 
-                outFaceValues = new CardFace[13];
-                _specCardsType = IsSpecCards(cards, laiziCount, outFaceValues);
+                CardFace[] newOutFaceValues = new CardFace[13];
+                _specCardsType = IsSpecCards(cards, laiziCount, newOutFaceValues);
                 if (_specCardsType == SpecCardsType.Normal)
                     continue;
 
                 SpecCardsInfo info = new SpecCardsInfo
                 {
                     specCardsType = _specCardsType,
-                    faceValues = outFaceValues
+                    faceValues = newOutFaceValues
                 };
 
                 specCardsInfoList.Add(info);
@@ -126,6 +126,8 @@ namespace CardRuleNS
                 return null;
 
             List<CardFace[]> cardFacesList = new List<CardFace[]>();
+            CardKey cardkey = new CardKey();
+            HashSet<CardKey> cardkeySet = new HashSet<CardKey>();
 
             for (int i = 0; i < cardFaces.Length - 2; i++)
             {
@@ -137,8 +139,19 @@ namespace CardRuleNS
                         {
                             cardFaces[i], cardFaces[j], cardFaces[k]
                         };
-                            
-                        cardFacesList.Add(tmpCardFaces);
+
+                        for (int m = 0; m < tmpCardFaces.Length; m++)
+                        {
+                            CardInfo card = CardsTransform.Instance.CreateCardInfo(tmpCardFaces[m]);
+                            cardkey = new CardKey();
+                            cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, card.value, card.suit);
+                        }
+
+                        if(!cardkeySet.Contains(cardkey))
+                        {
+                            cardFacesList.Add(tmpCardFaces);
+                            cardkeySet.Add(cardkey);
+                        }
                     }
                 }
             }
@@ -240,7 +253,7 @@ namespace CardRuleNS
             CardInfo[] cards = formatCards;
             int n = 0;
             int idx;
-            for (int i = 2; i < 14; i++)
+            for (int i = 2; i <= 14; i++)
             {
                 if (i == 14)
                     i = 1;
@@ -258,6 +271,9 @@ namespace CardRuleNS
                 {
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards[idx].value, cards[idx].suit);
                 }
+
+                if (i == 1)
+                    break;
             }
 
             return true;
