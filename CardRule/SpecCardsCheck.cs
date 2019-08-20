@@ -9,16 +9,107 @@ namespace CardRuleNS
     /// </summary>
     public class SpecCardsCheck
     {
+        struct SpecCardsInfo
+        {
+            public SpecCardsType specCardsType;
+            public CardFace[] faceValues;
+        }
+
+        private class SpecCardsComparer : IComparer<SpecCardsInfo>
+        {
+            public int Compare(SpecCardsInfo info1, SpecCardsInfo info2)
+            {
+                if (info1.specCardsType > info2.specCardsType)
+                    return -1;
+                else if (info1.specCardsType < info2.specCardsType)
+                    return 1;
+
+                return 0;
+            }
+        }
+
         /// <summary>
         /// 检查是否为特殊牌型
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
         public SpecCardsType Check(CardFace[] cardFaces, CardFace[] laizi, CardFace[] outFaceValues)
         {
+            if (cardFaces.Length == 13)
+                return Check13Count(cardFaces, laizi, outFaceValues);
+
+            List<CardFace[]> removeCardFacesList = CreateRemoveOut13CountCards(cardFaces);
+            SpecCardsType _specCardsType;
+            List<SpecCardsInfo> specCardsInfoList = new List<SpecCardsInfo>();
+
+            for (int i = 0; i < removeCardFacesList.Count; i++)
+            {
+                CardFace[] newCardFaces = CardsTransform.Instance.CreateDelFaceValues(cardFaces, removeCardFacesList[i]);
+                int laiziCount = 0;
+                CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(newCardFaces, laizi, ref laiziCount);
+
+                outFaceValues = new CardFace[13];
+                _specCardsType = IsSpecCards(cards, laiziCount, outFaceValues);
+                if (_specCardsType == SpecCardsType.Normal)
+                    continue;
+
+                SpecCardsInfo info = new SpecCardsInfo
+                {
+                    specCardsType = _specCardsType,
+                    faceValues = outFaceValues
+                };
+
+                specCardsInfoList.Add(info);
+            }
+
+            if(specCardsInfoList.Count > 0)
+            {
+                specCardsInfoList.Sort(new SpecCardsComparer());
+
+                for (int i = 0; i < outFaceValues.Length; i++)
+                    outFaceValues[i] = specCardsInfoList[0].faceValues[i];
+
+                return specCardsInfoList[0].specCardsType;
+            }
+
+
+            return SpecCardsType.Normal;
+
+        }
+
+        SpecCardsType Check13Count(CardFace[] cardFaces, CardFace[] laizi, CardFace[] outFaceValues)
+        {
             int laiziCount = 0;
             CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
             return IsSpecCards(cards, laiziCount, outFaceValues);
         }
+
+        List<CardFace[]> CreateRemoveOut13CountCards(CardFace[] cardFaces)
+        {
+            if (cardFaces.Length != 16)
+                return null;
+
+            List<CardFace[]> cardFacesList = new List<CardFace[]>();
+
+            for (int i = 0; i < cardFaces.Length - 3; i++)
+            {
+                for (int j = 0; j < cardFaces.Length - 2; j++)
+                {
+                    for (int k = 0; k < cardFaces.Length; k++)
+                    {
+                        CardFace[] tmpCardFaces = new CardFace[3]
+                        {
+                            cardFaces[i],  cardFaces[j], cardFaces[k]
+                        };
+                            
+                        cardFacesList.Add(tmpCardFaces);
+                    }
+                }
+            }
+
+            return cardFacesList;
+
+        }
+
 
         SpecCardsType IsSpecCards(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues)
         {

@@ -78,6 +78,16 @@ namespace CardRuleNS
             return newCardFaces.ToArray();
         }
 
+        public CardFace[] CreateDelFaceValues(CardFace[] cardFaces, CardFace[] removeCardFaceValues)
+        {
+            if (removeCardFaceValues == null || removeCardFaceValues.Length == 0)
+                return cardFaces;
+
+            CardInfo[] cards = TransToCardInfo(cardFaces);
+            CardInfo[] cardinfo = TransToCardInfo(removeCardFaceValues);
+            CardInfo[] newCardInfos = CreateRemoveCardInfos(cards, cardinfo);
+            return CreateCardFaces(newCardInfos);
+        }
 
         public CardInfo[] CreateRemoveFaceValues(CardFace[] cardFaces, CardFace[] removeCardFaceValues)
         {

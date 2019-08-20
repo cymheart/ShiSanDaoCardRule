@@ -129,24 +129,14 @@ namespace CardRuleNS
         Normal = 0,
 
         /// <summary>
-        /// 至尊一条龙
-        /// </summary>
-        ZhiZunQinLong,
-
-        /// <summary>
-        /// 一条龙
-        /// </summary>
-        YiTiaoLong,
-
-        /// <summary>
         /// 六对半
         /// </summary>
         LiuDuiBan,
 
         /// <summary>
-        /// 三顺子
+        /// 四套三条
         /// </summary>
-        SanShunZi,
+        SiTaoSan,
 
         /// <summary>
         /// 三同花
@@ -154,19 +144,9 @@ namespace CardRuleNS
         SanTongHua,
 
         /// <summary>
-        /// 至尊雷
+        /// 三顺子
         /// </summary>
-        ZhiZunLei,
-      
-        /// <summary>
-        /// 八炸
-        /// </summary>
-        EightBomb,
-
-        /// <summary>
-        /// 七炸
-        /// </summary>
-        SevenBomb,
+        SanShunZi,
 
         /// <summary>
         /// 六炸
@@ -174,9 +154,29 @@ namespace CardRuleNS
         SixBomb,
 
         /// <summary>
-        /// 四套三条
+        /// 七炸
         /// </summary>
-        SiTaoSan,
+        SevenBomb,
+
+        /// <summary>
+        /// 八炸
+        /// </summary>
+        EightBomb,
+
+        /// <summary>
+        /// 至尊雷
+        /// </summary>
+        ZhiZunLei,
+
+        /// <summary>
+        /// 一条龙
+        /// </summary>
+        YiTiaoLong,
+
+        /// <summary>
+        /// 至尊一条龙
+        /// </summary>
+        ZhiZunQinLong,
     }
 
     // <summary>
