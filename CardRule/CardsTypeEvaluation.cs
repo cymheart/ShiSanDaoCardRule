@@ -19,6 +19,10 @@ namespace CardRuleNS
 
         public float eval;
         public float variance;
+
+        /// <summary>
+        /// 综合比较值
+        /// </summary>
         public float variance_eval;
     }
 
@@ -39,6 +43,16 @@ namespace CardRuleNS
         /// 例:0~0.3
         /// </summary>
         float varianceCubicRange = 0.3f;
+
+        /// <summary>
+        /// 最大分数
+        /// </summary>
+        float maxScore = 2750f;
+
+        /// <summary>
+        /// 最大水数
+        /// </summary>
+        float maxShui = 33f;
 
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
@@ -142,6 +156,15 @@ namespace CardRuleNS
                 for (int i = 0; i < curtSlotCardTypeInfo.Value.laiziCount; i++)
                     evalDatas[slotDepth].Add(removeLaizi[i]);
 
+
+                //排除非最大牌型的可能性
+                CardsTypeCreater cardCreater = new CardsTypeCreater();
+                cardCreater.CreateAllCardsTypeArray(evalDatas[slotDepth].ToArray());
+                CardsTypeInfo infox = cardCreater.GetMaxScoreCardsTypeInfo();
+                if (infox.type != curtSlotCardTypeInfo.Value.type)
+                    return;
+
+                // 
                 cardsTypeInfos[slotDepth] = curtSlotCardTypeInfo;
             }
 
@@ -205,14 +228,13 @@ namespace CardRuleNS
 
                 evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
      
-
                 //
                 evalInfo.totalScore = evalInfo.slotScore[0] + evalInfo.slotScore[1] + evalInfo.slotScore[2];
                 evalInfo.totalShuiScore = evalInfo.slotShuiScore[0] + evalInfo.slotShuiScore[1] + evalInfo.slotShuiScore[2];
 
                 evalInfo.eval = 
-                    evalInfo.totalScore / 2700f * scoreAndShuiWeight +
-                    evalInfo.totalShuiScore / 24f * (1 - scoreAndShuiWeight);
+                    evalInfo.totalScore / maxScore * scoreAndShuiWeight +
+                    evalInfo.totalShuiScore / maxShui * (1 - scoreAndShuiWeight);
 
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
 
