@@ -67,6 +67,8 @@ namespace CardRuleNS
         CardEvalComparer cardEvalComparer = new CardEvalComparer();
         CardsTypeCreater optimalCardCreater = new CardsTypeCreater();
 
+        int optimalSlotCardsEvalInfoCount = 50;
+
         private struct EvalFuncParamDatas
         {
             public CardFace[] cardFaces;
@@ -128,6 +130,17 @@ namespace CardRuleNS
 
 
         /// <summary>
+        /// 设置获取最优牌型解的数量
+        /// </summary>
+        /// <param name="count"></param>
+        public void SetOptimalSlotCardsEvalInfoCount(int count)
+        {
+            optimalSlotCardsEvalInfoCount = count;
+        }
+        
+
+
+        /// <summary>
         /// 手牌估值
         /// </summary>
         /// <param name="cardFaces"></param>
@@ -166,7 +179,7 @@ namespace CardRuleNS
 
             //
             slotCardsEvalGroup.Sort(cardEvalComparer);
-            List<SlotCardsEvalInfo> optimalSlotCardsEvalGroup = GetOptimalSlotCardsEvelInfoList(slotCardsEvalGroup);
+            List<SlotCardsEvalInfo> optimalSlotCardsEvalGroup = GetOptimalSlotCardsEvalInfoList(slotCardsEvalGroup);
 
 
             return optimalSlotCardsEvalGroup;
@@ -429,13 +442,14 @@ namespace CardRuleNS
         /// </summary>
         /// <param name="slotCardsEvalInfoList"></param>
         /// <returns></returns>
-        List<SlotCardsEvalInfo> GetOptimalSlotCardsEvelInfoList(List<SlotCardsEvalInfo> slotCardsEvalInfoList)
+        List<SlotCardsEvalInfo> GetOptimalSlotCardsEvalInfoList(List<SlotCardsEvalInfo> slotCardsEvalInfoList)
         {
             List<SlotCardsEvalInfo> newSlotCardsEvalInfo = new List<SlotCardsEvalInfo>();
-            int count = Math.Min(50, slotCardsEvalInfoList.Count);
+            int count = 0;
             SlotCardsEvalInfo evalInfo;
             CardsTypeInfo info;
-            for (int i = 0; i < count; i++)
+
+            for (int i = 0; i < slotCardsEvalInfoList.Count; i++)
             {
                 evalInfo = slotCardsEvalInfoList[i];
 
@@ -456,6 +470,10 @@ namespace CardRuleNS
                     continue;
 
                 newSlotCardsEvalInfo.Add(evalInfo);
+                count++;
+
+                if (count == optimalSlotCardsEvalInfoCount)
+                    break;
             }
 
             return newSlotCardsEvalInfo;

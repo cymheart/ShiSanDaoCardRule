@@ -46,7 +46,9 @@ CardFace.Heart_6
 
 
             //测试牌型估值
+            List<SlotCardsEvalInfo> evalInfoList;
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
+            eval.SetOptimalSlotCardsEvalInfoCount(50);
 
             string text = "开始计时";
             Console.WriteLine(text);
@@ -54,7 +56,7 @@ CardFace.Heart_6
             stopwatch.Start();
 
             //
-            eval.Evaluation(cardValues);
+            evalInfoList = eval.Evaluation(cardValues);
 
             //
             long ms = stopwatch.ElapsedMilliseconds;
