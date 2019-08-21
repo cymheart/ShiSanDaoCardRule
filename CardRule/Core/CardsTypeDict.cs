@@ -1321,7 +1321,5 @@ namespace CardRuleNS
         
             AddToDict(single5KeyDict, cardkey, 0, score);
         }
-    }
-
-    
+    } 
 }

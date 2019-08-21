@@ -11,15 +11,6 @@ namespace CardRule
     {
         static void Main(string[] args)
         {
-            float var = SolveVariance(new float[] { 860, 610.02f, 0.0009f });
-
-            float var2 = SolveVariance(new float[] { 860, 310, 102 });
-
-
-            //0, 0.3f, 1f, 1
-            float val = InOutCubic(0.3f, 0, 1, 1);
-
-
 
             CardFace[] cardValues = new CardFace[]
               {
@@ -42,7 +33,7 @@ CardFace.Heart_9
 
             //获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
-            creater.CreateAllCardsTypeArray(cardValues, new[] {CardFace.BlackJoker, CardFace.RedJoker });
+            creater.CreateAllCardsTypeArray(cardValues);
             //获取cardValues牌中的顺子组合
             List<CardsTypeInfo> santiaos = creater.SantiaoList;
 
@@ -51,45 +42,15 @@ CardFace.Heart_9
 
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
-            SpecCardsType type = specCard.Check(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker }, outCards);
+            SpecCardsType type = specCard.Check(cardValues, outCards);
 
 
             //
-            CardsTypeEvaluation.Instance.Evaluation(cardValues, new[] { CardFace.BlackJoker, CardFace.RedJoker });
+            CardsTypeEvaluation.Instance.Evaluation(cardValues);
 
-           
-
+          
         }
 
-        static float SolveVariance(float[] nums)
-        {
-            float score = 0;
-            for (int i = 0; i < nums.Length; i++)
-                score += nums[i];
-
-            float avg = score / nums.Length;
-            float sub;
-            float var = 0;
-            for (int i = 0; i < nums.Length; i++)
-            {
-                sub = (nums[i] - avg) / avg;
-                var += sub * sub;
-            }
-
-            float variance = var / nums.Length;
-            variance = (float)Math.Sqrt(variance);
-            return variance;
-        }
-
-        static float InOutCubic(float t, float b, float c, float d)
-        {
-            t /= d / 2;
-
-            if (t < 1)
-                return c / 2 * (float)Math.Pow(t, 3) + b;
-
-            return c / 2 * ((float)Math.Pow(t - 2, 3) + 2) + b;
-        }
-
+       
     }
 }

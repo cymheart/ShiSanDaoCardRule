@@ -61,6 +61,8 @@ namespace CardRuleNS
 
         CardFace[] newCardFaces = new CardFace[13];
 
+        CardFace[] laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
+
         private static CardsTypeEvaluation instance = null;
         public static CardsTypeEvaluation Instance
         {
@@ -79,7 +81,6 @@ namespace CardRuleNS
             public List<CardFace>[] evalDatas;
             public CardsTypeInfo?[] cardsTypeInfos;
             public int slotDepth;
-            public CardFace[] refLaizi;
         }
 
         private class Comparer : IComparer<CardsTypeInfo>
@@ -103,6 +104,20 @@ namespace CardRuleNS
             }
         }
 
+        /// <summary>
+        /// 设置赖子
+        /// </summary>
+        /// <param name="_laizi"></param>
+        public void SetLaizi(CardFace[] _laizi = null)
+        {
+            if (_laizi == null)
+            {
+                laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
+                return;
+            }
+
+            laizi = _laizi;
+        }
 
 
         /// <summary>
@@ -111,7 +126,7 @@ namespace CardRuleNS
         /// <param name="cardFaces"></param>
         /// <param name="laizi"></param>
         /// <returns></returns>
-        public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces, CardFace[] laizi = null)
+        public List<SlotCardsEvalInfo> Evaluation(CardFace[] cardFaces)
         {
             //排序
             int laiziCount = 0;
@@ -138,7 +153,6 @@ namespace CardRuleNS
                 evalDatas = evalDatas,
                 cardsTypeInfos = cardsTypeInfos,
                 slotDepth = -1,
-                refLaizi = laizi
             };
 
             CreateEvalInfo(paramDatas);
@@ -159,14 +173,13 @@ namespace CardRuleNS
             List<CardFace>[] evalDatas = paramDatas.evalDatas;
             CardsTypeInfo?[] cardsTypeInfos = paramDatas.cardsTypeInfos;
             int slotDepth = paramDatas.slotDepth;
-            CardFace[] refLaizi = paramDatas.refLaizi;
 
             if (curtSlotCardTypeInfo != null)
             {
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
                 if (curtSlotCardTypeInfo.Value.laiziCount > 0)
-                    cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, refLaizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
+                    cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, laizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
 
                 //移除当前槽已使用的牌型牌
                 CardInfo[] cardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, curtSlotCardTypeInfo.Value.cardFaceValues);
@@ -317,7 +330,8 @@ namespace CardRuleNS
 
             //为下一个槽准备数据
             CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
-            nextSlotCreater.CreateAllCardsTypeArray(cardFaces, refLaizi);
+            nextSlotCreater.SetLaizi(laizi);
+            nextSlotCreater.CreateAllCardsTypeArray(cardFaces);
 
             CardsTypeInfo[] info;
 
@@ -345,7 +359,6 @@ namespace CardRuleNS
                         evalDatas = evalDatas,
                         cardsTypeInfos = cardsTypeInfos,
                         slotDepth = slotDepth + 1,
-                        refLaizi = refLaizi
                     };
 
                     CreateEvalInfo(paramDatas2);
@@ -365,7 +378,6 @@ namespace CardRuleNS
                     evalDatas = evalDatas,
                     cardsTypeInfos = cardsTypeInfos,
                     slotDepth = slotDepth + 1,
-                    refLaizi = refLaizi
                 };
 
                 CreateEvalInfo(paramDatas2);

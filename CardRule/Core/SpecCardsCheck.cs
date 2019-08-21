@@ -8,6 +8,7 @@ namespace CardRuleNS
     public class SpecCardsCheck
     {
         HashSet<SpecCardsType> checkSpeckCardSet = new HashSet<SpecCardsType>();
+        CardFace[] laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
 
         struct SpecCardsInfo
         {
@@ -28,9 +29,25 @@ namespace CardRuleNS
             }
         }
 
+
         public SpecCardsCheck()
         {
             ReSetCheckSpecCardTypesDefault();
+        }
+
+        /// <summary>
+        /// 设置赖子
+        /// </summary>
+        /// <param name="_laizi"></param>
+        public void SetLaizi(CardFace[] _laizi = null)
+        {
+            if (_laizi == null)
+            {
+                laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
+                return;
+            }
+
+            laizi = _laizi;
         }
 
         public void SetCheckSpecCardTypes(SpecCardsType[] specCardsTypes)
@@ -67,10 +84,10 @@ namespace CardRuleNS
         /// 检查是否为特殊牌型
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
-        public SpecCardsType Check(CardFace[] cardFaces, CardFace[] laizi, CardFace[] outFaceValues)
+        public SpecCardsType Check(CardFace[] cardFaces, CardFace[] outFaceValues)
         {
             if (cardFaces.Length == 13)
-                return Check13Count(cardFaces, laizi, outFaceValues);
+                return Check13Count(cardFaces, outFaceValues);
 
             List<CardFace[]> removeCardFacesList = CreateRemoveOut13CountCards(cardFaces);
             SpecCardsType _specCardsType;
@@ -111,7 +128,7 @@ namespace CardRuleNS
 
         }
 
-        SpecCardsType Check13Count(CardFace[] cardFaces, CardFace[] laizi, CardFace[] outFaceValues)
+        SpecCardsType Check13Count(CardFace[] cardFaces, CardFace[] outFaceValues)
         {
             int laiziCount = 0;
             CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
