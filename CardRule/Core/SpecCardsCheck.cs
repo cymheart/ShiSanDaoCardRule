@@ -89,6 +89,9 @@ namespace CardRuleNS
             if (cardFaces.Length == 13)
                 return Check13Count(cardFaces, outFaceValues);
 
+            if (cardFaces.Length != 16)
+                return  SpecCardsType.Normal;
+
             List<CardFace[]> removeCardFacesList = CreateRemoveOut13CountCards(cardFaces);
             SpecCardsType _specCardsType;
             List<SpecCardsInfo> specCardsInfoList = new List<SpecCardsInfo>();
