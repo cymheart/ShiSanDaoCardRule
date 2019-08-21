@@ -31,21 +31,23 @@ CardFace.Heart_6
 
             CardsTypeDict dict = CardsTypeDict.Instance;
 
-            //获取普通牌型组合
+            /////////////////////////////////////////////////
+            //1.获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
             creater.CreateAllCardsTypeArray(cardValues);
             //获取cardValues牌中的三条牌型表
             List<CardsTypeInfo> santiaos = creater.SantiaoList;
 
-            //特殊牌型检查
+            /////////////////////////////////////////////////
+            //2.特殊牌型检查
             SpecCardsCheck specCard = new SpecCardsCheck();
 
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
             SpecCardsType type = specCard.Check(cardValues, outCards);
 
-
-            //测试牌型估值
+            /////////////////////////////////////////////////
+            //3.测试牌型估值
             List<SlotCardsEvalInfo> evalInfoList;
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
             eval.SetOptimalSlotCardsEvalInfoCount(50);
