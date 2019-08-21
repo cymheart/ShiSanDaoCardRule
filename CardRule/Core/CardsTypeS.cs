@@ -1,6 +1,4 @@
 ﻿
-using System.Collections.Generic;
-
 namespace CardRuleNS
 {
     #region 枚举数据

@@ -28,6 +28,9 @@ namespace CardRuleNS
         public float compEval;
     }
 
+    /// <summary>
+    /// 手牌估值
+    /// </summary>
     public class CardsTypeEvaluation
     {
         /// <summary>
