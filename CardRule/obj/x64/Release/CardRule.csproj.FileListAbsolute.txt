@@ -1,0 +1,6 @@
+D:\Documents\github\ShiSanDaoCardRule\CardRule\bin\x64\Release\CardRule.exe.config
+D:\Documents\github\ShiSanDaoCardRule\CardRule\bin\x64\Release\CardRule.exe
+D:\Documents\github\ShiSanDaoCardRule\CardRule\bin\x64\Release\CardRule.pdb
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\x64\Release\CardRule.csproj.CoreCompileInputs.cache
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\x64\Release\CardRule.exe
+D:\Documents\github\ShiSanDaoCardRule\CardRule\obj\x64\Release\CardRule.pdb

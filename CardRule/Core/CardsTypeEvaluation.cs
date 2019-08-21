@@ -140,7 +140,38 @@ namespace CardRuleNS
         {
             optimalSlotCardsEvalInfoCount = count;
         }
-        
+
+
+        /// <summary>
+        /// 设置分值水数权重
+        /// 1:偏向牌型分值加权， 0：偏向水数加权
+        /// 默认0.9
+        /// </summary>
+        /// <param name="weight"></param>
+        public void SetScoreAndShuiWeight(float weight = 0.9f)
+        {
+            scoreAndShuiWeight = weight;
+        }
+
+        /// <summary>
+        /// 设置每道牌型偏离方差倍率的上限
+        /// 默认2倍偏离
+        /// </summary>
+        /// <param name="mulLimit"></param>
+        public void SetVarianceMulLimit(float mulLimit = 2)
+        {
+            varianceLimit = mulLimit;
+        }
+
+
+        /// <summary>
+        /// 设置方差在InOutCubic曲线上的取值范围
+        /// 默认范围:0~0.3
+        /// </summary>
+        public void SetVarianceCubicRange(float range = 0.3f)
+        {
+            varianceCubicRange = range;
+        }
 
 
         /// <summary>
