@@ -46,7 +46,8 @@ CardFace.Heart_6
 
 
             //
-            CardsTypeEvaluation.Instance.Evaluation(cardValues);
+            CardsTypeEvaluation eval = new CardsTypeEvaluation();
+            eval.Evaluation(cardValues);
 
           
         }

@@ -63,16 +63,9 @@ namespace CardRuleNS
 
         CardFace[] laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
 
-        private static CardsTypeEvaluation instance = null;
-        public static CardsTypeEvaluation Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new CardsTypeEvaluation();
-                return instance;
-            }
-        }
+        Comparer comparer;
+        CardEvalComparer cardEvalComparer = new CardEvalComparer();
+
         private struct EvalFuncParamDatas
         {
             public CardFace[] cardFaces;
@@ -85,9 +78,15 @@ namespace CardRuleNS
 
         private class Comparer : IComparer<CardsTypeInfo>
         {
+            CardsTypeEvaluation cardsTypeEval;
+            public Comparer(CardsTypeEvaluation cardsTypeEval)
+            {
+                this.cardsTypeEval = cardsTypeEval;
+            }
+
             public int Compare(CardsTypeInfo c1, CardsTypeInfo c2)
             {
-                return instance.Cmp(c1, null, c2, null);
+                return cardsTypeEval.Cmp(c1, null, c2, null);
             }
         }
 
@@ -102,6 +101,11 @@ namespace CardRuleNS
 
                 return 0;
             }
+        }
+
+        public CardsTypeEvaluation()
+        {
+            comparer = new Comparer(this);
         }
 
         /// <summary>
@@ -157,9 +161,8 @@ namespace CardRuleNS
 
             CreateEvalInfo(paramDatas);
 
-
             //
-            slotCardsEvalGroup.Sort(new CardEvalComparer());
+            slotCardsEvalGroup.Sort(cardEvalComparer);
 
             return slotCardsEvalGroup;
         }
@@ -426,7 +429,7 @@ namespace CardRuleNS
         public void SortCardsTypes(List<CardsTypeInfo> cardsTypeInfoList)
         {
             if (cardsTypeInfoList != null && cardsTypeInfoList.Count > 0)
-                cardsTypeInfoList.Sort(new Comparer());
+                cardsTypeInfoList.Sort(comparer);
         }
 
         int Cmp(
@@ -534,6 +537,7 @@ namespace CardRuleNS
         public float CalCardsScore(CardFace[] cardFaces)
         {
             CardsTypeCreater cardCreater = new CardsTypeCreater();
+            cardCreater.SetLaizi(laizi);
             cardCreater.CreateAllCardsTypeArray(cardFaces);
             CardsTypeInfo info = cardCreater.GetMaxScoreCardsTypeInfo();
             CardInfo[] otherCards = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, info.cardFaceValues);
@@ -541,7 +545,7 @@ namespace CardRuleNS
             return CalCardsScore(info, otherCards);
         }
 
-        public float GetCardsTypeShuiScore(CardsTypeInfo? cardsTypeInfo, int slotIdx)
+        static public float GetCardsTypeShuiScore(CardsTypeInfo? cardsTypeInfo, int slotIdx)
         {
             if(cardsTypeInfo == null)
             {
@@ -552,13 +556,13 @@ namespace CardRuleNS
         }
 
 
-            /// <summary>
-            /// 获取牌型所在对应槽位的水数
-            /// </summary>
-            /// <param name="cardsType"></param>
-            /// <param name="slotIdx"></param>
-            /// <returns></returns>
-            public float GetCardsTypeShuiScore(CardsType cardsType, int slotIdx)
+        /// <summary>
+        /// 获取牌型所在对应槽位的水数
+        /// </summary>
+        /// <param name="cardsType"></param>
+        /// <param name="slotIdx"></param>
+        /// <returns></returns>
+        static public float GetCardsTypeShuiScore(CardsType cardsType, int slotIdx)
         {
             switch (cardsType)
             {
@@ -607,8 +611,7 @@ namespace CardRuleNS
             return 1;
         }
 
-
-        public float GetShunZiBaseScore(float startCardValue)
+        static public float GetShunZiBaseScore(float startCardValue)
         {
             float score = 0;
             for (int i = 0; i < 5; i++)
@@ -616,39 +619,39 @@ namespace CardRuleNS
             return score;
         }
 
-        public float GetHuLuBaseScore(float firstCardValue, float secondCardValue)
+        static public float GetHuLuBaseScore(float firstCardValue, float secondCardValue)
         {
             float score = firstCardValue + 0.01f * secondCardValue;
             return score;
         }
 
-        public float GetTwoDuiBaseScore(float firstCardValue, float secondCardValue)
+        static public float GetTwoDuiBaseScore(float firstCardValue, float secondCardValue)
         {
             float score = firstCardValue + secondCardValue;
             return score;
         }
 
-        public float GetWuTongBaseScore(float cardValue)
+        static public float GetWuTongBaseScore(float cardValue)
         {
             return cardValue;
         }
 
-        public float GetTieZhiBaseScore(float cardValue)
+        static public float GetTieZhiBaseScore(float cardValue)
         {
             return cardValue;
         }
 
-        public float GetSanTiaoBaseScore(float cardValue)
+        static public float GetSanTiaoBaseScore(float cardValue)
         {
             return cardValue;
         }
 
-        public float GetDuiziBaseScore(float cardValue)
+        static public float GetDuiziBaseScore(float cardValue)
         {
             return cardValue;
         }
 
-        public float GetTongHuaBaseScore(float[] cardValues)
+        static public float GetTongHuaBaseScore(float[] cardValues)
         {
             float max = cardValues[0];
             for (int i = 1; i < cardValues.Length; i++)

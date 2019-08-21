@@ -98,7 +98,7 @@ namespace CardRuleNS
         //
         bool isCheckSuitCount = false;
         int limitSameSuitCount = 2;
-
+ 
         CardsTypeDict()
         {
             CreateDict();
@@ -286,12 +286,12 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            float score = CardsTypeEvaluation.Instance.GetShunZiBaseScore(10);
+            float score = CardsTypeEvaluation.GetShunZiBaseScore(10);
             AddShunziKeyToList(null, 0, score);
 
             for (int i = 1; i <= 10; i++)
             {
-                score = CardsTypeEvaluation.Instance.GetShunZiBaseScore(i);
+                score = CardsTypeEvaluation.GetShunZiBaseScore(i);
 
                 for (int s0 = -1; s0 < 4; s0++)
                 {            
@@ -445,7 +445,7 @@ namespace CardRuleNS
                                 if (j == 1) b = 14;
                                 else b = j;
 
-                                score = CardsTypeEvaluation.Instance.GetHuLuBaseScore(a, b);
+                                score = CardsTypeEvaluation.GetHuLuBaseScore(a, b);
 
                                 for (int m0 = 0; m0 < 4; m0++)
                                 {
@@ -503,7 +503,7 @@ namespace CardRuleNS
             float score2 = score;
             float tmpScore;
             if (cards[0].value < cards[3].value)
-                score2 = CardsTypeEvaluation.Instance.GetHuLuBaseScore(cards[3].value, cards[0].value);
+                score2 = CardsTypeEvaluation.GetHuLuBaseScore(cards[3].value, cards[0].value);
 
             for (int i = 0; i < 4; i++)
             {
@@ -565,7 +565,7 @@ namespace CardRuleNS
                             if (j == 1) b = 14;
                             else b = j;
 
-                            score = CardsTypeEvaluation.Instance.GetTwoDuiBaseScore(a, b);
+                            score = CardsTypeEvaluation.GetTwoDuiBaseScore(a, b);
 
                             for (int m0 = 0; m0 < 4; m0++)
                             {
@@ -659,7 +659,7 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            float score = CardsTypeEvaluation.Instance.GetWuTongBaseScore(14);
+            float score = CardsTypeEvaluation.GetWuTongBaseScore(14);
             AddWuTongKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -671,9 +671,9 @@ namespace CardRuleNS
                 cards[4].value = i;
 
                 if (i == 1)
-                    score = CardsTypeEvaluation.Instance.GetWuTongBaseScore(14);
+                    score = CardsTypeEvaluation.GetWuTongBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetWuTongBaseScore(i);
+                    score = CardsTypeEvaluation.GetWuTongBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -834,7 +834,7 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
-            float score = CardsTypeEvaluation.Instance.GetTieZhiBaseScore(14);
+            float score = CardsTypeEvaluation.GetTieZhiBaseScore(14);
             AddTieZhiKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -845,9 +845,9 @@ namespace CardRuleNS
                 cards[3].value = i;
 
                 if (i == 1)
-                    score = CardsTypeEvaluation.Instance.GetTieZhiBaseScore(14);
+                    score = CardsTypeEvaluation.GetTieZhiBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetTieZhiBaseScore(i);
+                    score = CardsTypeEvaluation.GetTieZhiBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -967,7 +967,7 @@ namespace CardRuleNS
                 new CardInfo(),
             };
 
-            float score = CardsTypeEvaluation.Instance.GetSanTiaoBaseScore(14);
+            float score = CardsTypeEvaluation.GetSanTiaoBaseScore(14);
             AddSanTiaoKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -977,9 +977,9 @@ namespace CardRuleNS
                 cards[2].value = i;
 
                 if(i == 1)
-                    score = CardsTypeEvaluation.Instance.GetSanTiaoBaseScore(14);
+                    score = CardsTypeEvaluation.GetSanTiaoBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetSanTiaoBaseScore(i);
+                    score = CardsTypeEvaluation.GetSanTiaoBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -1067,7 +1067,7 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
-            float score = CardsTypeEvaluation.Instance.GetDuiziBaseScore(14);
+            float score = CardsTypeEvaluation.GetDuiziBaseScore(14);
             AddDuiZiKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -1076,9 +1076,9 @@ namespace CardRuleNS
                 cards[1].value = i;
 
                 if(i == 1)
-                    score = CardsTypeEvaluation.Instance.GetDuiziBaseScore(14);
+                    score = CardsTypeEvaluation.GetDuiziBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetDuiziBaseScore(i);
+                    score = CardsTypeEvaluation.GetDuiziBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -1156,7 +1156,7 @@ namespace CardRuleNS
                                     k == m + 1 && m == n + 1)
                                     continue;
 
-                                score = CardsTypeEvaluation.Instance.GetTongHuaBaseScore(new float[] {i, j, k, m, n });
+                                score = CardsTypeEvaluation.GetTongHuaBaseScore(new float[] {i, j, k, m, n });
 
                                 cards[4].value = n;
 

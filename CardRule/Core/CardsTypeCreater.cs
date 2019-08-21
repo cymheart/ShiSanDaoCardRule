@@ -268,16 +268,19 @@ namespace CardRuleNS
 
         void SortDictCardsTypeInfo()
         {
-            CardsTypeEvaluation.Instance.SortCardsTypes(WutongList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(TonghuashunList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(TiezhiList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(HuluList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(TonghuaList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(ShunziList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(SantiaoList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(TwoduiList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(DuiziList);
-            CardsTypeEvaluation.Instance.SortCardsTypes(Single5List);
+            CardsTypeEvaluation eval = new CardsTypeEvaluation();
+            eval.SetLaizi(laizi);
+
+            eval.SortCardsTypes(WutongList);
+            eval.SortCardsTypes(TonghuashunList);
+            eval.SortCardsTypes(TiezhiList);
+            eval.SortCardsTypes(HuluList);
+            eval.SortCardsTypes(TonghuaList);
+            eval.SortCardsTypes(ShunziList);
+            eval.SortCardsTypes(SantiaoList);
+            eval.SortCardsTypes(TwoduiList);
+            eval.SortCardsTypes(DuiziList);
+            eval.SortCardsTypes(Single5List);
         }
 
         void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
