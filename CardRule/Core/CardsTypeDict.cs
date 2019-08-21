@@ -402,6 +402,10 @@ namespace CardRuleNS
             }
         }
 
+
+        /// <summary>
+        /// 生成葫芦字典
+        /// </summary>
         void CreateHuluDict()
         {
             huluKeyDict.Clear();
