@@ -14,11 +14,11 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
               {
-CardFace.Club_10,
-CardFace.Club_10,
 CardFace.RedJoker,
-CardFace.Club_2,
-CardFace.Club_3,
+CardFace.RedJoker,
+CardFace.RedJoker,
+CardFace.RedJoker,
+CardFace.RedJoker,
 CardFace.RedJoker,
 CardFace.RedJoker,
 CardFace.Diamond_9,
@@ -34,7 +34,7 @@ CardFace.Heart_6
             //获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
             creater.CreateAllCardsTypeArray(cardValues);
-            //获取cardValues牌中的顺子组合
+            //获取cardValues牌中的三条牌型表
             List<CardsTypeInfo> santiaos = creater.SantiaoList;
 
             //特殊牌型检查
@@ -45,11 +45,22 @@ CardFace.Heart_6
             SpecCardsType type = specCard.Check(cardValues, outCards);
 
 
-            //
+            //测试牌型估值
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
+
+            string text = "开始计时";
+            Console.WriteLine(text);
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
+            //
             eval.Evaluation(cardValues);
 
-          
+            //
+            long ms = stopwatch.ElapsedMilliseconds;
+            text = "用时:" + ms + "毫秒";
+            Console.WriteLine(text);
+            Console.ReadLine();
         }
 
        

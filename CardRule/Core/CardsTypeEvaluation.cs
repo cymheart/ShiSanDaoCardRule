@@ -166,8 +166,10 @@ namespace CardRuleNS
 
             //
             slotCardsEvalGroup.Sort(cardEvalComparer);
+            List<SlotCardsEvalInfo> optimalSlotCardsEvalGroup = GetOptimalSlotCardsEvelInfoList(slotCardsEvalGroup);
 
-            return slotCardsEvalGroup;
+
+            return optimalSlotCardsEvalGroup;
         }
 
 
@@ -179,8 +181,6 @@ namespace CardRuleNS
             List<CardFace>[] evalDatas = paramDatas.evalDatas;
             CardsTypeInfo?[] cardsTypeInfos = paramDatas.cardsTypeInfos;
             int slotDepth = paramDatas.slotDepth;
-
-
 
 
             if (curtSlotCardTypeInfo != null)
@@ -233,14 +233,6 @@ namespace CardRuleNS
                 evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
                 evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
 
-                //排除非最大牌型(针对补全赖子牌后的牌型歧义)
-                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[0].ToArray());
-                CardsTypeInfo infox = optimalCardCreater.GetMaxScoreCardsTypeInfo();
-                if (infox.type != evalInfo.slotCardsType[0])
-                    return;
-
-
-
                 //中道
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
@@ -261,13 +253,6 @@ namespace CardRuleNS
 
                 evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
-
-                //排除非最大牌型(针对补全赖子牌后的牌型歧义)
-                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[1].ToArray());
-                infox = optimalCardCreater.GetMaxScoreCardsTypeInfo();
-                if (infox.type != evalInfo.slotCardsType[1])
-                    return;
-
 
                 //头道
                 valueIdx = 0;
@@ -322,13 +307,6 @@ namespace CardRuleNS
                 }
 
                 evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
-
-                //排除非最大牌型(针对补全赖子牌后的牌型歧义)
-                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[2].ToArray());
-                infox = optimalCardCreater.GetMaxScoreCardsTypeInfo();
-                if (infox.type != evalInfo.slotCardsType[2])
-                    return;
-
 
 
                 //综合估值
@@ -443,6 +421,44 @@ namespace CardRuleNS
                 return c / 2 * (float)Math.Pow(t, 3) + b;
 
             return c / 2 * ((float)Math.Pow(t - 2, 3) + 2) + b;
+        }
+
+
+        /// <summary>
+        /// 获取最优评估牌型信息
+        /// </summary>
+        /// <param name="slotCardsEvalInfoList"></param>
+        /// <returns></returns>
+        List<SlotCardsEvalInfo> GetOptimalSlotCardsEvelInfoList(List<SlotCardsEvalInfo> slotCardsEvalInfoList)
+        {
+            List<SlotCardsEvalInfo> newSlotCardsEvalInfo = new List<SlotCardsEvalInfo>();
+            int count = Math.Min(50, slotCardsEvalInfoList.Count);
+            SlotCardsEvalInfo evalInfo;
+            CardsTypeInfo info;
+            for (int i = 0; i < count; i++)
+            {
+                evalInfo = slotCardsEvalInfoList[i];
+
+                //排除非最大牌型(针对补全赖子牌后的牌型歧义)
+                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[2].ToArray());
+                info = optimalCardCreater.GetMaxScoreCardsTypeInfo();
+                if (info.type != evalInfo.slotCardsType[2])
+                    continue;
+
+                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[1].ToArray());
+                info = optimalCardCreater.GetMaxScoreCardsTypeInfo();
+                if (info.type != evalInfo.slotCardsType[1])
+                    continue;
+
+                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[0].ToArray());
+                info = optimalCardCreater.GetMaxScoreCardsTypeInfo();
+                if (info.type != evalInfo.slotCardsType[0])
+                    continue;
+
+                newSlotCardsEvalInfo.Add(evalInfo);
+            }
+
+            return newSlotCardsEvalInfo;
         }
 
         public void SortCardsTypes(List<CardsTypeInfo> cardsTypeInfoList)
