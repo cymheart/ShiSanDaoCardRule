@@ -23,10 +23,10 @@ CardFace.Spade_4,
 CardFace.Diamond_7,
 CardFace.Diamond_9,
 CardFace.Heart_5,
-CardFace.Diamond_6,
+CardFace.Spade_2,
 CardFace.Heart_8,
 CardFace.Heart_4,
-CardFace.Heart_9
+CardFace.Heart_6
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;

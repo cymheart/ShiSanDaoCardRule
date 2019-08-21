@@ -193,6 +193,7 @@ namespace CardRuleNS
 
                 //排除非最大牌型(针对补全赖子牌后的牌型歧义)
                 CardsTypeCreater cardCreater = new CardsTypeCreater();
+                cardCreater.SetLaizi(laizi);
                 cardCreater.CreateAllCardsTypeArray(evalDatas[slotDepth].ToArray());
                 CardsTypeInfo infox = cardCreater.GetMaxScoreCardsTypeInfo();
                 if (infox.type != curtSlotCardTypeInfo.Value.type)
