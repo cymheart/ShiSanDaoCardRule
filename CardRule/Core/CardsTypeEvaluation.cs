@@ -65,6 +65,7 @@ namespace CardRuleNS
 
         Comparer comparer;
         CardEvalComparer cardEvalComparer = new CardEvalComparer();
+        CardsTypeCreater optimalCardCreater = new CardsTypeCreater();
 
         private struct EvalFuncParamDatas
         {
@@ -121,6 +122,8 @@ namespace CardRuleNS
             }
 
             laizi = _laizi;
+
+            optimalCardCreater.SetLaizi(laizi);
         }
 
 
@@ -177,6 +180,9 @@ namespace CardRuleNS
             CardsTypeInfo?[] cardsTypeInfos = paramDatas.cardsTypeInfos;
             int slotDepth = paramDatas.slotDepth;
 
+
+
+
             if (curtSlotCardTypeInfo != null)
             {
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
@@ -228,10 +234,8 @@ namespace CardRuleNS
                 evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
 
                 //排除非最大牌型(针对补全赖子牌后的牌型歧义)
-                CardsTypeCreater cardCreater = new CardsTypeCreater();
-                cardCreater.SetLaizi(laizi);
-                cardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[0].ToArray());
-                CardsTypeInfo infox = cardCreater.GetMaxScoreCardsTypeInfo();
+                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[0].ToArray());
+                CardsTypeInfo infox = optimalCardCreater.GetMaxScoreCardsTypeInfo();
                 if (infox.type != evalInfo.slotCardsType[0])
                     return;
 
@@ -259,10 +263,8 @@ namespace CardRuleNS
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
 
                 //排除非最大牌型(针对补全赖子牌后的牌型歧义)
-                cardCreater = new CardsTypeCreater();
-                cardCreater.SetLaizi(laizi);
-                cardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[1].ToArray());
-                infox = cardCreater.GetMaxScoreCardsTypeInfo();
+                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[1].ToArray());
+                infox = optimalCardCreater.GetMaxScoreCardsTypeInfo();
                 if (infox.type != evalInfo.slotCardsType[1])
                     return;
 
@@ -322,10 +324,8 @@ namespace CardRuleNS
                 evalInfo.slotShuiScore[2] = GetCardsTypeShuiScore(cardsTypeInfos[2], 2);
 
                 //排除非最大牌型(针对补全赖子牌后的牌型歧义)
-                cardCreater = new CardsTypeCreater();
-                cardCreater.SetLaizi(laizi);
-                cardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[2].ToArray());
-                infox = cardCreater.GetMaxScoreCardsTypeInfo();
+                optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[2].ToArray());
+                infox = optimalCardCreater.GetMaxScoreCardsTypeInfo();
                 if (infox.type != evalInfo.slotCardsType[2])
                     return;
 
