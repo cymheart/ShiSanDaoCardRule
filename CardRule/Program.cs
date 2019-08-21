@@ -15,18 +15,18 @@ namespace CardRule
             CardFace[] cardValues = new CardFace[]
               {
 CardFace.Club_10,
-CardFace.Heart_10,
 CardFace.Club_10,
-CardFace.RedJoker,
-CardFace.Club_J,
-CardFace.Club_Q,
-CardFace.Club_K,
-CardFace.Diamond_2,
-CardFace.RedJoker,
-CardFace.Heart_9,
-CardFace.Diamond_8,
-CardFace.Club_A,
-CardFace.Heart_10
+CardFace.Club_9,
+CardFace.Club_9,
+CardFace.Club_7,
+CardFace.Spade_4,
+CardFace.Diamond_7,
+CardFace.Diamond_9,
+CardFace.Heart_4,
+CardFace.Heart_8,
+CardFace.Heart_10,
+CardFace.Heart_4,
+CardFace.Heart_9
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;

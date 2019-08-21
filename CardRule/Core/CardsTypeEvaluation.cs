@@ -232,6 +232,13 @@ namespace CardRuleNS
 
             if (curtSlotCardTypeInfo != null)
             {
+                //去除当道牌型大于前道牌型的组合
+                if (slotDepth >= 1 &&
+                    curtSlotCardTypeInfo.Value.type > cardsTypeInfos[slotDepth - 1].Value.type)
+                {
+                    return;
+                }
+
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
                 if (curtSlotCardTypeInfo.Value.laiziCount > 0)
@@ -301,6 +308,11 @@ namespace CardRuleNS
                 evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
 
+
+                if (evalInfo.slotScore[1] > evalInfo.slotScore[0])
+                    return;
+
+
                 //头道
                 valueIdx = 0;
                 Array.Clear(value, 0, value.Length);
@@ -344,8 +356,7 @@ namespace CardRuleNS
 
                 evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
 
-                if (evalInfo.slotScore[1] > evalInfo.slotScore[0] || 
-                    evalInfo.slotScore[2] > evalInfo.slotScore[1])
+                if (evalInfo.slotScore[2] > evalInfo.slotScore[1])
                     return;
 
                 if (cardsTypeInfos[2] != null && cardsTypeInfos[2].Value.type == CardsType.SanTiao)
@@ -503,7 +514,10 @@ namespace CardRuleNS
                 if (info.type != evalInfo.slotCardsType[0])
                     continue;
 
+                PostSort(evalInfo);
                 newSlotCardsEvalInfo.Add(evalInfo);
+
+
                 count++;
 
                 if (count == optimalSlotCardsEvalInfoCount)
@@ -512,6 +526,35 @@ namespace CardRuleNS
 
             return newSlotCardsEvalInfo;
         }
+
+        void PostSort(SlotCardsEvalInfo evalInfo)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (evalInfo.slotCardsType[i] == CardsType.HuLu)
+                {
+                    List<CardFace> facelist = evalInfo.slotCardFaceList[i];
+
+
+                    if(CardsTransform.Instance.GetValue(facelist[0]) == CardsTransform.Instance.GetValue(facelist[1]) &&
+                       CardsTransform.Instance.GetValue(facelist[1]) == CardsTransform.Instance.GetValue(facelist[2]))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        CardFace a = facelist[0];
+                        CardFace b = facelist[1];
+                        facelist[0] = facelist[2];
+                        facelist[1] = facelist[3];
+                        facelist[2] = facelist[4];
+                        facelist[3] = a;
+                        facelist[4] = b;
+                    }
+                }   
+            }
+        }
+
 
         public void SortCardsTypes(List<CardsTypeInfo> cardsTypeInfoList)
         {
