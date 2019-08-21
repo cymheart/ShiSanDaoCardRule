@@ -390,7 +390,7 @@ namespace CardRuleNS
             //为下一个槽准备数据
            // CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
           //  nextSlotCreater.SetLaizi(laizi);
-            nextSlotCreater.CreateAllCardsTypeArray(cardFaces);
+            nextSlotCreater.CreateAllCardsTypeArray(cardFaces, false);
 
             CardsTypeInfo[] info;
 

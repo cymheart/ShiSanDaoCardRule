@@ -89,11 +89,14 @@ namespace CardRuleNS
         /// 生成所有牌型组数据
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
-        public void CreateAllCardsTypeArray(CardFace[] cardFaces)
+        public void CreateAllCardsTypeArray(CardFace[] cardFaces, bool isSort = true)
         {
             Clear();
 
-            cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+            if(isSort)
+                cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+            else
+                cards = CardsTransform.Instance.CreateFormatCardsNotSort(cardFaces, laizi, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
