@@ -66,6 +66,8 @@ namespace CardRuleNS
         Comparer comparer;
         CardEvalComparer cardEvalComparer = new CardEvalComparer();
         CardsTypeCreater optimalCardCreater = new CardsTypeCreater();
+        CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+       
 
         int optimalSlotCardsEvalInfoCount = 50;
 
@@ -126,6 +128,7 @@ namespace CardRuleNS
             laizi = _laizi;
 
             optimalCardCreater.SetLaizi(laizi);
+            nextSlotCreater.SetLaizi(laizi);
         }
 
 
@@ -343,8 +346,8 @@ namespace CardRuleNS
             }
 
             //为下一个槽准备数据
-            CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
-            nextSlotCreater.SetLaizi(laizi);
+           // CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+          //  nextSlotCreater.SetLaizi(laizi);
             nextSlotCreater.CreateAllCardsTypeArray(cardFaces);
 
             CardsTypeInfo[] info;

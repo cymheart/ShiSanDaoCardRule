@@ -14,19 +14,19 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
               {
+CardFace.Club_10,
+CardFace.Club_10,
+CardFace.Club_10,
 CardFace.RedJoker,
-CardFace.RedJoker,
-CardFace.RedJoker,
-CardFace.RedJoker,
-CardFace.RedJoker,
-CardFace.RedJoker,
+CardFace.Club_3,
+CardFace.Spade_4,
 CardFace.RedJoker,
 CardFace.Diamond_9,
-CardFace.RedJoker,
-CardFace.Spade_2,
+CardFace.Heart_5,
+CardFace.Diamond_6,
 CardFace.Heart_8,
 CardFace.Heart_4,
-CardFace.Heart_6
+CardFace.Heart_9
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
@@ -60,6 +60,7 @@ CardFace.Heart_6
             //
             evalInfoList = eval.Evaluation(cardValues);
 
+            stopwatch.Stop();
             //
             long ms = stopwatch.ElapsedMilliseconds;
             text = "用时:" + ms + "毫秒";
