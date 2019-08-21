@@ -43,14 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CardsTypeDict.cs" />
-    <Compile Include="CardsTypeCreater.cs" />
-    <Compile Include="CardsTypeEvaluation.cs" />
-    <Compile Include="CardsTypeS.cs" />
-    <Compile Include="CardsTransform.cs" />
+    <Compile Include="Core\CardsTypeDict.cs" />
+    <Compile Include="Core\CardsTypeCreater.cs" />
+    <Compile Include="Core\CardsTypeEvaluation.cs" />
+    <Compile Include="Core\CardsTypeS.cs" />
+    <Compile Include="Core\CardsTransform.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpecCardsCheck.cs" />
+    <Compile Include="Core\SpecCardsCheck.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
