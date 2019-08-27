@@ -9,6 +9,7 @@ namespace CardRuleNS
     {
         public CardFace[] computedCardFaces;
         public CardFace[] laiziCardFaces;
+        public CardsType type;
     }
     public class CardsTypeMatch
     {
@@ -35,7 +36,7 @@ namespace CardRuleNS
         /// <returns></returns>
         public MatchCardFacesInfo ComputeMatchCardFacesInfo(CardFace[] cardFaces, CardsType cardsType = CardsType.None)
         {
-            CardFace[] computedCardFaces = ComputeCardFaces(cardFaces, cardsType);
+            CardFace[] computedCardFaces = ComputeCardFaces(cardFaces, ref cardsType);
             CardFace[] laiziCardFaces = new CardFace[computedCardFaces.Length];
             int idx;
             CardFace[] removeLaizi = new CardFace[1];
@@ -58,7 +59,8 @@ namespace CardRuleNS
             MatchCardFacesInfo matchInfo = new MatchCardFacesInfo()
             {
                 computedCardFaces = computedCardFaces,
-                laiziCardFaces = laiziCardFaces
+                laiziCardFaces = laiziCardFaces,
+                type = cardsType
             };
 
             return matchInfo;
@@ -69,28 +71,61 @@ namespace CardRuleNS
         /// 计算确定的牌型CardFaces
         /// </summary>
         /// <returns></returns>
-        public CardFace[] ComputeCardFaces(CardFace[] cardFaces, CardsType cardsType = CardsType.None)
+        public CardFace[] ComputeCardFaces(CardFace[] cardFaces, ref CardsType cardsType)
         {
+            CardsTypeInfo typeInfo;
+            CardInfo[] cardInfos;
+            CardFace[] removeLaizi = new CardFace[5];
+            CardFace[] computedCardFaces;
+            CardFace[] resultCardFaces;
+            CardFace[] cardFaces2;
+            int idx = 0;
+
             if (cardsType == CardsType.None)
             {
                 CardsTypeCreater creater = new CardsTypeCreater();
                 creater.SetLaizi(laizi);
                 creater.CreateAllCardsTypeArray(cardFaces);
-                CardsTypeInfo typeInfo = creater.GetMaxScoreCardsTypeInfo();
-                return ComputeCardFaces(typeInfo);
+                typeInfo = creater.GetMaxScoreCardsTypeInfo();
+                cardsType = typeInfo.type;
+                cardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, typeInfo.cardFaceValues);
+                cardFaces2 = CardsTransform.Instance.CreateCardFaces(cardInfos);
+                removeLaizi = new CardFace[5];
+                cardFaces2 = CardsTransform.Instance.RemoveLaiziByCount(cardFaces2, laizi, typeInfo.laiziCount, removeLaizi);
+
+                computedCardFaces = ComputeCardFaces(typeInfo);
+                resultCardFaces = new CardFace[cardFaces.Length];
+                for (int i = 0; i < computedCardFaces.Length; i++)
+                    resultCardFaces[idx++] = computedCardFaces[i];
+                for (int i = 0; i < cardFaces2.Length; i++)
+                    resultCardFaces[idx++] = cardFaces2[i];
+
+                return resultCardFaces;
             }
 
             int laiziCount = 0;
             CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
 
-            CardsTypeInfo info = new CardsTypeInfo()
+            typeInfo = new CardsTypeInfo()
             {
                 cardFaceValues = CardsTransform.Instance.CreateCardFaces(cards),
                 laiziCount = laiziCount,
                 type = cardsType
             };
 
-            return ComputeCardFaces(info);
+            cardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, typeInfo.cardFaceValues);
+            cardFaces2 = CardsTransform.Instance.CreateCardFaces(cardInfos);
+            removeLaizi = new CardFace[5];
+            cardFaces2 = CardsTransform.Instance.RemoveLaiziByCount(cardFaces2, laizi, typeInfo.laiziCount, removeLaizi);
+
+            computedCardFaces = ComputeCardFaces(typeInfo);
+            resultCardFaces = new CardFace[cardFaces.Length];
+            for (int i = 0; i < computedCardFaces.Length; i++)
+                resultCardFaces[idx++] = computedCardFaces[i];
+            for (int i = 0; i < cardFaces2.Length; i++)
+                resultCardFaces[idx++] = cardFaces2[i];
+
+            return resultCardFaces;
         }
 
         /// <summary>
