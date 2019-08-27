@@ -101,7 +101,12 @@ namespace CardRuleNS
         public CardFace[] ComputeCardFaces(CardsTypeInfo info)
         {
             if (info.laiziCount == 0)
-                return info.cardFaceValues;
+            {
+                CardFace[] cardFaces = new CardFace[info.cardFaceValues.Length];
+                for (int i = 0; i < cardFaces.Length; i++)
+                    cardFaces[i] = info.cardFaceValues[i];
+                return cardFaces;
+            }
 
             switch (info.type)
             {
