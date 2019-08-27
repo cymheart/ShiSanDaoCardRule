@@ -14,19 +14,19 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
               {
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.RedJoker
+CardFace.Heart_5,
+CardFace.RedJoker,
+CardFace.Spade_2,
+CardFace.Club_A,
+CardFace.RedJoker,
+CardFace.Club_K,
+CardFace.Club_Q,
+CardFace.Club_J,
+CardFace.Club_10,
+CardFace.RedJoker,
+CardFace.Spade_J,
+CardFace.Spade_6,
+CardFace.Diamond_6
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
@@ -37,6 +37,19 @@ CardFace.RedJoker
             creater.CreateAllCardsTypeArray(cardValues);
             //获取cardValues牌中的三条牌型表
             List<CardsTypeInfo> santiaos = creater.SantiaoList;
+
+            List<CardsTypeInfo> tonghuaShun = creater.TonghuashunList;
+            CardFace[] computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(tonghuaShun[26]);
+
+            List<CardsTypeInfo> shun = creater.ShunziList;
+            computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(shun[6]);
+
+
+            List<CardsTypeInfo> hulu = creater.HuluList;
+            computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(hulu[0]);
+
+            List<CardsTypeInfo> towdui = creater.TwoduiList;
+            computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(towdui[8]);
 
             /////////////////////////////////////////////////
             //2.特殊牌型检查

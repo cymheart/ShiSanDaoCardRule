@@ -935,7 +935,7 @@ namespace CardRuleNS
                             return cardFaces;
                         }
 
-                        CardFace cardface = cardFaces[0];
+                        CardFace cardface = info.cardFaceValues[0];
                         CardInfo cardinfo = CardsTransform.Instance.CreateCardInfo(cardface);
 
                         if (cardinfo.value == 1)
@@ -961,11 +961,24 @@ namespace CardRuleNS
                             return cardFaces;
                         }
 
-                        cardFaces[0] = cardface;
-                        cardFaces[1] = CardsTransform.Instance.GetCardFace(cardinfo.value + 1, cardinfo.suit);
-                        cardFaces[2] = CardsTransform.Instance.GetCardFace(cardinfo.value + 2, cardinfo.suit);
-                        cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfo.value + 3, cardinfo.suit);
-                        cardFaces[4] = CardsTransform.Instance.GetCardFace(cardinfo.value + 4, cardinfo.suit);
+                        int value = cardinfo.value;
+                        if (cardinfo.value >= 10)
+                        {
+                            cardFaces[0] = CardsTransform.Instance.GetCardFace(10, cardinfo.suit);
+                            cardFaces[1] = CardsTransform.Instance.GetCardFace(11, cardinfo.suit);
+                            cardFaces[2] = CardsTransform.Instance.GetCardFace(12, cardinfo.suit);
+                            cardFaces[3] = CardsTransform.Instance.GetCardFace(13, cardinfo.suit);
+                            cardFaces[4] = CardsTransform.Instance.GetCardFace(1, cardinfo.suit);
+                        }
+                        else
+                        {
+                            cardFaces[0] = cardface;
+                            cardFaces[1] = CardsTransform.Instance.GetCardFace(cardinfo.value + 1, cardinfo.suit);
+                            cardFaces[2] = CardsTransform.Instance.GetCardFace(cardinfo.value + 2, cardinfo.suit);
+                            cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfo.value + 3, cardinfo.suit);
+                            cardFaces[4] = CardsTransform.Instance.GetCardFace(cardinfo.value + 4, cardinfo.suit);
+                        }
+
                         return cardFaces;
 
                     }
@@ -1010,8 +1023,8 @@ namespace CardRuleNS
                         }
 
                         CardFace[] cardFaces = new CardFace[5];
-                        int[] aCardIdxs = CardsTransform.Instance.FindCards(cardinfos, a);
-                        int[] bCardIdxs = b > 0 ? CardsTransform.Instance.FindCards(cardinfos, b) : null;
+                        int[] aCardIdxs = CardsTransform.Instance.FindCards(cardinfos, cardinfos[a].value);
+                        int[] bCardIdxs = b > 0 ? CardsTransform.Instance.FindCards(cardinfos, cardinfos[b].value) : null;
 
                         if(bCardIdxs == null)
                         {
@@ -1023,22 +1036,22 @@ namespace CardRuleNS
 
                                 if (aCardIdxs.Length == 1)
                                 {
-                                    cardFaces[3] = cardFaces[aCardIdxs[0]];
+                                    cardFaces[3] = info.cardFaceValues[aCardIdxs[0]];
                                     cardFaces[4] = cardFaces[3];
                                 }
                                 else
                                 {
-                                    cardFaces[3] = cardFaces[aCardIdxs[0]];
-                                    cardFaces[4] = cardFaces[aCardIdxs[1]];
+                                    cardFaces[3] = info.cardFaceValues[aCardIdxs[0]];
+                                    cardFaces[4] = info.cardFaceValues[aCardIdxs[1]];
                                 }
                             }
                             else
                             {
                                 int idx = 0;
                                 for (int i = 0; i < aCardIdxs.Length; i++)
-                                    cardFaces[idx++] = cardFaces[aCardIdxs[i]];
+                                    cardFaces[idx++] = info.cardFaceValues[aCardIdxs[i]];
                                 for (int i = 0; i < 3 - aCardIdxs.Length; i++)
-                                    cardFaces[idx++] = cardFaces[0];
+                                    cardFaces[idx++] = info.cardFaceValues[0];
 
                                 cardFaces[3] = CardFace.Heart_A;
                                 cardFaces[4] = CardFace.Heart_A;
@@ -1051,7 +1064,7 @@ namespace CardRuleNS
                         if (aCardIdxs.Length == 3)
                         {
                             for (int i = 0; i < aCardIdxs.Length; i++)
-                                cardFaces[i] = cardFaces[aCardIdxs[i]];
+                                cardFaces[i] = info.cardFaceValues[aCardIdxs[i]];
 
                             cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfos[bCardIdxs[0]].value, cardinfos[bCardIdxs[0]].suit);
                             if (bCardIdxs.Length == 1) cardFaces[4] = cardFaces[3];
@@ -1062,7 +1075,7 @@ namespace CardRuleNS
                         else if(bCardIdxs.Length == 3)
                         {
                             for (int i = 0; i < aCardIdxs.Length; i++)
-                                cardFaces[i] = cardFaces[bCardIdxs[i]];
+                                cardFaces[i] = info.cardFaceValues[bCardIdxs[i]];
 
                             cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfos[aCardIdxs[0]].value, cardinfos[aCardIdxs[0]].suit);
                             if (bCardIdxs.Length == 1) cardFaces[4] = cardFaces[3];
@@ -1075,12 +1088,12 @@ namespace CardRuleNS
                             {
                                 int idx = 0;
                                 for (int i = 0; i < aCardIdxs.Length; i++)
-                                    cardFaces[idx++] = cardFaces[aCardIdxs[i]];
+                                    cardFaces[idx++] = info.cardFaceValues[aCardIdxs[i]];
                                 for (int i = 0; i < 3 - aCardIdxs.Length; i++)
                                     cardFaces[idx++] = cardFaces[0];
 
                                 for (int i = 0; i < bCardIdxs.Length; i++)
-                                    cardFaces[idx++] = cardFaces[bCardIdxs[i]];
+                                    cardFaces[idx++] = info.cardFaceValues[bCardIdxs[i]];
                                 for (int i = 0; i < 2 - bCardIdxs.Length; i++)
                                     cardFaces[idx++] = cardFaces[3];
                             }
@@ -1088,12 +1101,12 @@ namespace CardRuleNS
                             {
                                 int idx = 0;
                                 for (int i = 0; i < bCardIdxs.Length; i++)
-                                    cardFaces[idx++] = cardFaces[bCardIdxs[i]];
+                                    cardFaces[idx++] = info.cardFaceValues[bCardIdxs[i]];
                                 for (int i = 0; i < 3 - bCardIdxs.Length; i++)
                                     cardFaces[idx++] = cardFaces[0];
 
                                 for (int i = 0; i < aCardIdxs.Length; i++)
-                                    cardFaces[idx++] = cardFaces[aCardIdxs[i]];
+                                    cardFaces[idx++] = info.cardFaceValues[aCardIdxs[i]];
                                 for (int i = 0; i < 2 - aCardIdxs.Length; i++)
                                     cardFaces[idx++] = cardFaces[3];
                             }
@@ -1120,14 +1133,14 @@ namespace CardRuleNS
 
                         CardFace[] cardFaces = new CardFace[4];
               
-                        int[] cardIdxs = CardsTransform.Instance.FindCards(cardinfos, a);
+                        int[] cardIdxs = CardsTransform.Instance.FindCards(cardinfos, cardinfos[a].value);
                         cardFaces[0] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[0]].value, cardinfos[cardIdxs[0]].suit);
                         if (cardIdxs.Length == 1) cardFaces[1] = cardFaces[0];
                         else cardFaces[1] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[1]].value, cardinfos[cardIdxs[1]].suit);
 
                         if (b > 0)
                         {
-                            cardIdxs = CardsTransform.Instance.FindCards(cardinfos, b);
+                            cardIdxs = CardsTransform.Instance.FindCards(cardinfos, cardinfos[b].value);
                             cardFaces[2] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[0]].value, cardinfos[cardIdxs[0]].suit);
                             if (cardIdxs.Length == 1) cardFaces[3] = cardFaces[2];
                             else cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[1]].value, cardinfos[cardIdxs[1]].suit);
@@ -1251,13 +1264,31 @@ namespace CardRuleNS
                             return cardFaces;
                         }
 
-                        cardFaces[0] = info.cardFaceValues[0];
-                        for (int j = 1; j < 5; j++)
+
+                        if (cardinfo[0].value >= 10)
                         {
-                            idx = CardsTransform.Instance.FindCard(cardinfo, cardinfo[0].value + j);
-                            if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
-                            else cardFaces[j] = CardsTransform.Instance.GetCardFace(cardinfo[0].value + j, 0);
-                        } 
+                            for (int j = 0; j < 4; j++)
+                            {
+                                idx = CardsTransform.Instance.FindCard(cardinfo, 10 + j);
+                                if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
+                                else cardFaces[j] = CardsTransform.Instance.GetCardFace(10 + j, 0);
+                            }
+
+                            idx = CardsTransform.Instance.FindCard(cardinfo, 1);
+                            if (idx != -1) cardFaces[4] = info.cardFaceValues[idx];
+                            else cardFaces[4] = CardsTransform.Instance.GetCardFace(1, 0);
+                        }
+                        else
+                        {
+                            cardFaces[0] = info.cardFaceValues[0];
+                            for (int j = 1; j < 5; j++)
+                            {
+                                idx = CardsTransform.Instance.FindCard(cardinfo, cardinfo[0].value + j);
+                                if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
+                                else cardFaces[j] = CardsTransform.Instance.GetCardFace(cardinfo[0].value + j, 0);
+                            }
+                        }
+
                         return cardFaces;
                     }
 
