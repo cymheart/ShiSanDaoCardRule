@@ -66,6 +66,7 @@
     <Compile Include="Core\CardsTypeDict.cs" />
     <Compile Include="Core\CardsTypeCreater.cs" />
     <Compile Include="Core\CardsTypeEvaluation.cs" />
+    <Compile Include="Core\CardsTypeMatch.cs" />
     <Compile Include="Core\CardsTypeS.cs" />
     <Compile Include="Core\CardsTransform.cs" />
     <Compile Include="Program.cs" />

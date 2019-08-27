@@ -39,17 +39,19 @@ CardFace.Diamond_6
             List<CardsTypeInfo> santiaos = creater.SantiaoList;
 
             List<CardsTypeInfo> tonghuaShun = creater.TonghuashunList;
-            CardFace[] computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(tonghuaShun[26]);
+            List<CardFace> cardFaceList = new List<CardFace>();
+            int idx = 3;
 
-            List<CardsTypeInfo> shun = creater.ShunziList;
-            computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(shun[6]);
+            for (int i = 0; i < santiaos[idx].cardFaceValues.Length; i++)
+                cardFaceList.Add(santiaos[idx].cardFaceValues[i]);
 
+            for (int i = 0; i < santiaos[idx].laiziCount; i++)
+                cardFaceList.Add(CardFace.RedJoker);
 
-            List<CardsTypeInfo> hulu = creater.HuluList;
-            computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(hulu[0]);
+            CardsTypeMatch match = new CardsTypeMatch();
+            MatchCardFacesInfo info = match.ComputeMatchCardFacesInfo(cardFaceList.ToArray());
 
-            List<CardsTypeInfo> towdui = creater.TwoduiList;
-            computeCardFaces = CardsTypeCreater.ComputeMaxScoreCardFaces(towdui[8]);
+           
 
             /////////////////////////////////////////////////
             //2.特殊牌型检查
