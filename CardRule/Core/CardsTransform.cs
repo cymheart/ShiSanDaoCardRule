@@ -129,7 +129,7 @@ namespace CardRuleNS
             return newCards.ToArray();
         }
 
-   
+
         public int FindCard(List<CardInfo> cards, int value, int suit)
         {
             for (int i = 0; i < cards.Count; i++)
@@ -151,6 +151,24 @@ namespace CardRuleNS
             }
 
             return -1;
+        }
+
+        public int[] FindCards(CardInfo[] cards, int value)
+        {
+            List<int> idxList = new List<int>();
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (cards[i].value == value)
+                {
+                    idxList.Add(i);
+                }
+            }
+
+            if (idxList.Count > 0)
+                return idxList.ToArray();
+
+            return null;
         }
 
         public int FindCardFace(CardFace[] cardfaces, CardFace findCardface)
@@ -180,16 +198,6 @@ namespace CardRuleNS
             SortCards(cards);
             return cards;
         }
-
-        public CardInfo[] CreateFormatCardsNotSort(CardFace[] cardFaces, CardFace[] laiziCardFaces, ref int laiziCount)
-        {
-            CardFace[] newCardFaces;
-            laiziCount = 0;
-            newCardFaces = RemoveLaizi(cardFaces, laiziCardFaces, ref laiziCount);
-            CardInfo[] cards = TransToCardInfo(newCardFaces);
-            return cards;
-        }
-
 
         /// <summary>
         /// 移除牌中的赖子，获取没有赖子的cardfaces

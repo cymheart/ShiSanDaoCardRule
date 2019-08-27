@@ -26,16 +26,7 @@ CardFace.Heart_9,
 CardFace.Heart_9,
 CardFace.Heart_9,
 CardFace.Heart_9,
-CardFace.Heart_9,
-CardFace.Spade_10,
-CardFace.Spade_10,
-CardFace.Spade_10,
-CardFace.Spade_8,
-CardFace.Spade_8,
-CardFace.Spade_8,
-CardFace.Spade_8,
-CardFace.Spade_8,
-CardFace.Spade_8,
+CardFace.RedJoker
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
@@ -59,7 +50,7 @@ CardFace.Spade_8,
             //3.测试牌型估值
             List<SlotCardsEvalInfo> evalInfoList;
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
-            eval.SetOptimalSlotCardsEvalInfoCount(50);
+            eval.SetOptimalSlotCardsEvalInfoCount(4);
 
             string text = "开始计时";
             Console.WriteLine(text);

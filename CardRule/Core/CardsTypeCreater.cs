@@ -89,14 +89,11 @@ namespace CardRuleNS
         /// 生成所有牌型组数据
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
-        public void CreateAllCardsTypeArray(CardFace[] cardFaces, bool isSort = true)
+        public void CreateAllCardsTypeArray(CardFace[] cardFaces)
         {
             Clear();
 
-            if(isSort)
-                cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
-            else
-                cards = CardsTransform.Instance.CreateFormatCardsNotSort(cardFaces, laizi, ref laiziCount);
+            cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -120,14 +117,68 @@ namespace CardRuleNS
 
 
         /// <summary>
+        /// 生成五同牌型数组
+        /// </summary>
+        /// <param name="cardFaces"></param>
+        public void CreateWutongArray(CardFace[] cardFaces)
+        {
+            WutongList.Clear();
+            int laiziCount = 0;
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+            CreateWutongArray(cards, laiziCount);
+        }
+
+        /// <summary>
+        /// 生成五同牌型数组
+        /// </summary>
+        /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
+        /// <param name="laiziCount"></param>
+        public void CreateWutongArray(CardInfo[] formatCards, int laiziCount)
+        {
+            HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(formatCards);
+            HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(formatCards);
+            HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(formatCards);
+            HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(formatCards);
+            HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(formatCards);
+
+            CreateWutongArrayBySplitGroup(cardkeyHashSet5, laiziCount, 5);
+            CreateWutongArrayBySplitGroup(cardkeyHashSet4, laiziCount, 4);
+            CreateWutongArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
+            CreateWutongArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
+            CreateWutongArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
+
+            //
+            SortDictCardsTypeInfo();
+        }
+
+        void CreateWutongArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
+        {
+            bool ret;
+            CardsTypeCombInfo combInfo;
+            CardInfo[] cardInfos;
+            CardsTypeInfo CardsTypeInfo;
+
+            foreach (var cardkey in cardkeyHashSet)
+            {
+                ret = CardsTypeDict.Instance.wutongKeyDict.TryGetValue(cardkey, out combInfo);
+                if (ret == true && combInfo.laiziCount <= laiziCount)
+                {
+                    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.WuTong, combInfo.laiziCount, combInfo.baseScore);
+                    WutongList.Add(CardsTypeInfo);
+                }  
+            }
+        }
+
+
+        /// <summary>
         /// 生成顺子牌型数组（包括同花顺）
         /// </summary>
         /// <param name="cardFaces"></param>
         public void CreateShunziArray(CardFace[] cardFaces)
         {
             ShunziList.Clear();
-
-            List<CardFace> newPukeFaceValueList = new List<CardFace>();
+            TonghuashunList.Clear();
             int laiziCount = 0;
             CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
             CreateShunziArray(cards, laiziCount);
@@ -155,6 +206,34 @@ namespace CardRuleNS
             //
             SortDictCardsTypeInfo();
         }
+
+        void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
+        {
+            bool ret;
+            CardsTypeCombInfo combInfo;
+            CardInfo[] cardInfos;
+            CardsTypeInfo CardsTypeInfo;
+
+            foreach (var cardkey in cardkeyHashSet)
+            {
+                ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+                if (ret == true && combInfo.laiziCount <= laiziCount)
+                {
+                    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHuaShun, combInfo.laiziCount, combInfo.baseScore);
+                    TonghuashunList.Add(CardsTypeInfo);
+                }
+
+                ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
+                if (ret == true && combInfo.laiziCount <= laiziCount)
+                {
+                    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.ShunZi, combInfo.laiziCount, combInfo.baseScore);
+                    ShunziList.Add(CardsTypeInfo);
+                }
+            }
+        }
+
 
         /// <summary>
         /// 获取所有能生成的牌型信息
@@ -202,6 +281,10 @@ namespace CardRuleNS
             return cards;
         }
   
+        /// <summary>
+        /// 获取最高分的CardsTypeInfo
+        /// </summary>
+        /// <returns></returns>
         public CardsTypeInfo GetMaxScoreCardsTypeInfo()
         {
             if(WutongList.Count > 0)
@@ -268,7 +351,6 @@ namespace CardRuleNS
             return info;
         }
 
-
         void SortDictCardsTypeInfo()
         {
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
@@ -286,34 +368,7 @@ namespace CardRuleNS
             eval.SortCardsTypes(Single5List);
         }
 
-        void CreateShunziArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
-        {
-            bool ret;
-            CardsTypeCombInfo combInfo;
-            CardInfo[] cardInfos;
-            CardsTypeInfo CardsTypeInfo;
-
-            foreach (var cardkey in cardkeyHashSet)
-            {
-                ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
-                if (ret == true && combInfo.laiziCount <= laiziCount)
-                {
-                    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.TongHuaShun, combInfo.laiziCount, combInfo.baseScore);
-                    TonghuashunList.Add(CardsTypeInfo);
-                }
-
-                ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
-                if (ret == true && combInfo.laiziCount <= laiziCount)
-                {
-                    cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
-                    CardsTypeInfo = CreateCardsTypeInfo(cardInfos, CardsType.ShunZi, combInfo.laiziCount, combInfo.baseScore);
-                    ShunziList.Add(CardsTypeInfo);
-                }
-            }
-        }
-
-
+        
         void CreateCardsTypeArrayBySplitGroup(HashSet<CardKey> cardkeyHashSet, int laiziCount, int splitGroup)
         {
             foreach (var cardkey in cardkeyHashSet)
@@ -805,6 +860,413 @@ namespace CardRuleNS
 
             return cardkeyHashSet;
         }
+
+        /// <summary>
+        /// 计算确定的最大分值牌型CardFaces
+        /// </summary>
+        /// <returns></returns>
+        static public CardFace[] ComputeMaxScoreCardFaces(CardFace[] cardFaces, CardsType cardsType = CardsType.None, CardFace[] laizi = null)
+        {
+            if(cardsType == CardsType.None)
+            {
+                CardsTypeCreater creater = new CardsTypeCreater();
+                creater.SetLaizi(laizi);
+                creater.CreateAllCardsTypeArray(cardFaces);
+                CardsTypeInfo typeInfo = creater.GetMaxScoreCardsTypeInfo();
+                return ComputeMaxScoreCardFaces(typeInfo);
+            }
+        
+            int laiziCount = 0;
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+
+            CardsTypeInfo info = new CardsTypeInfo()
+            {
+                cardFaceValues = CardsTransform.Instance.CreateCardFaces(cards),
+                laiziCount = laiziCount,
+                type = cardsType
+            };
+
+           return ComputeMaxScoreCardFaces(info);
+        }
+
+        /// <summary>
+        /// 计算确定的最大分值牌型CardFaces
+        /// </summary>
+        /// <returns></returns>
+        static public CardFace[] ComputeMaxScoreCardFaces(CardsTypeInfo info)
+        {
+            if (info.laiziCount == 0)
+                return info.cardFaceValues;
+
+            switch (info.type)
+            {
+                case CardsType.WuTong:
+                    {
+                        CardFace[] cardFaces = new CardFace[5];
+
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            for (int i = 0; i < 5; i++)
+                                cardFaces[i] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        int idx = 0;
+                        for (int i = 0; i < info.cardFaceValues.Length; i++)
+                            cardFaces[idx++] = info.cardFaceValues[i];
+
+                        for (int i = 0; i < info.laiziCount; i++)
+                        {
+                            cardFaces[idx++] = cardFaces[0];
+                        }
+
+                        return cardFaces;
+                    }
+                case CardsType.TongHuaShun:
+                    {
+                        CardFace[] cardFaces = new CardFace[5];
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            cardFaces[0] = CardFace.Heart_10;
+                            cardFaces[1] = CardFace.Heart_J;
+                            cardFaces[2] = CardFace.Heart_Q;
+                            cardFaces[3] = CardFace.Heart_K;
+                            cardFaces[4] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        CardFace cardface = cardFaces[0];
+                        CardInfo cardinfo = CardsTransform.Instance.CreateCardInfo(cardface);
+
+                        if (cardinfo.value == 1)
+                        {
+                            for (int i = 0; i < info.cardFaceValues.Length; i++)
+                            {
+                                if (CardsTransform.Instance.GetValue(info.cardFaceValues[i]) >= 10)
+                                {
+                                    cardFaces[0] = CardsTransform.Instance.GetCardFace(10, cardinfo.suit);
+                                    cardFaces[1] = CardsTransform.Instance.GetCardFace(11, cardinfo.suit);
+                                    cardFaces[2] = CardsTransform.Instance.GetCardFace(12, cardinfo.suit);
+                                    cardFaces[3] = CardsTransform.Instance.GetCardFace(13, cardinfo.suit);
+                                    cardFaces[4] = cardface;
+                                    return cardFaces;
+                                }
+                            }
+
+                            cardFaces[0] = cardface;
+                            cardFaces[1] = CardsTransform.Instance.GetCardFace(2, cardinfo.suit);
+                            cardFaces[2] = CardsTransform.Instance.GetCardFace(3, cardinfo.suit);
+                            cardFaces[3] = CardsTransform.Instance.GetCardFace(4, cardinfo.suit);
+                            cardFaces[4] = CardsTransform.Instance.GetCardFace(5, cardinfo.suit);
+                            return cardFaces;
+                        }
+
+                        cardFaces[0] = cardface;
+                        cardFaces[1] = CardsTransform.Instance.GetCardFace(cardinfo.value + 1, cardinfo.suit);
+                        cardFaces[2] = CardsTransform.Instance.GetCardFace(cardinfo.value + 2, cardinfo.suit);
+                        cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfo.value + 3, cardinfo.suit);
+                        cardFaces[4] = CardsTransform.Instance.GetCardFace(cardinfo.value + 4, cardinfo.suit);
+                        return cardFaces;
+
+                    }
+                case CardsType.Bomb:
+                    {
+                        CardFace[] cardFaces = new CardFace[4];
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            cardFaces[0] = CardFace.Heart_A;
+                            cardFaces[1] = CardFace.Heart_A;
+                            cardFaces[2] = CardFace.Heart_A;
+                            cardFaces[3] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        CardInfo[] cardinfo = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
+                        int idx;
+
+                        cardFaces[0] = info.cardFaceValues[0];
+                        for (int j = 1; j < 4; j++)
+                        {
+                            idx = CardsTransform.Instance.FindCard(cardinfo, cardinfo[0].value);
+                            if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
+                            else cardFaces[j] = CardsTransform.Instance.GetCardFace(cardinfo[0].value, 0);
+                        }
+                        return cardFaces;
+                    }
+
+                case CardsType.HuLu:
+                    {
+                        CardInfo[] cardinfos = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
+                        int a = 0;
+                        int b = -1;
+
+                        for (int i = 1; i < cardinfos.Length; i++)
+                        {
+                            if (cardinfos[i].value != cardinfos[0].value)
+                            {
+                                b = i;
+                                break;
+                            }
+                        }
+
+                        CardFace[] cardFaces = new CardFace[5];
+                        int[] aCardIdxs = CardsTransform.Instance.FindCards(cardinfos, a);
+                        int[] bCardIdxs = b > 0 ? CardsTransform.Instance.FindCards(cardinfos, b) : null;
+
+                        if(bCardIdxs == null)
+                        {
+                            if(info.laiziCount >= 3)
+                            {
+                                cardFaces[0] = CardFace.Heart_A;
+                                cardFaces[1] = CardFace.Heart_A;
+                                cardFaces[2] = CardFace.Heart_A;
+
+                                if (aCardIdxs.Length == 1)
+                                {
+                                    cardFaces[3] = cardFaces[aCardIdxs[0]];
+                                    cardFaces[4] = cardFaces[3];
+                                }
+                                else
+                                {
+                                    cardFaces[3] = cardFaces[aCardIdxs[0]];
+                                    cardFaces[4] = cardFaces[aCardIdxs[1]];
+                                }
+                            }
+                            else
+                            {
+                                int idx = 0;
+                                for (int i = 0; i < aCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[aCardIdxs[i]];
+                                for (int i = 0; i < 3 - aCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[0];
+
+                                cardFaces[3] = CardFace.Heart_A;
+                                cardFaces[4] = CardFace.Heart_A;
+                            }
+
+                            return cardFaces;
+                        }
+
+
+                        if (aCardIdxs.Length == 3)
+                        {
+                            for (int i = 0; i < aCardIdxs.Length; i++)
+                                cardFaces[i] = cardFaces[aCardIdxs[i]];
+
+                            cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfos[bCardIdxs[0]].value, cardinfos[bCardIdxs[0]].suit);
+                            if (bCardIdxs.Length == 1) cardFaces[4] = cardFaces[3];
+                            else cardFaces[4] = CardsTransform.Instance.GetCardFace(cardinfos[bCardIdxs[1]].value, cardinfos[bCardIdxs[1]].suit);
+
+                            return cardFaces;
+                        }
+                        else if(bCardIdxs.Length == 3)
+                        {
+                            for (int i = 0; i < aCardIdxs.Length; i++)
+                                cardFaces[i] = cardFaces[bCardIdxs[i]];
+
+                            cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfos[aCardIdxs[0]].value, cardinfos[aCardIdxs[0]].suit);
+                            if (bCardIdxs.Length == 1) cardFaces[4] = cardFaces[3];
+                            else cardFaces[4] = CardsTransform.Instance.GetCardFace(cardinfos[aCardIdxs[1]].value, cardinfos[aCardIdxs[1]].suit);
+                            return cardFaces;
+                        }
+                        else
+                        {
+                            if(cardinfos[aCardIdxs[0]].value > cardinfos[bCardIdxs[0]].value)
+                            {
+                                int idx = 0;
+                                for (int i = 0; i < aCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[aCardIdxs[i]];
+                                for (int i = 0; i < 3 - aCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[0];
+
+                                for (int i = 0; i < bCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[bCardIdxs[i]];
+                                for (int i = 0; i < 2 - bCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[3];
+                            }
+                            else
+                            {
+                                int idx = 0;
+                                for (int i = 0; i < bCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[bCardIdxs[i]];
+                                for (int i = 0; i < 3 - bCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[0];
+
+                                for (int i = 0; i < aCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[aCardIdxs[i]];
+                                for (int i = 0; i < 2 - aCardIdxs.Length; i++)
+                                    cardFaces[idx++] = cardFaces[3];
+                            }
+
+                            return cardFaces;
+                        } 
+                    }
+       
+
+                case CardsType.TwoDui:
+                    {
+                        CardInfo[] cardinfos = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
+                        int a = 0;
+                        int b = -1;
+
+                        for (int i = 1; i < cardinfos.Length; i++)
+                        {
+                            if (cardinfos[i].value != cardinfos[0].value)
+                            {
+                                b = i;
+                                break;
+                            }
+                        }
+
+                        CardFace[] cardFaces = new CardFace[4];
+              
+                        int[] cardIdxs = CardsTransform.Instance.FindCards(cardinfos, a);
+                        cardFaces[0] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[0]].value, cardinfos[cardIdxs[0]].suit);
+                        if (cardIdxs.Length == 1) cardFaces[1] = cardFaces[0];
+                        else cardFaces[1] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[1]].value, cardinfos[cardIdxs[1]].suit);
+
+                        if (b > 0)
+                        {
+                            cardIdxs = CardsTransform.Instance.FindCards(cardinfos, b);
+                            cardFaces[2] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[0]].value, cardinfos[cardIdxs[0]].suit);
+                            if (cardIdxs.Length == 1) cardFaces[3] = cardFaces[2];
+                            else cardFaces[3] = CardsTransform.Instance.GetCardFace(cardinfos[cardIdxs[1]].value, cardinfos[cardIdxs[1]].suit);
+                        }
+                        else
+                        {
+                            cardFaces[2] = CardFace.Heart_A;
+                            cardFaces[3] = CardFace.Heart_A;
+                        }
+                        return cardFaces;
+                    }
+
+                case CardsType.TongHua:
+                    {
+                        CardFace[] cardFaces = new CardFace[5];
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            cardFaces[0] = CardFace.Heart_A;
+                            cardFaces[1] = CardFace.Heart_A;
+                            cardFaces[2] = CardFace.Heart_A;
+                            cardFaces[3] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        int idx = 0;
+                        for (int i = 0; i < info.cardFaceValues.Length; i++)
+                            cardFaces[idx++] = info.cardFaceValues[i];
+
+                        for (int i = 0; i < info.laiziCount; i++)
+                            cardFaces[idx++] = CardFace.Heart_A;
+                        return cardFaces;
+                    }
+
+                case CardsType.SanTiao:
+                    {
+                        CardFace[] cardFaces = new CardFace[3];
+
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            for (int i = 0; i < 3; i++)
+                                cardFaces[i] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        int idx = 0;
+                        for (int i = 0; i < info.cardFaceValues.Length; i++)
+                            cardFaces[idx++] = info.cardFaceValues[i];
+
+                        for (int i = 0; i < info.laiziCount; i++)
+                        {
+                            cardFaces[idx++] = cardFaces[0];
+                        }
+
+                        return cardFaces;
+                    }
+
+                case CardsType.DuiZi:
+                    {
+                        CardFace[] cardFaces = new CardFace[2];
+
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            for (int i = 0; i < 2; i++)
+                                cardFaces[i] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        int idx = 0;
+                        for (int i = 0; i < info.cardFaceValues.Length; i++)
+                            cardFaces[idx++] = info.cardFaceValues[i];
+
+                        for (int i = 0; i < info.laiziCount; i++)
+                        {
+                            cardFaces[idx++] = cardFaces[0];
+                        }
+
+                        return cardFaces;
+                    }
+
+                case CardsType.ShunZi:
+                    {
+                        CardFace[] cardFaces = new CardFace[5];
+                        if (info.cardFaceValues == null || info.cardFaceValues.Length == 0)
+                        {
+                            cardFaces[0] = CardFace.Heart_10;
+                            cardFaces[1] = CardFace.Heart_J;
+                            cardFaces[2] = CardFace.Heart_Q;
+                            cardFaces[3] = CardFace.Heart_K;
+                            cardFaces[4] = CardFace.Heart_A;
+                            return cardFaces;
+                        }
+
+                        CardInfo[] cardinfo = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
+                        int idx;
+
+                        if (cardinfo[0].value == 1)
+                        {
+                            for (int i = 0; i < info.cardFaceValues.Length; i++)
+                            {
+                                if (CardsTransform.Instance.GetValue(info.cardFaceValues[i]) >= 10)
+                                {
+                                    for (int j = 0; j < 4; j++)
+                                    {
+                                        idx = CardsTransform.Instance.FindCard(cardinfo, 10 + j);
+                                        if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
+                                        else cardFaces[j] = CardsTransform.Instance.GetCardFace(10 + j, 0);
+                                    }
+  
+                                    cardFaces[4] = info.cardFaceValues[0];
+                                    return cardFaces;
+                                }
+                            }
+
+                            cardFaces[0] = info.cardFaceValues[0];
+                            for (int j = 1; j < 5; j++)
+                            {
+                                idx = CardsTransform.Instance.FindCard(cardinfo, 1 + j);
+                                if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
+                                else cardFaces[j] = CardsTransform.Instance.GetCardFace(1 + j, 0);
+                            }
+                            return cardFaces;
+                        }
+
+                        cardFaces[0] = info.cardFaceValues[0];
+                        for (int j = 1; j < 5; j++)
+                        {
+                            idx = CardsTransform.Instance.FindCard(cardinfo, cardinfo[0].value + j);
+                            if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
+                            else cardFaces[j] = CardsTransform.Instance.GetCardFace(cardinfo[0].value + j, 0);
+                        } 
+                        return cardFaces;
+                    }
+
+
+            }
+
+            return null;
+        }
+
 
         void Clear()
         {
