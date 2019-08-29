@@ -336,11 +336,16 @@ namespace CardRuleNS
                 info = new CardsTypeInfo();
                 info.type = CardsType.Single;
                 if (cards[0].value == 1)
-                    info.cardFaceValues = new CardFace[] { CardFace.Club_A };
+                {
+                    CardFace face = CardsTransform.Instance.GetCardFace(cards[0].value, cards[0].suit);
+                    info.cardFaceValues = new CardFace[] { face };
+                    info.score = 14;
+                }
                 else
                 {
                     CardFace face = CardsTransform.Instance.GetCardFace(cards[cards.Length - 1].value, cards[cards.Length - 1].suit);
                     info.cardFaceValues = new CardFace[] { face };
+                    info.score = cards[cards.Length - 1].value;
                 }
                 return info;
             }

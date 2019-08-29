@@ -14,19 +14,19 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
               {
+CardFace.Heart_J,
+CardFace.RedJoker,
+CardFace.Heart_K,
+CardFace.Club_2,
+CardFace.Heart_3,
+CardFace.RedJoker,
 CardFace.Heart_5,
 CardFace.RedJoker,
-CardFace.Spade_2,
-CardFace.Club_A,
-CardFace.RedJoker,
-CardFace.Club_K,
-CardFace.Club_Q,
-CardFace.Club_J,
 CardFace.Club_10,
-CardFace.RedJoker,
-CardFace.Spade_J,
-CardFace.Spade_6,
-CardFace.Diamond_6
+CardFace.Heart_J,
+CardFace.Spade_Q,
+CardFace.Spade_K,
+CardFace.Diamond_A
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
@@ -42,14 +42,14 @@ CardFace.Diamond_6
             List<CardFace> cardFaceList = new List<CardFace>();
             int idx = 3;
 
-            for (int i = 0; i < santiaos[idx].cardFaceValues.Length; i++)
-                cardFaceList.Add(santiaos[idx].cardFaceValues[i]);
+            //for (int i = 0; i < santiaos[idx].cardFaceValues.Length; i++)
+            //    cardFaceList.Add(santiaos[idx].cardFaceValues[i]);
 
-            for (int i = 0; i < santiaos[idx].laiziCount; i++)
-                cardFaceList.Add(CardFace.RedJoker);
+            //for (int i = 0; i < santiaos[idx].laiziCount; i++)
+            //    cardFaceList.Add(CardFace.RedJoker);
 
-            CardsTypeMatch match = new CardsTypeMatch();
-            MatchCardFacesInfo info = match.ComputeMatchCardFacesInfo(cardFaceList.ToArray());
+            //CardsTypeMatch match = new CardsTypeMatch();
+            //MatchCardFacesInfo info = match.ComputeMatchCardFacesInfo(cardFaceList.ToArray());
 
            
 
@@ -59,7 +59,8 @@ CardFace.Diamond_6
 
             //存储特殊牌型结果（已排好序）
             CardFace[] outCards = new CardFace[13];
-            SpecCardsType type = specCard.Check(cardValues, outCards);
+            CardFace[] outComputedCards = new CardFace[13];
+            SpecCardsType type = specCard.Check(cardValues, outCards, outComputedCards);
 
             /////////////////////////////////////////////////
             //3.测试牌型估值
