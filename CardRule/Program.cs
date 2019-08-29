@@ -15,17 +15,17 @@ namespace CardRule
             CardFace[] cardValues = new CardFace[]
               {
 CardFace.Heart_J,
-CardFace.RedJoker,
-CardFace.Heart_K,
+CardFace.Heart_J,
+CardFace.Heart_J,
 CardFace.Club_2,
-CardFace.Heart_3,
-CardFace.RedJoker,
+CardFace.Heart_2,
+CardFace.Heart_2,
 CardFace.Heart_5,
 CardFace.RedJoker,
-CardFace.Club_10,
-CardFace.Heart_J,
+CardFace.Club_5,
+CardFace.Heart_Q,
 CardFace.Spade_Q,
-CardFace.Spade_K,
+CardFace.Spade_Q,
 CardFace.Diamond_A
               };
 

@@ -533,6 +533,7 @@ namespace CardRuleNS
             int n = 0;
             int m = 0;
             bool isFind;
+            CardInfo tmpCardInfo;
 
             while (true)
             {
@@ -592,6 +593,7 @@ namespace CardRuleNS
                         {
                             outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
                             outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[j].value, cardList[j].suit);
+                            tmpCardInfo = cardList[i];
                             cardList.RemoveRange(i, 2);
 
                             laiziCount--;
@@ -599,7 +601,7 @@ namespace CardRuleNS
                                 return false;
 
                             outFaceValues[n++] = CardFace.Laizi;
-                            outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                            outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(tmpCardInfo);
 
                             isFind = true;
                             j = cardList.Count;
@@ -638,6 +640,7 @@ namespace CardRuleNS
                 for (int i = 0; i < cardList.Count; i++)
                 {
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                    tmpCardInfo = cardList[i];
                     cardList.RemoveAt(i);
 
                     for (int j = 0; j < 2; j++)
@@ -647,7 +650,7 @@ namespace CardRuleNS
                             return false;
 
                         outFaceValues[n++] = CardFace.Laizi;
-                        outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                        outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(tmpCardInfo);
                     }
 
                     isFind = true;
@@ -707,6 +710,7 @@ namespace CardRuleNS
             int n = 0;
             int m = 0;
             bool isFind;
+            CardInfo tmpCardInfo;
 
             while (true)
             {
@@ -759,6 +763,7 @@ namespace CardRuleNS
                 for (int i = 0; i < cardList.Count; i++)
                 {
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                    tmpCardInfo = cardList[i];
                     cardList.RemoveAt(i);
 
                     laiziCount--;
@@ -766,7 +771,7 @@ namespace CardRuleNS
                         return false;
 
                     outFaceValues[n++] = CardFace.Laizi;
-                    outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(cardList[i].value, cardList[i].suit);
+                    outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(tmpCardInfo);
 
                     isFind = true;
                     i = cardList.Count;
