@@ -117,7 +117,7 @@ namespace CardRuleNS
                 specCardsInfoList.Add(info);
             }
 
-            if(specCardsInfoList.Count > 0)
+            if (specCardsInfoList.Count > 0)
             {
                 specCardsInfoList.Sort(new SpecCardsComparer());
 
@@ -166,7 +166,7 @@ namespace CardRuleNS
                             cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, card.value, card.suit);
                         }
 
-                        if(!cardkeySet.Contains(cardkey))
+                        if (!cardkeySet.Contains(cardkey))
                         {
                             cardFacesList.Add(tmpCardFaces);
                             cardkeySet.Add(cardkey);
@@ -189,7 +189,7 @@ namespace CardRuleNS
             {
                 type = SpecCardsType.ZhiZunQinLong;
             }
-            else if (checkSpeckCardSet.Contains(SpecCardsType.YiTiaoLong) && 
+            else if (checkSpeckCardSet.Contains(SpecCardsType.YiTiaoLong) &&
                 IsYiTiaoLong(cards, laiziCount, outFaceValues, outComputedFaceValues))
             {
                 type = SpecCardsType.YiTiaoLong;
@@ -250,14 +250,14 @@ namespace CardRuleNS
         {
             CardInfo[] cards = formatCards;
 
-            for (int i= 1; i < cards.Length; i++)
+            for (int i = 1; i < cards.Length; i++)
             {
                 if (cards[i].suit != cards[0].suit)
                     return false;
             }
 
             bool ret = IsYiTiaoLong(cards, laiziCount, outFaceValues, outComputedFaceValues);
-            return ret; 
+            return ret;
         }
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace CardRuleNS
                 return false;
 
             //只有3种花色
-            if(count == 3)
+            if (count == 3)
             {
                 int min = 4; //最小数量花色牌的数量
                 int minIdx = 0;  //最小数量花色的idx
@@ -373,7 +373,7 @@ namespace CardRuleNS
                 int n = 0;
                 int m = 0;
 
-                for(int i=0; i < suitCards[minIdx].Count; i++)
+                for (int i = 0; i < suitCards[minIdx].Count; i++)
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(suitCards[minIdx][i].value, suitCards[minIdx][i].suit);
 
                 for (int i = suitCards[minIdx].Count; i < 3; i++)
@@ -387,7 +387,7 @@ namespace CardRuleNS
                 }
 
                 //对其他两种花色处理
-                for(int i = 0; i < 3; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     if (idx[i] == minIdx)  //上面已处理的最小数量的花色，不作处理
                         continue;
@@ -406,7 +406,7 @@ namespace CardRuleNS
                     }
                 }
             }
-            else if(count == 2)
+            else if (count == 2)
             {
                 if (suitCards[idx[0]].Count > 5 &&
                     suitCards[idx[1]].Count > 5)
@@ -931,7 +931,7 @@ namespace CardRuleNS
             int k = 0;
             n = 0;
 
-            for(int i=0; i< matchInfo1.laiziCardFaces.Length; i++)
+            for (int i = 0; i < matchInfo1.laiziCardFaces.Length; i++)
             {
                 if (matchInfo1.laiziCardFaces[i] == CardFace.RedJoker)
                 {
@@ -984,7 +984,7 @@ namespace CardRuleNS
             };
 
             int[] cardCount = new int[14];
-            for(int i=0; i < cards.Length; i++)
+            for (int i = 0; i < cards.Length; i++)
                 cardCount[cards[i].value]++;
 
             for (int j = 0; j < 2; j++)
@@ -1078,7 +1078,7 @@ namespace CardRuleNS
                     int s = CardsTransform.Instance.FindCard(cards, maxIdx);
                     outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards[s].value, cards[s].suit);
                 }
-                else 
+                else
                 {
                     if (laiziCount - mustLaiziCount >= 1)
                     {
@@ -1179,10 +1179,10 @@ namespace CardRuleNS
             }
 
             CardInfo[] cards2 = CardsTransform.Instance.CreateRemoveCardInfos(cards, cardsList.ToArray());
-            for(int i=0; i < cards2.Length; i++)
-                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards2[i].value, cards2[i].suit); 
+            for (int i = 0; i < cards2.Length; i++)
+                outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cards2[i].value, cards2[i].suit);
 
-            if(13 - n <= laiziCount - mustLaiziCount)
+            if (13 - n <= laiziCount - mustLaiziCount)
             {
                 for (int i = n; i < 13; i++)
                 {

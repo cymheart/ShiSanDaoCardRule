@@ -98,7 +98,17 @@ namespace CardRuleNS
         //
         bool isCheckSuitCount = false;
         int limitSameSuitCount = 2;
- 
+
+        /// <summary>
+        /// 是否生成同花字典
+        /// </summary>
+        bool isCreateTonghuaDict = false;
+
+        /// <summary>
+        /// 是否生成单张5个字典
+        /// </summary>
+        bool isCreateSingle5Dict = false;
+
         CardsTypeDict()
         {
             CreateDict();
@@ -116,8 +126,12 @@ namespace CardRuleNS
             CreateTieZhiDict();
             CreateSanTiaoDict();
             CreateDuiZiDict();
-            CreateTongHuaDict();
-           // CreateSingle5Dict();
+
+            if(isCreateTonghuaDict)
+                CreateTongHuaDict();
+
+            if (isCreateSingle5Dict)
+                CreateSingle5Dict();
         }
 
         void AddToDict(Dictionary<CardKey, CardsTypeCombInfo> dict, CardKey cardkey, int count, float score)
@@ -1136,28 +1150,24 @@ namespace CardRuleNS
 
             float score;
 
-            for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
 
-                for (int j = i; j <= 10; j++)
+                for (int j = 1; j <= 13; j++)
                 {
                     cards[1].value = j;
-                    for (int k = j; k <= 11; k++)
+                    for (int k = 1; k <= 13; k++)
                     {
                         cards[2].value = k;
-                        for (int m = k; m <= 12; m++)
+                        for (int m = 1; m <= 13; m++)
                         {
                             cards[3].value = m;
 
-                            for (int n = m; n <= 13; n++)
+                            for (int n = 1; n <= 13; n++)
                             {
-                                if ((i == j && i == k) || (i == k && i == m ) || (i == m && i == n) ||
-                                    (j == k && j == m) || (j == m && j == n) || (k == m && k == n))
-                                    continue;
-
-                                else if (i == j + 1 && j == k + 1 &&
-                                    k == m + 1 && m == n + 1)
+                                if (i == j + 1 && j == k + 1 &&
+                                   k == m + 1 && m == n + 1)
                                     continue;
 
                                 score = CardsTypeEvaluation.GetTongHuaBaseScore(new float[] {i, j, k, m, n });

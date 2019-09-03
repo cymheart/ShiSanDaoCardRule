@@ -743,9 +743,7 @@ namespace CardRuleNS
 
         static public float GetShunZiBaseScore(float startCardValue)
         {
-            float score = 0;
-            for (int i = 0; i < 5; i++)
-                score += startCardValue + i;
+            float score = startCardValue + 4;
             return score;
         }
 
@@ -786,7 +784,9 @@ namespace CardRuleNS
             float max = cardValues[0];
             for (int i = 1; i < cardValues.Length; i++)
             {
-                if (cardValues[i] > max)
+                if (cardValues[i] == 1)
+                    max = 14;
+                else if (cardValues[i] > max)
                     max = cardValues[i];
             }
             return max;

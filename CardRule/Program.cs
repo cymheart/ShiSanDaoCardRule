@@ -22,14 +22,37 @@ CardFace.Heart_2,
 CardFace.Heart_2,
 CardFace.Heart_5,
 CardFace.RedJoker,
-CardFace.Club_5,
-CardFace.Heart_Q,
-CardFace.Spade_Q,
-CardFace.Spade_Q,
-CardFace.Diamond_A
+ CardFace.Heart_Q,
+ CardFace.Heart_Q,
+ CardFace.Heart_Q,
+ CardFace.Heart_7,
+ CardFace.Heart_7,
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
+
+
+            CardFace[] cardface = new CardFace[]
+            {
+                CardFace.Heart_Q,
+                CardFace.Heart_Q,
+                CardFace.Heart_Q,
+                CardFace.Heart_7,
+                CardFace.Heart_7,
+            };
+
+            CardInfo[] cards = CardsTransform.Instance.CreateCardInfos(cardface);
+            CardKey cardkey = new CardKey();
+            for(int i=0; i< cards.Length; i++)
+                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+
+
+            if (CardsTypeDict.Instance.tonghuaKeyDict.ContainsKey(cardkey))
+            {
+                int a;
+                a = 3;
+            }
+
 
             /////////////////////////////////////////////////
             //1.获取普通牌型组合
