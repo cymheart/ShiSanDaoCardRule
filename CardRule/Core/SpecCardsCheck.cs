@@ -412,7 +412,7 @@ namespace CardRuleNS
                     suitCards[idx[1]].Count > 5)
                     return false;
 
-                int min = 4;
+                int min = 5;
                 int minIdx = 0;
                 int otherIdx = 0;
 

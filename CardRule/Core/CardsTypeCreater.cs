@@ -967,6 +967,10 @@ namespace CardRuleNS
                                         if (ret == true && combInfo.laiziCount <= laiziCount)
                                             continue;
 
+                                        ret = CardsTypeDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
                                         cardkeyHashSet.Add(cardkey);
 
                                         CardInfo[] cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
