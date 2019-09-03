@@ -322,39 +322,39 @@ namespace CardRuleNS
         {
             if(WutongList.Count > 0)
             {
-                return WutongList[WutongList.Count - 1];
+                return WutongList[0];
             }
             else if(TonghuashunList.Count > 0)
             {
-                return TonghuashunList[TonghuashunList.Count - 1];
+                return TonghuashunList[0];
             }
             else if (TiezhiList.Count > 0)
             {
-                return TiezhiList[TiezhiList.Count - 1];
+                return TiezhiList[0];
             }
             else if (HuluList.Count > 0)
             {
-                return HuluList[HuluList.Count - 1];
+                return HuluList[0];
             }
             else if (TonghuaList.Count > 0)
             {
-                return TonghuaList[TonghuaList.Count - 1];
+                return TonghuaList[0];
             }
             else if (ShunziList.Count > 0)
             {
-                return ShunziList[ShunziList.Count - 1];
+                return ShunziList[0];
             }
             else if (SantiaoList.Count > 0)
             {
-                return SantiaoList[SantiaoList.Count - 1];
+                return SantiaoList[0];
             }
             else if (TwoduiList.Count > 0)
             {
-                return TwoduiList[TwoduiList.Count - 1];
+                return TwoduiList[0];
             }
             else if (DuiziList.Count > 0)
             {
-                return DuiziList[DuiziList.Count - 1];
+                return DuiziList[0];
             }
 
             CardsTypeInfo info;

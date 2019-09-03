@@ -394,7 +394,10 @@ namespace CardRuleNS
                         }
                         else
                         {
-                            if (cardinfos[aCardIdxs[0]].value > cardinfos[bCardIdxs[0]].value)
+
+
+                            if (cardinfos[aCardIdxs[0]].value == 1 || 
+                                cardinfos[aCardIdxs[0]].value > cardinfos[bCardIdxs[0]].value)
                             {
                                 int idx = 0;
                                 for (int i = 0; i < aCardIdxs.Length; i++)
