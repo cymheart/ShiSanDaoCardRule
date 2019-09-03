@@ -89,7 +89,7 @@ CardFace.RedJoker,
             //3.测试牌型估值
             List<SlotCardsEvalInfo> evalInfoList;
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
-            eval.SetOptimalSlotCardsEvalInfoCount(4);
+            eval.SetOptimalSlotCardsEvalInfoCount(10);
 
             string text = "开始计时";
             Console.WriteLine(text);

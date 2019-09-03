@@ -981,8 +981,8 @@ namespace CardRuleNS
                                         float score;
                                         switch(info.type)
                                         {
-                                            case CardsType.SanTiao: score = 100 + info.score;break;
-                                            case CardsType.TwoDui: score = 50 + info.score; break;
+                                            case CardsType.SanTiao: score = 60 + info.score;break;
+                                            case CardsType.TwoDui: score = 40 + info.score; break;
                                             case CardsType.DuiZi: score = 20 + info.score; break;
                                             default: score = info.score;  break;
                                         }
@@ -1048,8 +1048,8 @@ namespace CardRuleNS
                                         float score;
                                         switch (info.type)
                                         {
-                                            case CardsType.SanTiao: score = 100 + info.score; break;
-                                            case CardsType.TwoDui: score = 50 + info.score; break;
+                                            case CardsType.SanTiao: score = 60 + info.score; break;
+                                            case CardsType.TwoDui: score = 40 + info.score; break;
                                             case CardsType.DuiZi: score = 20 + info.score; break;
                                             default: score = info.score; break;
                                         }
@@ -1114,8 +1114,8 @@ namespace CardRuleNS
                                     float score;
                                     switch (info.type)
                                     {
-                                        case CardsType.SanTiao: score = 100 + info.score; break;
-                                        case CardsType.TwoDui: score = 50 + info.score; break;
+                                        case CardsType.SanTiao: score = 60 + info.score; break;
+                                        case CardsType.TwoDui: score = 40 + info.score; break;
                                         case CardsType.DuiZi: score = 20 + info.score; break;
                                         default: score = info.score; break;
                                     }
@@ -1177,8 +1177,8 @@ namespace CardRuleNS
                                 float score;
                                 switch (info.type)
                                 {
-                                    case CardsType.SanTiao: score = 100 + info.score; break;
-                                    case CardsType.TwoDui: score = 50 + info.score; break;
+                                    case CardsType.SanTiao: score = 60 + info.score; break;
+                                    case CardsType.TwoDui: score = 40 + info.score; break;
                                     case CardsType.DuiZi: score = 20 + info.score; break;
                                     default: score = info.score; break;
                                 }
