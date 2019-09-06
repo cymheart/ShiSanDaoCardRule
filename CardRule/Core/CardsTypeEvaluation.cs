@@ -755,7 +755,11 @@ namespace CardRuleNS
 
         static public float GetTwoDuiBaseScore(float firstCardValue, float secondCardValue)
         {
-            float score = firstCardValue + secondCardValue;
+            float score;
+            if (firstCardValue > secondCardValue)
+                score = firstCardValue + secondCardValue * 0.1f;
+            else
+                score = secondCardValue + firstCardValue * 0.1f;
             return score;
         }
 
