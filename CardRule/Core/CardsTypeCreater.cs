@@ -88,7 +88,7 @@ namespace CardRuleNS
         /// 生成所有牌型组数据
         /// </summary>
         /// <param name="cardFaces">手牌数据</param>
-        public void CreateAllCardsTypeArray(CardFace[] cardFaces)
+        public void CreateAllCardsTypeArray(CardFace[] cardFaces, int createSingleTypeCount = 0)
         {
             Clear();
 
@@ -111,8 +111,11 @@ namespace CardRuleNS
             CreateTonghuaList();
 
             //
-            CreateSingle5Dict();
-            //CreateSingle3Dict();
+            if(createSingleTypeCount == 5)
+                CreateSingle5Dict();
+
+            if(createSingleTypeCount == 3)
+                CreateSingle3Dict();
 
             //
             SortDictCardsTypeInfo();
@@ -272,7 +275,7 @@ namespace CardRuleNS
         /// 获取所有能生成的牌型信息
         /// </summary>
         /// <returns></returns>
-        public CardsTypeInfo[] GetAllCardsTypeInfo(bool isExcludeSingle5 = true)
+        public CardsTypeInfo[] GetAllCardsTypeInfo(bool isExcludeSingleType = true)
         {
             List<CardsTypeInfo> infoList = new List<CardsTypeInfo>();
 
@@ -286,8 +289,11 @@ namespace CardRuleNS
             infoList.AddRange(TwoduiList);
             infoList.AddRange(DuiziList);
 
-            if(!isExcludeSingle5)
+            if (!isExcludeSingleType)
+            {
                 infoList.AddRange(Single5List);
+                infoList.AddRange(Single3List);
+            }
 
             return infoList.ToArray();
         }

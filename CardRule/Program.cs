@@ -14,44 +14,22 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
               {
-CardFace.Heart_J,
-CardFace.Heart_J,
-CardFace.Heart_J,
-CardFace.Club_2,
-CardFace.Heart_2,
-CardFace.Heart_2,
-CardFace.Heart_5,
-CardFace.RedJoker,
- CardFace.Heart_Q,
- CardFace.Heart_Q,
- CardFace.Heart_Q,
- CardFace.Heart_7,
- CardFace.Heart_7,
+CardFace.Club_Q,
+CardFace.Spade_J,
+CardFace.Spade_9,
+CardFace.Diamond_A,
+CardFace.Diamond_7,
+CardFace.Spade_7,
+CardFace.Club_6,
+CardFace.Diamond_4,
+CardFace.Heart_A,
+CardFace.Heart_K,
+CardFace.Heart_Q,
+CardFace.Heart_9,
+CardFace.Heart_3
               };
 
             CardsTypeDict dict = CardsTypeDict.Instance;
-
-
-            CardFace[] cardface = new CardFace[]
-            {
-                CardFace.Heart_Q,
-                CardFace.Heart_Q,
-                CardFace.Heart_Q,
-                CardFace.Heart_7,
-                CardFace.Heart_7,
-            };
-
-            CardInfo[] cards = CardsTransform.Instance.CreateCardInfos(cardface);
-            CardKey cardkey = new CardKey();
-            for(int i=0; i< cards.Length; i++)
-                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
-
-
-            if (CardsTypeDict.Instance.tonghuaKeyDict.ContainsKey(cardkey))
-            {
-                int a;
-                a = 3;
-            }
 
 
             /////////////////////////////////////////////////
@@ -89,7 +67,7 @@ CardFace.RedJoker,
             //3.测试牌型估值
             List<SlotCardsEvalInfo> evalInfoList;
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
-            eval.SetOptimalSlotCardsEvalInfoCount(10);
+            //eval.SetOptimalSlotCardsEvalInfoCount(10);
 
             string text = "开始计时";
             Console.WriteLine(text);

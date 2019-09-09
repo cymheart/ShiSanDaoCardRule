@@ -388,14 +388,12 @@ namespace CardRuleNS
             }
 
             //为下一个槽准备数据
-           // CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
-          //  nextSlotCreater.SetLaizi(laizi);
-            nextSlotCreater.CreateAllCardsTypeArray(cardFaces);
-
             CardsTypeInfo[] info;
 
             if (slotDepth < 1)
             {
+                nextSlotCreater.CreateAllCardsTypeArray(cardFaces);
+
                 if (nextSlotCreater.IsExistNotSingleCardsType())
                     info = nextSlotCreater.GetAllCardsTypeInfo();
                 else
@@ -403,9 +401,11 @@ namespace CardRuleNS
             }
             else
             {
+                nextSlotCreater.CreateAllCardsTypeArray(cardFaces, 3);
                 List<CardsTypeInfo> tmpInfo = new List<CardsTypeInfo>();
                 tmpInfo.AddRange(nextSlotCreater.SantiaoList);
                 tmpInfo.AddRange(nextSlotCreater.DuiziList);
+                tmpInfo.AddRange(nextSlotCreater.Single3List);
                 info = tmpInfo.ToArray();
 
                 if (info.Length == 0)
