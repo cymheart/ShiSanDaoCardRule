@@ -5,9 +5,20 @@ using System.Text;
 
 namespace CardRuleNS
 {
+    /// <summary>
+    /// 对牌型中的赖子牌进行计算，得到最大的牌型
+    /// 结果存储与MatchCardFacesInfo的computedCardFaces中
+    /// </summary>
     public struct MatchCardFacesInfo
     {
+        /// <summary>
+        /// 计算后的牌型
+        /// </summary>
         public CardFace[] computedCardFaces;
+
+        /// <summary>
+        /// 原始带癞子的牌型
+        /// </summary>
         public CardFace[] laiziCardFaces;
         public CardsType type;
     }
