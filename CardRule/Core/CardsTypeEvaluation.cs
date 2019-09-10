@@ -26,6 +26,7 @@ namespace CardRuleNS
         /// 综合估值
         /// </summary>
         public float compEval;
+
     }
 
     /// <summary>
@@ -67,6 +68,7 @@ namespace CardRuleNS
         CardEvalComparer cardEvalComparer = new CardEvalComparer();
         CardsTypeCreater optimalCardCreater = new CardsTypeCreater();
         CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+        CardsTypeMatch match = new CardsTypeMatch();
        
 
         int optimalSlotCardsEvalInfoCount = 50;
@@ -129,6 +131,7 @@ namespace CardRuleNS
 
             optimalCardCreater.SetLaizi(laizi);
             nextSlotCreater.SetLaizi(laizi);
+            match.SetLaizi(laizi);
         }
 
 
@@ -259,7 +262,11 @@ namespace CardRuleNS
 
             if (slotDepth == 2)
             {
-                int mustSingleCardCount = 5 - evalDatas[0].Count + 5 - evalDatas[1].Count + 3 - evalDatas[2].Count;
+                int mustSingleCardCount = 
+                    5 - evalDatas[0].Count + 
+                    5 - evalDatas[1].Count + 
+                    3 - evalDatas[2].Count;
+
                 if (cardFaces.Length < mustSingleCardCount)
                     return;
              
@@ -666,10 +673,9 @@ namespace CardRuleNS
         /// <returns></returns>
         public float CalCardsScore(CardFace[] cardFaces)
         {
-            CardsTypeCreater cardCreater = new CardsTypeCreater();
-            cardCreater.SetLaizi(laizi);
-            cardCreater.CreateAllCardsTypeArray(cardFaces);
-            CardsTypeInfo info = cardCreater.GetMaxScoreCardsTypeInfo();
+            MatchCardFacesInfo matchInfo = match.ComputeMatchCardFacesInfo(cardFaces);
+            nextSlotCreater.CreateAllCardsTypeArray(matchInfo.computedCardFaces);
+            CardsTypeInfo info = nextSlotCreater.GetMaxScoreCardsTypeInfo();
             CardInfo[] otherCards = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, info.cardFaceValues);
 
             return CalCardsScore(info, otherCards);
