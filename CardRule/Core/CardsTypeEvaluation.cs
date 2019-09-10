@@ -744,6 +744,12 @@ namespace CardRuleNS
         static public float GetShunZiBaseScore(float startCardValue)
         {
             float score = startCardValue + 4;
+
+            if (startCardValue == 10)
+                score = 15;
+            if (startCardValue == 1)
+                score = 14;
+
             return score;
         }
 
