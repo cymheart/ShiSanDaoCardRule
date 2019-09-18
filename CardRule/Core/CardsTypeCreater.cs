@@ -131,7 +131,6 @@ namespace CardRuleNS
             int laiziCount = 0;
             cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
 
-            HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
             HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(cards);
             HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(cards);
             HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(cards);

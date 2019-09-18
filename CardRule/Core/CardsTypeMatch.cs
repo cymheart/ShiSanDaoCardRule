@@ -5,20 +5,9 @@ using System.Text;
 
 namespace CardRuleNS
 {
-    /// <summary>
-    /// 对牌型中的赖子牌进行计算，得到最大的牌型
-    /// 结果存储与MatchCardFacesInfo的computedCardFaces中
-    /// </summary>
     public struct MatchCardFacesInfo
     {
-        /// <summary>
-        /// 计算后的牌型
-        /// </summary>
         public CardFace[] computedCardFaces;
-
-        /// <summary>
-        /// 原始带癞子的牌型
-        /// </summary>
         public CardFace[] laiziCardFaces;
         public CardsType type;
     }
@@ -149,20 +138,8 @@ namespace CardRuleNS
             if (info.laiziCount == 0)
             {
                 CardFace[] cardFaces = new CardFace[info.cardFaceValues.Length];
-
-                if (CardsTransform.Instance.GetValue(info.cardFaceValues[0]) == 1)
-                {
-                    CardInfo[] cardinfos = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
-                    CardsTransform.Instance.SortCardsByMaxA(cardinfos);
-                    for (int i = 0; i < cardinfos.Length; i++)
-                        cardFaces[i] = CardsTransform.Instance.GetCardFace(cardinfos[i]);
-                }
-                else
-                {
-                    for (int i = 0; i < cardFaces.Length; i++)
-                        cardFaces[i] = info.cardFaceValues[i];
-                }
-
+                for (int i = 0; i < cardFaces.Length; i++)
+                    cardFaces[i] = info.cardFaceValues[i];
                 return cardFaces;
             }
 
@@ -258,7 +235,33 @@ namespace CardRuleNS
                             }
 
                             CardFace cardface = info.cardFaceValues[0];
-                            CardInfo cardinfo = CardsTransform.Instance.CreateCardInfo(cardface);
+                            CardInfo[] cardinfos = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
+                            CardInfo cardinfo = cardinfos[0];
+                            int idx;
+
+                            if (cardinfos[cardinfos.Length - 1].value <= 5)
+                            {
+                                int laiziCount = info.laiziCount;
+                                int i = 0;
+
+                                for (i = 1; i <= 5; i++)
+                                {
+                                    idx = CardsTransform.Instance.FindCard(cardinfos, i);
+                                    if (idx != -1)
+                                        cardFaces[i - 1] = info.cardFaceValues[idx];
+                                    else
+                                    {
+                                        cardFaces[i - 1] = CardsTransform.Instance.GetCardFace(i, cardinfo.suit);
+                                        laiziCount--;
+                                        if (laiziCount < 0)
+                                            break;
+                                    }
+                                }
+
+                                if (i == 6)
+                                    return cardFaces;
+                            }
+
 
                             if (cardinfo.value == 1)
                             {
@@ -274,13 +277,6 @@ namespace CardRuleNS
                                         return cardFaces;
                                     }
                                 }
-
-                                cardFaces[0] = cardface;
-                                cardFaces[1] = CardsTransform.Instance.GetCardFace(2, cardinfo.suit);
-                                cardFaces[2] = CardsTransform.Instance.GetCardFace(3, cardinfo.suit);
-                                cardFaces[3] = CardsTransform.Instance.GetCardFace(4, cardinfo.suit);
-                                cardFaces[4] = CardsTransform.Instance.GetCardFace(5, cardinfo.suit);
-                                return cardFaces;
                             }
 
                             int value = cardinfo.value;
@@ -633,6 +629,28 @@ namespace CardRuleNS
                             CardInfo[] cardinfo = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
                             int idx;
 
+                            if(cardinfo[cardinfo.Length - 1].value <= 5)
+                            {
+                                int laiziCount = info.laiziCount;
+                                int i = 0;
+
+                                for (i = 1; i <= 5; i++)
+                                {
+                                    idx = CardsTransform.Instance.FindCard(cardinfo, i);
+                                    if (idx != -1) cardFaces[i - 1] = info.cardFaceValues[idx];
+                                    else
+                                    {
+                                        cardFaces[i - 1] = CardsTransform.Instance.GetCardFace(i, 0);
+                                        laiziCount--;
+                                        if (laiziCount < 0)
+                                            break;
+                                    }
+                                }
+
+                                if (i == 6)
+                                    return cardFaces;
+                            }
+
                             if (cardinfo[0].value == 1)
                             {
                                 for (int i = 0; i < info.cardFaceValues.Length; i++)
@@ -650,15 +668,6 @@ namespace CardRuleNS
                                         return cardFaces;
                                     }
                                 }
-
-                                cardFaces[0] = info.cardFaceValues[0];
-                                for (int j = 1; j < 5; j++)
-                                {
-                                    idx = CardsTransform.Instance.FindCard(cardinfo, 1 + j);
-                                    if (idx != -1) cardFaces[j] = info.cardFaceValues[idx];
-                                    else cardFaces[j] = CardsTransform.Instance.GetCardFace(1 + j, 0);
-                                }
-                                return cardFaces;
                             }
 
 

@@ -300,6 +300,27 @@ namespace CardRuleNS
            );
         }
 
+        public void SortMaxCardsByMaxA(CardInfo[] cards)
+        {
+            Array.Sort(cards,
+
+               delegate (CardInfo p1, CardInfo p2)
+               {
+                   int p1_value = p1.value;
+                   int p2_value = p2.value;
+
+                   if (p1_value == 1) p1_value = 14;
+                   if (p2_value == 1) p2_value = 14;
+
+                   if (p1_value > p2_value)
+                       return -1;
+                   else if (p1_value < p2_value)
+                       return 1;
+                   return 0;
+               }
+           );
+        }
+
 
         void CreatePukeInfoList()
         {

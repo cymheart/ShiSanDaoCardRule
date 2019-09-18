@@ -65,7 +65,7 @@ namespace CardRuleNS
             SpecCardsType[] specCardsTypes = new SpecCardsType[]
             {
                  SpecCardsType.SixBomb, SpecCardsType.SevenBomb, SpecCardsType.EightBomb,
-                SpecCardsType.ZhiZunLei, SpecCardsType.YiTiaoLong, SpecCardsType.ZhiZunQinLong
+                SpecCardsType.ZhiZunLei76, SpecCardsType.ZhiZunLei66, SpecCardsType.YiTiaoLong, SpecCardsType.ZhiZunQinLong
             };
 
             SetCheckSpecCardTypes(specCardsTypes);
@@ -183,7 +183,7 @@ namespace CardRuleNS
         SpecCardsType IsSpecCards(CardInfo[] cards, int laiziCount, CardFace[] outFaceValues, CardFace[] outComputedFaceValues)
         {
             SpecCardsType type = SpecCardsType.Normal;
-
+      
             if (checkSpeckCardSet.Contains(SpecCardsType.ZhiZunQinLong) &&
                 IsZhiZunQinLong(cards, laiziCount, outFaceValues, outComputedFaceValues))
             {
@@ -194,10 +194,15 @@ namespace CardRuleNS
             {
                 type = SpecCardsType.YiTiaoLong;
             }
-            else if (checkSpeckCardSet.Contains(SpecCardsType.ZhiZunLei) &&
-                IsZhiZunLei(cards, laiziCount, outFaceValues, outComputedFaceValues))
+            else if (checkSpeckCardSet.Contains(SpecCardsType.ZhiZunLei76) &&
+                IsZhiZunLei(cards, laiziCount, outFaceValues, outComputedFaceValues) == 1)
             {
-                type = SpecCardsType.ZhiZunLei;
+                type = SpecCardsType.ZhiZunLei76;
+            }
+            else if (checkSpeckCardSet.Contains(SpecCardsType.ZhiZunLei66) &&
+                IsZhiZunLei(cards, laiziCount, outFaceValues, outComputedFaceValues) == 2)
+            {
+                type = SpecCardsType.ZhiZunLei66;
             }
             else if (checkSpeckCardSet.Contains(SpecCardsType.EightBomb) &&
                 IsEightBomb(cards, laiziCount, outFaceValues, outComputedFaceValues))
@@ -974,7 +979,7 @@ namespace CardRuleNS
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
         /// <returns></returns>
-        public bool IsZhiZunLei(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues, CardFace[] outComputedFaceValues)
+        public int IsZhiZunLei(CardInfo[] formatCards, int laiziCount, CardFace[] outFaceValues, CardFace[] outComputedFaceValues)
         {
             CardInfo[] cards = formatCards;
 
@@ -1011,13 +1016,13 @@ namespace CardRuleNS
             }
 
             if (cardsList[0].Count > 7 || cardsList[1].Count > 6)
-                return false;
+                return 0;
 
             if (cardsList[0].Count == 7)
             {
                 int mustLaiziCount = 13 - (cardsList[0].Count + cardsList[1].Count);
                 if (laiziCount < mustLaiziCount)
-                    return false;
+                    return 0;
 
                 int n = 0;
                 int m = 0;
@@ -1036,13 +1041,13 @@ namespace CardRuleNS
                     outFaceValues[n++] = CardFace.Laizi;
                     outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(cardsList[1][0].value, cardsList[1][0].suit);
                 }
-                return true;
+                return 1;  //7+6
             }
             else
             {
                 int mustLaiziCount = 12 - (cardsList[0].Count + cardsList[1].Count);
                 if (laiziCount < mustLaiziCount)
-                    return false;
+                    return 0;
 
                 int n = 0;
                 int m = 0;
@@ -1086,10 +1091,10 @@ namespace CardRuleNS
                         outComputedFaceValues[m++] = CardsTransform.Instance.GetCardFace(1, 0);
                     }
                     else
-                        return false;
+                        return 0;
                 }
 
-                return true;
+                return 2; //6+6
             }
         }
 

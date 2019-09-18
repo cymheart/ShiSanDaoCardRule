@@ -161,10 +161,16 @@ namespace CardRuleNS
         /// </summary>
         EightBomb,
 
+
         /// <summary>
-        /// 至尊雷
+        /// 至尊雷66类型
         /// </summary>
-        ZhiZunLei,
+        ZhiZunLei66,
+
+        /// <summary>
+        /// 至尊雷76类型
+        /// </summary>
+        ZhiZunLei76,
 
         /// <summary>
         /// 一条龙

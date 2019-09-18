@@ -68,6 +68,10 @@ namespace CardRuleNS
         CardEvalComparer cardEvalComparer = new CardEvalComparer();
         CardsTypeCreater optimalCardCreater = new CardsTypeCreater();
         CardsTypeCreater nextSlotCreater = new CardsTypeCreater();
+
+        CardsTypeCreater creater1 = new CardsTypeCreater();
+        CardsTypeCreater creater2 = new CardsTypeCreater();
+
         CardsTypeMatch match = new CardsTypeMatch();
        
 
@@ -131,6 +135,8 @@ namespace CardRuleNS
 
             optimalCardCreater.SetLaizi(laizi);
             nextSlotCreater.SetLaizi(laizi);
+            creater1.SetLaizi(laizi);
+            creater2.SetLaizi(laizi);
             match.SetLaizi(laizi);
         }
 
@@ -319,6 +325,12 @@ namespace CardRuleNS
                 if (evalInfo.slotScore[1] > evalInfo.slotScore[0])
                     return;
 
+                if (evalInfo.slotScore[1] == evalInfo.slotScore[0])
+                {
+                    int cmp = CmpScoreEqualCards(evalInfo.slotCardFaceList[1].ToArray(), evalInfo.slotCardFaceList[0].ToArray());
+                    if (cmp == 1)
+                        return;
+                }
 
                 //头道
                 valueIdx = 0;
@@ -365,6 +377,13 @@ namespace CardRuleNS
 
                 if (evalInfo.slotScore[2] > evalInfo.slotScore[1])
                     return;
+
+                if (evalInfo.slotScore[2] == evalInfo.slotScore[1])
+                {
+                    int cmp = CmpScoreEqualCards(evalInfo.slotCardFaceList[2].ToArray(), evalInfo.slotCardFaceList[1].ToArray());
+                    if (cmp == 1)
+                        return;
+                }
 
                 if (cardsTypeInfos[2] != null && cardsTypeInfos[2].Value.type == CardsType.SanTiao)
                 {
@@ -679,6 +698,130 @@ namespace CardRuleNS
             CardInfo[] otherCards = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, info.cardFaceValues);
 
             return CalCardsScore(info, otherCards);
+        }
+
+
+        /// <summary>
+        /// 比较分值相等的两个牌型的大小
+        /// </summary>
+        /// <param name="cardFaces1"></param>
+        /// <param name="cardFaces2"></param>
+        /// <returns></returns>
+        public int CmpScoreEqualCards(CardFace[] cardFaces1, CardFace[] cardFaces2)
+        {
+            creater1.CreateUsedTonghuaCmpCardsTypeArray(cardFaces1);
+            creater2.CreateUsedTonghuaCmpCardsTypeArray(cardFaces2);
+
+            if (creater1.SantiaoList.Count == 0 && creater2.SantiaoList.Count != 0)
+                return -1;
+            else if (creater1.SantiaoList.Count != 0 && creater2.SantiaoList.Count == 0)
+                return 1;
+            else if(creater1.SantiaoList.Count != 0 && creater2.SantiaoList.Count != 0)
+            {
+                if (creater1.SantiaoList[0].score < creater2.SantiaoList[0].score)
+                    return -1;
+                else if (creater1.SantiaoList[0].score > creater2.SantiaoList[0].score)
+                    return 1;
+                else
+                {
+                    if (creater1.DuiziList.Count == 0 && creater2.DuiziList.Count != 0)
+                        return -1;
+                    else if (creater1.DuiziList.Count != 0 && creater2.DuiziList.Count == 0)
+                        return 1;
+                    else
+                    {
+                        if (creater1.DuiziList[0].score < creater2.DuiziList[0].score)
+                            return -1;
+                        else if (creater1.DuiziList[0].score > creater2.DuiziList[0].score)
+                            return 1;
+                        else
+                        {
+                            CardInfo[] cardInfos1 = CardsTransform.Instance.TransToCardInfo(cardFaces1);
+                            CardsTransform.Instance.SortMaxCardsByMaxA(cardInfos1);
+
+                            CardInfo[] cardInfos2 = CardsTransform.Instance.TransToCardInfo(cardFaces2);
+                            CardsTransform.Instance.SortMaxCardsByMaxA(cardInfos2);
+                            int count = Math.Min(cardInfos1.Length, cardInfos2.Length);
+                            int value1, value2;
+
+                            for (int i = 0; i < count; i++)
+                            {
+                                value1 = cardInfos1[i].value;
+                                value2 = cardInfos2[i].value;
+                                if (value1 == 1) value1 = 14;
+                                if (value2 == 1) value2 = 14;
+
+                                if (value1 > value2)
+                                    return 1;
+                                else if (value1 < value2)
+                                    return -1;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (creater1.DuiziList.Count == 0 && creater2.DuiziList.Count != 0)
+                    return -1;
+                else if (creater1.DuiziList.Count != 0 && creater2.DuiziList.Count == 0)
+                    return 1;
+                else if (creater1.DuiziList.Count != 0 && creater2.DuiziList.Count != 0)
+                {
+                    if (creater1.DuiziList[0].score < creater2.DuiziList[0].score)
+                        return -1;
+                    else if (creater1.DuiziList[0].score > creater2.DuiziList[0].score)
+                        return 1;
+                    else
+                    {
+                        CardInfo[] cardInfos1 = CardsTransform.Instance.TransToCardInfo(cardFaces1);
+                        CardsTransform.Instance.SortMaxCardsByMaxA(cardInfos1);
+
+                        CardInfo[] cardInfos2 = CardsTransform.Instance.TransToCardInfo(cardFaces2);
+                        CardsTransform.Instance.SortMaxCardsByMaxA(cardInfos2);
+                        int count = Math.Min(cardInfos1.Length, cardInfos2.Length);
+                        int value1, value2;
+
+                        for (int i = 0; i < count; i++)
+                        {
+                            value1 = cardInfos1[i].value;
+                            value2 = cardInfos2[i].value;
+                            if (value1 == 1) value1 = 14;
+                            if (value2 == 1) value2 = 14;
+
+                            if (value1 > value2)
+                                return 1;
+                            else if (value1 < value2)
+                                return -1;
+                        }
+                    }
+                }
+                else
+                {
+                    CardInfo[] cardInfos1 = CardsTransform.Instance.TransToCardInfo(cardFaces1);
+                    CardsTransform.Instance.SortMaxCardsByMaxA(cardInfos1);
+
+                    CardInfo[] cardInfos2 = CardsTransform.Instance.TransToCardInfo(cardFaces2);
+                    CardsTransform.Instance.SortMaxCardsByMaxA(cardInfos2);
+                    int count = Math.Min(cardInfos1.Length, cardInfos2.Length);
+                    int value1, value2;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        value1 = cardInfos1[i].value;
+                        value2 = cardInfos2[i].value;
+                        if (value1 == 1) value1 = 14;
+                        if (value2 == 1) value2 = 14;
+
+                        if (value1 > value2)
+                            return 1;
+                        else if (value1 < value2)
+                            return -1;
+                    }
+                }
+            }
+
+            return 0;
         }
 
         static public float GetCardsTypeShuiScore(CardsTypeInfo? cardsTypeInfo, int slotIdx)
