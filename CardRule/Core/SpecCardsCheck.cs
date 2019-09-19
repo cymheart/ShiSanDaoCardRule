@@ -1140,26 +1140,40 @@ namespace CardRuleNS
         /// <param name="formatCards">CardInfo[] formatCards = CardsTransform.Instance.CreateFormatCards(cardValues, ref laiziCount);</param>
         /// <param name="laiziCount"></param>
         /// <param name="outFaceValues"></param>
-        /// <returns></returns>
+        /// <returns></returns>  
         public bool IsNBomb(CardInfo[] formatCards, int laiziCount, int bombCount, CardFace[] outFaceValues, CardFace[] outComputedFaceValues)
         {
             CardInfo[] cards = formatCards;
 
             List<CardInfo> cardsList = new List<CardInfo>();
 
-            int[] cardCount = new int[14];
+            int[] cardCount = new int[15];
             for (int i = 0; i < cards.Length; i++)
-                cardCount[cards[i].value]++;
-
-            int max = cardCount[0];
-            int maxIdx = 0;
-            for (int i = 0; i < cardCount.Length; i++)
             {
-                if (cardCount[i] > max)
-                {
-                    max = cardCount[i];
+                if(cards[i].value == 1)
+                    cardCount[14]++;
+                else
+                    cardCount[cards[i].value]++;
+            }
+
+
+            int max = 0;
+            int maxIdx = 0;
+            int mustLaiziCount;
+            for (int i = cardCount.Length - 1; i > 1; i--)
+            {
+                mustLaiziCount = bombCount - cardCount[i];
+                if (laiziCount < mustLaiziCount)
+                    continue;
+
+                max = cardCount[i];
+
+                if (i == 14)
+                    maxIdx = 1;
+                else
                     maxIdx = i;
-                }
+
+                break;
             }
 
             if (max != 0)
@@ -1168,15 +1182,18 @@ namespace CardRuleNS
                 for (int i = s; i < s + max; i++)
                     cardsList.Add(cards[i]);
             }
-
-            int mustLaiziCount = bombCount - cardsList.Count;
-            if (laiziCount < mustLaiziCount)
+            else
+            {
                 return false;
+            }
 
+            mustLaiziCount = bombCount - cardsList.Count;
             int n = 0;
             int m = 0;
             for (int i = 0; i < cardsList.Count; i++)
                 outFaceValues[n++] = CardsTransform.Instance.GetCardFace(cardsList[i].value, cardsList[i].suit);
+
+
             for (int i = cardsList.Count; i < bombCount; i++)
             {
                 outFaceValues[n++] = CardFace.Laizi;
@@ -1202,5 +1219,6 @@ namespace CardRuleNS
 
             return true;
         }
+
     }
 }
