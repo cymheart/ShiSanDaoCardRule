@@ -695,9 +695,7 @@ namespace CardRuleNS
             MatchCardFacesInfo matchInfo = match.ComputeMatchCardFacesInfo(cardFaces);
             nextSlotCreater.CreateAllCardsTypeArray(matchInfo.computedCardFaces);
             CardsTypeInfo info = nextSlotCreater.GetMaxScoreCardsTypeInfo();
-            CardInfo[] otherCards = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, info.cardFaceValues);
-
-            return CalCardsScore(info, otherCards);
+            return CalCardsScore(info, null);
         }
 
 

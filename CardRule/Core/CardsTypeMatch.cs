@@ -490,10 +490,10 @@ namespace CardRuleNS
                             cardFaces[idx++] = info.cardFaceValues[i];
 
                         CardInfo[] cardinfos = CardsTransform.Instance.TransToCardInfo(info.cardFaceValues);
-                        CardsTransform.Instance.SortCards(cardinfos);
+                        CardsTransform.Instance.SortCardsByMaxA(cardinfos);
 
                         for (int i = 0; i < info.laiziCount; i++)
-                            cardFaces[idx++] = info.cardFaceValues[cardinfos.Length - 1];
+                            cardFaces[idx++] = CardsTransform.Instance.GetCardFace(cardinfos[cardinfos.Length - 1]);
                         return cardFaces;
                     }
 
