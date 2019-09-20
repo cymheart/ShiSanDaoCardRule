@@ -73,8 +73,7 @@ namespace CardRuleNS
         CardsTypeCreater creater2 = new CardsTypeCreater();
 
         CardsTypeMatch match = new CardsTypeMatch();
-       
-
+        int[] idxs = new int[10];
         int optimalSlotCardsEvalInfoCount = 50;
 
         private struct EvalFuncParamDatas
@@ -453,7 +452,55 @@ namespace CardRuleNS
                 }
             }
 
-            for (int i = 0; i < info.Length; i++)
+            //添加一个随机选取后50个牌型数据算法
+            int richCount = 0;
+            if (slotDepth < 1 && info.Length > 50)
+            {
+                Random rnd = new Random();
+                int n;
+                int maxRandCount = Math.Min(10, info.Length - 50);
+                richCount = info.Length - 50;
+                idxs[0] = -1;
+
+                for (int i = 0; i < maxRandCount; i++)
+                {
+                    n = rnd.Next(50, info.Length - 1);
+
+                    for (int j = 0; j < i; j++)
+                    {
+                        if (idxs[j] == n)
+                        {
+                            n = -1;
+                            break;
+                        }
+                    }
+
+                    idxs[i] = n;
+                }
+
+                for (int i = 0; i < maxRandCount; i++)
+                {
+                    if (idxs[i] == -1)
+                        continue;
+
+                    EvalFuncParamDatas paramDatas2 = new EvalFuncParamDatas()
+                    {
+                        cardFaces = cardFaces,
+                        curtSlotCardTypeInfo = info[idxs[i]],
+                        slotCardsEvalGroup = slotCardsEvalGroup,
+                        evalDatas = evalDatas,
+                        cardsTypeInfos = cardsTypeInfos,
+                        slotDepth = slotDepth + 1,
+                    };
+
+                    CreateEvalInfo(paramDatas2);
+                    evalDatas[slotDepth + 1].Clear();
+                    cardsTypeInfos[slotDepth + 1] = null;
+                }
+            }
+
+
+            for (int i = 0; i < info.Length - richCount; i++)
             {
                 EvalFuncParamDatas paramDatas2 = new EvalFuncParamDatas()
                 {
