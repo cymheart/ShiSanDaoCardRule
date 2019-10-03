@@ -19,3 +19,10 @@ D:\MyDocuments\GitHub\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.pdb
 D:\MyDocuments\GitHub\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.exe.config
 D:\MyDocuments\GitHub\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.exe
 D:\MyDocuments\GitHub\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.pdb
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.exe.config
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.exe
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\bin\Debug\CardRule.pdb
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.csprojAssemblyReference.cache
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.csproj.CoreCompileInputs.cache
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.exe
+C:\Users\cym\Documents\GitHub\ShiSanDaoCardRule\CardRule\obj\Debug\CardRule.pdb
