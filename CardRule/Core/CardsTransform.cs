@@ -49,9 +49,13 @@ namespace CardRuleNS
 
         public CardFace[] RemoveLaiziByCount(CardFace[] cardFaces,  CardFace[] laizi, int removeCount, CardFace[] outRemoveLaizis)
         {
+            if (removeCount == 0)
+                return cardFaces;
+
             List<CardFace> newCardFaces = new List<CardFace>();
             int n = 0;
-            for(int i=0; i<cardFaces.Length; i++)
+            int i = 0;
+            for (; i<cardFaces.Length; i++)
             {
                 if (FindCardFace(laizi, cardFaces[i]) != -1)
                 {
@@ -60,17 +64,33 @@ namespace CardRuleNS
 
                     n++;
 
-                    if (n == removeCount)
+                    if (n == removeCount){
+                        i++;
                         break;
+                    }
+
                     continue;
                 }
 
                 newCardFaces.Add(cardFaces[i]);
             }
 
+            for(; i < cardFaces.Length; i++)
+                newCardFaces.Add(cardFaces[i]);
+
             return newCardFaces.ToArray();
         }
 
+        public CardFace[] CreateDelFaceValues(CardFace[] cardFaces, CardFace[] removeCardFaceValues)
+        {
+            if (removeCardFaceValues == null || removeCardFaceValues.Length == 0)
+                return cardFaces;
+
+            CardInfo[] cards = TransToCardInfo(cardFaces);
+            CardInfo[] cardinfo = TransToCardInfo(removeCardFaceValues);
+            CardInfo[] newCardInfos = CreateRemoveCardInfos(cards, cardinfo);
+            return CreateCardFaces(newCardInfos);
+        }
 
         public CardInfo[] CreateRemoveFaceValues(CardFace[] cardFaces, CardFace[] removeCardFaceValues)
         {
@@ -136,6 +156,24 @@ namespace CardRuleNS
             return -1;
         }
 
+        public int[] FindCards(CardInfo[] cards, int value)
+        {
+            List<int> idxList = new List<int>();
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (cards[i].value == value)
+                {
+                    idxList.Add(i);
+                }
+            }
+
+            if (idxList.Count > 0)
+                return idxList.ToArray();
+
+            return null;
+        }
+
         public int FindCardFace(CardFace[] cardfaces, CardFace findCardface)
         {
             for (int i = 0; i < cardfaces.Length; i++)
@@ -172,6 +210,9 @@ namespace CardRuleNS
         /// <returns></returns>
         public CardFace[] RemoveLaizi(CardFace[] cardFaces, CardFace[] laiziCardFaces, ref int laiziCount)
         {
+            if (laiziCardFaces == null || laiziCardFaces.Length == 0)
+                return cardFaces;
+
             List<CardFace> newCardFaceList = new List<CardFace>();
             laiziCount = 0;
 
@@ -208,10 +249,73 @@ namespace CardRuleNS
 
                delegate (CardInfo p1, CardInfo p2)
                {
-                   if (p1.value > p2.value)
+                   int p1_value = p1.value;
+                   int p2_value = p2.value;
+
+                   if (p1_value > p2_value)
                        return 1;
-                   else if (p1.value < p2.value)
+                   else if (p1_value < p2_value)
                        return -1;
+                   return 0;
+               }
+           );
+        }
+
+        public void SortCardsByMaxA(CardInfo[] cards)
+        {
+            Array.Sort(cards,
+
+               delegate (CardInfo p1, CardInfo p2)
+               {
+                   int p1_value = p1.value;
+                   int p2_value = p2.value;
+
+                   if (p1_value == 1) p1_value = 14;
+                   if (p2_value == 1) p2_value = 14;
+
+                   if (p1_value > p2_value)
+                       return 1;
+                   else if (p1_value < p2_value)
+                       return -1;
+                   return 0;
+               }
+           );
+        }
+
+        public void SortMaxCards(CardInfo[] cards)
+        {
+            Array.Sort(cards,
+
+               delegate (CardInfo p1, CardInfo p2)
+               {
+                   int p1_value = p1.value;
+                   int p2_value = p2.value;
+
+                   if (p1_value > p2_value)
+                       return -1;
+                   else if (p1_value < p2_value)
+                       return 1;
+                   return 0;
+               }
+           );
+        }
+
+        public void SortMaxCardsByMaxA(CardInfo[] cards)
+        {
+            Array.Sort(cards,
+
+               delegate (CardInfo p1, CardInfo p2)
+               {
+                   int p1_value = p1.value;
+                   int p2_value = p2.value;
+
+                   if (p1_value == 1) p1_value = 14;
+                   if (p2_value == 1) p2_value = 14;
+
+                   if (p1_value > p2_value)
+                       return -1;
+                   else if (p1_value < p2_value)
+                       return 1;
                    return 0;
                }
            );
@@ -237,30 +341,30 @@ namespace CardRuleNS
             return cards;
         }
 
-        public CardInfo CreateCardInfo(CardFace cardFaces)
+        public CardInfo CreateCardInfo(CardFace cardFace)
         {
             CardInfo pukeInfo = new CardInfo();
 
-            if (cardFaces == CardFace.BlackJoker)
+            if (cardFace == CardFace.BlackJoker)
             {
-                pukeInfo.suit = -1;
+                pukeInfo.suit = 0;
                 pukeInfo.value = 14;
                 return pukeInfo;
             }
-            else if (cardFaces == CardFace.RedJoker)
+            else if (cardFace == CardFace.RedJoker)
             {
-                pukeInfo.suit = -1;
+                pukeInfo.suit = 2;
                 pukeInfo.value = 15;
                 return pukeInfo;
             }
-            else if (cardFaces == CardFace.Laizi)
+            else if (cardFace == CardFace.Laizi)
             {
-                pukeInfo.suit = -1;
+                pukeInfo.suit = 0;
                 pukeInfo.value = 16;
                 return pukeInfo;
             }
 
-            int n = (int)cardFaces;
+            int n = (int)cardFace;
             int suit = n / 13;
             int value = n % 13 + 1;
             pukeInfo.suit = suit;

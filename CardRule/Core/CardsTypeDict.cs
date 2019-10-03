@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CardRuleNS
 {
+
     /// <summary>
     /// 用于把手牌数据打包成紧凑的cardkey类型
     /// </summary>
     public struct CardKey
     {
-        public uint bit_103_96;
+        public uint bit_207_192;
+        public uint bit_191_160;
+        public uint bit_159_128;
+        public uint bit_127_96;
         public uint bit_95_64;
         public uint bit_63_32;
         public uint bit_31_0;
 
-        public CardKey(uint bit_103_96, uint bit_95_64, uint bit_63_32, uint bit_31_0)
+        public CardKey(
+            uint bit_207_192, uint bit_191_160, uint bit_159_128,
+            uint bit_127_96, uint bit_95_64, uint bit_63_32, uint bit_31_0)
         {
-            this.bit_103_96 = bit_103_96;
+            this.bit_207_192 = bit_207_192;
+            this.bit_191_160 = bit_191_160;
+            this.bit_159_128 = bit_159_128;
+            this.bit_127_96 = bit_127_96;
             this.bit_95_64 = bit_95_64;
             this.bit_63_32 = bit_63_32;
             this.bit_31_0 = bit_31_0;
@@ -30,7 +36,10 @@ namespace CardRuleNS
                 return x.bit_31_0 == y.bit_31_0 &&
                     x.bit_63_32 == y.bit_63_32 &&
                      x.bit_95_64 == y.bit_95_64 &&
-                     x.bit_103_96 == y.bit_103_96;
+                     x.bit_127_96 == y.bit_127_96 &&
+                    x.bit_159_128 == y.bit_159_128 &&
+                    x.bit_191_160 == y.bit_191_160 &&
+                     x.bit_207_192 == y.bit_207_192;
             }
 
             public int GetHashCode(CardKey obj)
@@ -38,7 +47,10 @@ namespace CardRuleNS
                 int hash = (int)obj.bit_31_0;
                 hash = hash * 31 + (int)obj.bit_63_32;
                 hash = hash * 31 + (int)obj.bit_95_64;
-                hash = hash * 31 + (int)obj.bit_103_96;
+                hash = hash * 31 + (int)obj.bit_127_96;
+                hash = hash * 31 + (int)obj.bit_159_128;
+                hash = hash * 31 + (int)obj.bit_191_160;
+                hash = hash * 31 + (int)obj.bit_207_192;
                 return hash;
             }
         }
@@ -84,8 +96,18 @@ namespace CardRuleNS
         public Dictionary<CardKey, CardsTypeCombInfo> single5KeyDict = new Dictionary<CardKey, CardsTypeCombInfo>(new CardKey.EqualityComparer());
       
         //
-        bool isCheckSuitCount = true;
+        bool isCheckSuitCount = false;
         int limitSameSuitCount = 2;
+
+        /// <summary>
+        /// 是否生成同花字典
+        /// </summary>
+        bool isCreateTonghuaDict = false;
+
+        /// <summary>
+        /// 是否生成单张5个字典
+        /// </summary>
+        bool isCreateSingle5Dict = false;
 
         CardsTypeDict()
         {
@@ -104,8 +126,12 @@ namespace CardRuleNS
             CreateTieZhiDict();
             CreateSanTiaoDict();
             CreateDuiZiDict();
-            CreateTongHuaDict();
-           // CreateSingle5Dict();
+
+            if(isCreateTonghuaDict)
+                CreateTongHuaDict();
+
+            if (isCreateSingle5Dict)
+                CreateSingle5Dict();
         }
 
         void AddToDict(Dictionary<CardKey, CardsTypeCombInfo> dict, CardKey cardkey, int count, float score)
@@ -132,8 +158,8 @@ namespace CardRuleNS
         /// <returns></returns>
         public CardKey AppendCardToCardKey(CardKey cardkey, int cardValue, int cardSuit)
         {
-            int n = (cardValue - 1) * 8;
-            int m = cardSuit * 2;
+            int n = (cardValue - 1) * 16;
+            int m = cardSuit * 4;
 
             if (n <= 31)
             {
@@ -149,32 +175,48 @@ namespace CardRuleNS
                 n -= 64;
                 cardkey.bit_95_64 = FlagKeyBit(cardkey.bit_95_64, n, m);
             }
-            else
+            else if (n <= 127)
             {
                 n -= 96;
-                cardkey.bit_103_96 = FlagKeyBit(cardkey.bit_103_96, n, m);
+                cardkey.bit_127_96 = FlagKeyBit(cardkey.bit_127_96, n, m);
+            }
+            else if (n <= 159)
+            {
+                n -= 128;
+                cardkey.bit_159_128 = FlagKeyBit(cardkey.bit_159_128, n, m);
+            }
+            else if (n <= 191)
+            {
+                n -= 160;
+                cardkey.bit_191_160 = FlagKeyBit(cardkey.bit_191_160, n, m);
+            }
+            else if (n <= 207)
+            {
+                n -= 192;
+                cardkey.bit_207_192 = FlagKeyBit(cardkey.bit_207_192, n, m);
             }
 
             return cardkey;
         }
 
-        /// <summary>
-        /// 检查cardkey是否包含checkCardKey的牌数据
-        /// </summary>
-        /// <param name="cardkey"></param>
-        /// <param name="checkCardKey"></param>
-        /// <returns></returns>
-        public bool IsContains(CardKey cardkey, CardKey checkCardKey)
+        uint FlagKeyBit(uint key, int n, int m)
         {
-            uint a = cardkey.bit_31_0 & checkCardKey.bit_31_0;
-            uint b = cardkey.bit_63_32 & checkCardKey.bit_63_32;
-            uint c = cardkey.bit_95_64 & checkCardKey.bit_95_64;
-            uint d = cardkey.bit_103_96 & checkCardKey.bit_103_96;
+            uint bitflag = (uint)(0xF << n);
+            bitflag <<= m;
+            uint result = key & bitflag;
+            result = (result >> m) >> n;
+            result++;
 
-            if (a == checkCardKey.bit_31_0 &&
-                b == checkCardKey.bit_63_32 &&
-                c == checkCardKey.bit_95_64 &&
-                d == checkCardKey.bit_103_96)
+            uint zeroMask = 0xFFFFFFFF ^ bitflag;
+            key &= zeroMask;
+            key |= ((result << n) << m);
+
+            return key;
+        }
+
+        public bool IsEqual(CardKey cardkeyA, CardKey cardkeyB)
+        {
+            if(cardkeyA.Equals(cardkeyB))
             {
                 return true;
             }
@@ -210,10 +252,41 @@ namespace CardRuleNS
         {
             List<CardInfo> cardInfoList = new List<CardInfo>();
             CreateCardInfoToList((int)cardkey.bit_31_0, 0, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_63_32, 4, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_95_64, 8, cardInfoList);
-            CreateCardInfoToList((int)cardkey.bit_103_96, 12, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_63_32, 2, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_95_64, 4, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_127_96, 6, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_159_128, 8, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_191_160, 10, cardInfoList);
+            CreateCardInfoToList((int)cardkey.bit_207_192, 12, cardInfoList);
             return cardInfoList.ToArray();
+        }
+
+
+        void CreateCardInfoToList(int key, int baseValue, List<CardInfo> cardInfoList)
+        {
+            int count;
+            int _value, _suit;
+            CardInfo cardinfo;
+
+            for (int i = 0; i <= 31; i += 4)
+            {
+                count = key & (0xF << i);
+                count >>= i;
+
+                _value = baseValue + i / 16 + 1;
+                _suit = i % 16 / 4;
+
+                for (int j = 0; j < count; j++)
+                {
+                    cardinfo = new CardInfo()
+                    {
+                        value = _value,
+                        suit = _suit
+                    };
+
+                    cardInfoList.Add(cardinfo);
+                }
+            }
         }
 
         void CreateShunziDict()
@@ -227,12 +300,12 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            float score = CardsTypeEvaluation.Instance.GetShunZiBaseScore(10);
+            float score = CardsTypeEvaluation.GetShunZiBaseScore(10);
             AddShunziKeyToList(null, 0, score);
 
             for (int i = 1; i <= 10; i++)
             {
-                score = CardsTypeEvaluation.Instance.GetShunZiBaseScore(i);
+                score = CardsTypeEvaluation.GetShunZiBaseScore(i);
 
                 for (int s0 = -1; s0 < 4; s0++)
                 {            
@@ -343,6 +416,10 @@ namespace CardRuleNS
             }
         }
 
+
+        /// <summary>
+        /// 生成葫芦字典
+        /// </summary>
         void CreateHuluDict()
         {
             huluKeyDict.Clear();
@@ -386,7 +463,7 @@ namespace CardRuleNS
                                 if (j == 1) b = 14;
                                 else b = j;
 
-                                score = CardsTypeEvaluation.Instance.GetHuLuBaseScore(i, j);
+                                score = CardsTypeEvaluation.GetHuLuBaseScore(a, b);
 
                                 for (int m0 = 0; m0 < 4; m0++)
                                 {
@@ -410,14 +487,20 @@ namespace CardRuleNS
         {
             if (isCheckSuitCount)
             {
-                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                int[] value = new int[14];
+                List<int>[] suitCounts = new List<int>[4]
+                {
+                    new List<int>(value), new List<int>(value), new List<int>(value),new List<int>(value)
+                };
+
                 for (int i = 0; i < cards.Length; i++)
                 {
-                    suitCount[cards[i].suit]++;
-                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                    suitCounts[cards[i].suit][cards[i].value]++;
+                    if (suitCounts[cards[i].suit][cards[i].value] > limitSameSuitCount)
                         return;
                 }
             }
+
 
             if (cards[0].value == cards[1].value &&
                cards[0].value == cards[2].value &&
@@ -438,7 +521,7 @@ namespace CardRuleNS
             float score2 = score;
             float tmpScore;
             if (cards[0].value < cards[3].value)
-                score2 = CardsTypeEvaluation.Instance.GetHuLuBaseScore(cards[3].value, cards[0].value);
+                score2 = CardsTypeEvaluation.GetHuLuBaseScore(cards[3].value, cards[0].value);
 
             for (int i = 0; i < 4; i++)
             {
@@ -500,7 +583,7 @@ namespace CardRuleNS
                             if (j == 1) b = 14;
                             else b = j;
 
-                            score = CardsTypeEvaluation.Instance.GetTwoDuiBaseScore(a, b);
+                            score = CardsTypeEvaluation.GetTwoDuiBaseScore(a, b);
 
                             for (int m0 = 0; m0 < 4; m0++)
                             {
@@ -523,11 +606,16 @@ namespace CardRuleNS
         {
             if (isCheckSuitCount)
             {
-                int[] suitCount = new int[4] { 0, 0, 0, 0 };
+                int[] value = new int[14];
+                List<int>[] suitCounts = new List<int>[4]
+                {
+                    new List<int>(value), new List<int>(value), new List<int>(value),new List<int>(value)
+                };
+
                 for (int i = 0; i < cards.Length; i++)
                 {
-                    suitCount[cards[i].suit]++;
-                    if (suitCount[cards[i].suit] > limitSameSuitCount)
+                    suitCounts[cards[i].suit][cards[i].value]++;
+                    if (suitCounts[cards[i].suit][cards[i].value] > limitSameSuitCount)
                         return;
                 }
             }
@@ -589,7 +677,7 @@ namespace CardRuleNS
                 new CardInfo()
             };
 
-            float score = CardsTypeEvaluation.Instance.GetWuTongBaseScore(14);
+            float score = CardsTypeEvaluation.GetWuTongBaseScore(14);
             AddWuTongKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -601,9 +689,9 @@ namespace CardRuleNS
                 cards[4].value = i;
 
                 if (i == 1)
-                    score = CardsTypeEvaluation.Instance.GetWuTongBaseScore(14);
+                    score = CardsTypeEvaluation.GetWuTongBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetWuTongBaseScore(i);
+                    score = CardsTypeEvaluation.GetWuTongBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -764,7 +852,7 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
-            float score = CardsTypeEvaluation.Instance.GetTieZhiBaseScore(14);
+            float score = CardsTypeEvaluation.GetTieZhiBaseScore(14);
             AddTieZhiKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -775,9 +863,9 @@ namespace CardRuleNS
                 cards[3].value = i;
 
                 if (i == 1)
-                    score = CardsTypeEvaluation.Instance.GetTieZhiBaseScore(14);
+                    score = CardsTypeEvaluation.GetTieZhiBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetTieZhiBaseScore(i);
+                    score = CardsTypeEvaluation.GetTieZhiBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -897,7 +985,7 @@ namespace CardRuleNS
                 new CardInfo(),
             };
 
-            float score = CardsTypeEvaluation.Instance.GetSanTiaoBaseScore(14);
+            float score = CardsTypeEvaluation.GetSanTiaoBaseScore(14);
             AddSanTiaoKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -907,9 +995,9 @@ namespace CardRuleNS
                 cards[2].value = i;
 
                 if(i == 1)
-                    score = CardsTypeEvaluation.Instance.GetSanTiaoBaseScore(14);
+                    score = CardsTypeEvaluation.GetSanTiaoBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetSanTiaoBaseScore(i);
+                    score = CardsTypeEvaluation.GetSanTiaoBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -997,7 +1085,7 @@ namespace CardRuleNS
                 new CardInfo(),new CardInfo(),
             };
 
-            float score = CardsTypeEvaluation.Instance.GetDuiziBaseScore(14);
+            float score = CardsTypeEvaluation.GetDuiziBaseScore(14);
             AddDuiZiKeyToList(null, score);
 
             for (int i = 1; i <= 13; i++)
@@ -1006,9 +1094,9 @@ namespace CardRuleNS
                 cards[1].value = i;
 
                 if(i == 1)
-                    score = CardsTypeEvaluation.Instance.GetDuiziBaseScore(14);
+                    score = CardsTypeEvaluation.GetDuiziBaseScore(14);
                 else
-                    score = CardsTypeEvaluation.Instance.GetDuiziBaseScore(i);
+                    score = CardsTypeEvaluation.GetDuiziBaseScore(i);
 
                 for (int s0 = 0; s0 < 4; s0++)
                 {
@@ -1062,31 +1150,27 @@ namespace CardRuleNS
 
             float score;
 
-            for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= 13; i++)
             {
                 cards[0].value = i;
 
-                for (int j = i; j <= 10; j++)
+                for (int j = 1; j <= 13; j++)
                 {
                     cards[1].value = j;
-                    for (int k = j; k <= 11; k++)
+                    for (int k = 1; k <= 13; k++)
                     {
                         cards[2].value = k;
-                        for (int m = k; m <= 12; m++)
+                        for (int m = 1; m <= 13; m++)
                         {
                             cards[3].value = m;
 
-                            for (int n = m; n <= 13; n++)
+                            for (int n = 1; n <= 13; n++)
                             {
-                                if ((i == j && i == k) || (i == k && i == m ) || (i == m && i == n) ||
-                                    (j == k && j == m) || (j == m && j == n) || (k == m && k == n))
+                                if (i == j + 1 && j == k + 1 &&
+                                   k == m + 1 && m == n + 1)
                                     continue;
 
-                                else if (i == j + 1 && j == k + 1 &&
-                                    k == m + 1 && m == n + 1)
-                                    continue;
-
-                                score = CardsTypeEvaluation.Instance.GetTongHuaBaseScore(new float[] {i, j, k, m, n });
+                                score = CardsTypeEvaluation.GetTongHuaBaseScore(new float[] {i, j, k, m, n });
 
                                 cards[4].value = n;
 
@@ -1251,54 +1335,5 @@ namespace CardRuleNS
         
             AddToDict(single5KeyDict, cardkey, 0, score);
         }
-
-
-
-        uint FlagKeyBit(uint key, int n, int m)
-        {
-            uint bitflag = (uint)(1 << n);
-            bitflag <<= m;
-            uint result = key & bitflag;
-
-            if (result == 0)
-            {
-                key |= bitflag;
-            }
-            else
-            {
-                bitflag <<= 1;
-                key |= bitflag;
-            }
-
-            return key;
-        }
-  
-        void CreateCardInfoToList(int key, int baseValue, List<CardInfo> cardInfoList)
-        {
-            int mask = 0x1;
-            int flag;
-            int _value, _suit;
-            CardInfo cardinfo;
-
-            for (int i = 0; i <= 31; i++)
-            {
-                flag = key & (mask << i);
-                if (flag == 0)
-                    continue;
-
-                _value = baseValue + i / 8 + 1;
-                _suit = i % 8 / 2;
-
-                cardinfo = new CardInfo()
-                {
-                    value = _value,
-                    suit = _suit
-                };
-
-                cardInfoList.Add(cardinfo);
-            }
-        }
-    }
-
-    
+    } 
 }
