@@ -14,6 +14,9 @@ namespace CardRule
 
             CardFace[] cardValues = new CardFace[]
               {
+CardFace.Club_A,
+CardFace.Heart_6,
+CardFace.Diamond_K,
 CardFace.BlackJoker,
 CardFace.RedJoker,
 CardFace.Club_A,

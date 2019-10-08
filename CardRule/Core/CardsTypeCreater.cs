@@ -367,7 +367,9 @@ namespace CardRuleNS
             {
                 info = new CardsTypeInfo();
                 info.type = CardsType.Single;
-                info.cardFaceValues = new CardFace[] { CardFace.Club_A };
+                info.cardFaceValues = new CardFace[0];
+                info.laiziCount = 1;
+                info.score = 14;
                 return info;
             }
             else if (cards.Length > 0)

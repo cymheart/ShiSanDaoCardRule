@@ -76,6 +76,8 @@ namespace CardRuleNS
         int[] idxs = new int[10];
         int optimalSlotCardsEvalInfoCount = 50;
 
+        int maxCount = 10;
+
         private struct EvalFuncParamDatas
         {
             public CardFace[] cardFaces;
@@ -430,7 +432,11 @@ namespace CardRuleNS
                 List<CardsTypeInfo> tmpInfo = new List<CardsTypeInfo>();
                 tmpInfo.AddRange(nextSlotCreater.SantiaoList);
                 tmpInfo.AddRange(nextSlotCreater.DuiziList);
-                tmpInfo.AddRange(nextSlotCreater.Single3List);
+
+                int count = Math.Min(5, nextSlotCreater.Single3List.Count);
+                for(int i=0; i<count; i++)
+                    tmpInfo.Add(nextSlotCreater.Single3List[i]);
+
                 info = tmpInfo.ToArray();
 
                 if (info.Length == 0)
@@ -452,19 +458,19 @@ namespace CardRuleNS
                 }
             }
 
-            //添加一个随机选取后50个牌型数据算法
+            //添加一个随机选取后maxCount个牌型数据算法
             int richCount = 0;
-            if (slotDepth < 1 && info.Length > 50)
+            if (slotDepth < 1 && info.Length > maxCount)
             {
                 Random rnd = new Random();
                 int n;
-                int maxRandCount = Math.Min(10, info.Length - 50);
-                richCount = info.Length - 50;
+                int maxRandCount = Math.Min(5, info.Length - maxCount);
+                richCount = info.Length - maxCount;
                 idxs[0] = -1;
 
                 for (int i = 0; i < maxRandCount; i++)
                 {
-                    n = rnd.Next(50, info.Length - 1);
+                    n = rnd.Next(maxCount, info.Length - 1);
 
                     for (int j = 0; j < i; j++)
                     {
@@ -516,6 +522,7 @@ namespace CardRuleNS
                 evalDatas[slotDepth + 1].Clear();
                 cardsTypeInfos[slotDepth + 1] = null;
             }
+
         }
 
 

@@ -435,7 +435,6 @@ namespace CardRuleNS
                         }
                     }
 
-
                 case CardsType.TwoDui:
                     {
                         CardInfo[] cardinfos = CardsTransform.Instance.CreateCardInfos(info.cardFaceValues);
@@ -699,6 +698,12 @@ namespace CardRuleNS
                         }
                     }
 
+                case CardsType.Single:
+                    {
+                        if (info.laiziCount >= 1)
+                            return new CardFace[] { CardFace.Club_A };
+                    }
+                    break;
 
             }
 
