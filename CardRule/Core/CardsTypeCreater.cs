@@ -131,10 +131,12 @@ namespace CardRuleNS
             int laiziCount = 0;
             cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
 
+            HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4_ForTowDui(cards);
             HashSet<CardKey> cardkeyHashSet3 = SplitCardsGroup3(cards);
             HashSet<CardKey> cardkeyHashSet2 = SplitCardsGroup2(cards);
             HashSet<CardKey> cardkeyHashSet1 = SplitCardsGroup1(cards);
 
+            CreateCardsTypeArrayBySplitGroup(cardkeyHashSet4, laiziCount, 4);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet3, laiziCount, 3);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet2, laiziCount, 2);
             CreateCardsTypeArrayBySplitGroup(cardkeyHashSet1, laiziCount, 1);
@@ -912,7 +914,37 @@ namespace CardRuleNS
             return cardkeyHashSet;
         }
 
+        HashSet<CardKey> SplitCardsGroup4_ForTowDui(CardInfo[] cards)
+        {
+            HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>(new CardKey.EqualityComparer());
+            CardKey cardkey;
+
+            //可能的两对
+            CardKey tmpCardkey;
+
+            for (int i = 0; i < cards.Length - 1; i++)
+            {
+                cardkey = new CardKey();
+                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
+                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, cards[i + 1].value, cards[i + 1].suit);
+
+                for (int j = 0; j < cards.Length - 1; j++)
+                {
+                    if (j < i - 1 || j > i + 1)
+                    {
+                        tmpCardkey = cardkey;
+                        tmpCardkey = CardsTypeDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j].value, cards[j].suit);
+                        tmpCardkey = CardsTypeDict.Instance.AppendCardToCardKey(tmpCardkey, cards[j + 1].value, cards[j + 1].suit);
+                        if (!cardkeyHashSet.Contains(tmpCardkey))
+                            cardkeyHashSet.Add(tmpCardkey);
+                    }
+                }
+            }
        
+            return cardkeyHashSet;
+        }
+
+
         void CreateTonghuaList()
         {
             if (TonghuaList.Count != 0)
