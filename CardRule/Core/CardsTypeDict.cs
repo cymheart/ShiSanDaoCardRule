@@ -1155,6 +1155,7 @@ namespace CardRuleNS
         public void CreateTongHuaDict(CardFace[] handCardFaces, CardFace[] laizi = null)
         {
             tonghuaKeyDict.Clear();
+
             CardsTypeCreater creater = new CardsTypeCreater();
             creater.SetLaizi(laizi);
 

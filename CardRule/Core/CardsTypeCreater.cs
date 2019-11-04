@@ -64,7 +64,7 @@ namespace CardRuleNS
 
         int laiziCount;
         CardInfo[] cards;
-
+        public CardFace[] handCardFaces;
         CardFace[] laizi = new CardFace[] { CardFace.BlackJoker, CardFace.RedJoker };
 
 
@@ -93,6 +93,9 @@ namespace CardRuleNS
             Clear();
 
             cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+            handCardFaces = new CardFace[cardFaces.Length];
+            for (int i = 0; i < cardFaces.Length; i++)
+                handCardFaces[i] = cardFaces[i];
 
             HashSet<CardKey> cardkeyHashSet5 = SplitCardsGroup5(cards);
             HashSet<CardKey> cardkeyHashSet4 = SplitCardsGroup4(cards);
@@ -117,6 +120,105 @@ namespace CardRuleNS
             if(isSort)
                 SortDictCardsTypeInfo();
         }
+
+        /// <summary>
+        /// 基于已有的基牌型生成器生成当前牌型数组
+        /// 算法是比较两组手牌中, 少了的牌，移除没有此牌的牌型
+        /// </summary>
+        /// <param name="cardFaces"></param>
+        /// <param name="isSort"></param>
+        public void CreateAllCardsTypeArrayByBaseCreater(CardFace[] cardFaces, CardsTypeCreater baseCreater, bool isSort = true)
+        {
+            cards = CardsTransform.Instance.CreateFormatCards(cardFaces, laizi, ref laiziCount);
+            handCardFaces = new CardFace[cardFaces.Length];
+            for (int i = 0; i < cardFaces.Length; i++)
+                handCardFaces[i] = cardFaces[i];
+
+            bool[] isUsedBaseCardFaces = new bool[baseCreater.handCardFaces.Length];
+            List<CardFace> existCardFaceList = new List<CardFace>();
+
+            for(int i=0; i < handCardFaces.Length; i++)
+            {
+                for (int j = 0; j < baseCreater.handCardFaces.Length; j++)
+                {
+                    if (baseCreater.handCardFaces[j] == handCardFaces[i] &&
+                        isUsedBaseCardFaces[j] == false)
+                    {
+                        isUsedBaseCardFaces[j] = true;
+                        break;
+                    }
+                }
+            }
+
+            for (int i = 0; i < baseCreater.handCardFaces.Length; i++)
+            {
+                if (isUsedBaseCardFaces[i] == true)
+                    existCardFaceList.Add(baseCreater.handCardFaces[i]);
+            }
+
+
+            //
+            CardFace[] existCardFaces = existCardFaceList.ToArray();
+            CreateCardsTypeList(CardsType.WuTong, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.TongHuaShun, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.Bomb, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.HuLu, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.ShunZi, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.SanTiao, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.TwoDui, existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.DuiZi,  existCardFaces, baseCreater);
+            CreateCardsTypeList(CardsType.Single, existCardFaces, baseCreater, 5);
+            CreateCardsTypeList(CardsType.Single, existCardFaces, baseCreater, 3);
+  
+        }
+
+        void CreateCardsTypeList(CardsType cardsType, CardFace[] existCardFaces, CardsTypeCreater baseCreater, int singleCount = 0)
+        {
+            CardFace[] faces;
+            CardsTypeInfo info;
+            bool isNotUse = false;
+
+            List<CardsTypeInfo> baseCardsTypeList = baseCreater.GetCardsTypeList(cardsType);
+            List<CardsTypeInfo> cardsTypeList = GetCardsTypeList(cardsType);
+
+            cardsTypeList.Clear();
+
+            for (int i = 0; i < baseCardsTypeList.Count; i++)
+            {
+                isNotUse = true;
+                info = baseCardsTypeList[i];
+
+                if (info.laiziCount > laiziCount)
+                    continue;
+
+                bool[] isUsedExistCardFaces = new bool[existCardFaces.Length];
+                faces = baseCardsTypeList[i].cardFaceValues;
+
+                for (int j = 0; j < faces.Length; j++)
+                {
+                    isNotUse = true;
+                    for (int k = 0; k < existCardFaces.Length; k++)
+                    {
+                        if (existCardFaces[k] == faces[j] &&
+                            isUsedExistCardFaces[k] == false)
+                        {
+                            isNotUse = false;
+                            isUsedExistCardFaces[k] = true;
+                            break;
+                        }
+                    }
+
+                    if (isNotUse)
+                        break;
+                }
+
+                if (isNotUse)
+                    continue;
+
+                cardsTypeList.Add(info);
+            }
+        }
+
 
         /// <summary>
         /// 生成可用于同花比大小的牌型数组
@@ -266,6 +368,37 @@ namespace CardRuleNS
                     ShunziList.Add(CardsTypeInfo);
                 }
             }
+        }
+
+
+        /// <summary>
+        /// 获取牌型列表
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="singleCount"></param>
+        /// <returns></returns>
+        public List<CardsTypeInfo> GetCardsTypeList(CardsType type, int singleCount = 0)
+        {
+            switch(type)
+            {
+                case CardsType.WuTong: return WutongList;
+                case CardsType.TongHuaShun: return TonghuashunList;
+                case CardsType.Bomb: return TiezhiList;
+                case CardsType.HuLu: return HuluList;
+                case CardsType.TongHua: return TonghuaList;
+                case CardsType.ShunZi: return ShunziList;
+                case CardsType.SanTiao: return SantiaoList;
+                case CardsType.TwoDui: return TwoduiList;
+                case CardsType.DuiZi: return DuiziList;
+                case CardsType.Single:
+                    {
+                        if(singleCount == 5)
+                            return Single5List;
+                        return Single3List;
+                    }
+            }
+
+            return null;
         }
 
 
@@ -645,9 +778,6 @@ namespace CardRuleNS
                     }
                 }
             }
-
-
-
         }
 
 
