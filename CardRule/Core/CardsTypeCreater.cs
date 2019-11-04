@@ -123,7 +123,9 @@ namespace CardRuleNS
 
         /// <summary>
         /// 基于已有的基牌型生成器生成当前牌型数组
-        /// 算法是比较两组手牌中, 少了的牌，移除没有此牌的牌型
+        /// 算法是比较两组手牌中, 少了的牌，移除没有此牌的牌型，
+        /// 注意当前牌型只能是基牌型的子集
+        /// (生成速度比较快)
         /// </summary>
         /// <param name="cardFaces"></param>
         /// <param name="isSort"></param>
