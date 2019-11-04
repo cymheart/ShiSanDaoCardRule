@@ -23,9 +23,12 @@ CardFace.Heart_10,
 
             CardsTypeDict dict = CardsTypeDict.Instance;
 
+            /////////////////////////////////////////////////
+            //1.根据当前手牌生成同花牌型查询字典
+            CardsTypeDict.Instance.CreateTongHuaDict(cardValues);
 
             /////////////////////////////////////////////////
-            //1.获取普通牌型组合
+            //2.获取普通牌型组合
             CardsTypeCreater creater = new CardsTypeCreater();
             creater.CreateAllCardsTypeArray(cardValues);
             //获取cardValues牌中的三条牌型表
@@ -47,7 +50,7 @@ CardFace.Heart_10,
            
 
             /////////////////////////////////////////////////
-            //2.特殊牌型检查
+            //3.特殊牌型检查
             SpecCardsCheck specCard = new SpecCardsCheck();
 
             //存储特殊牌型结果（已排好序）
@@ -56,7 +59,7 @@ CardFace.Heart_10,
             SpecCardsType type = specCard.Check(cardValues, outCards, outComputedCards);
 
             /////////////////////////////////////////////////
-            //3.测试牌型估值
+            //4.测试牌型估值
             List<SlotCardsEvalInfo> evalInfoList;
             CardsTypeEvaluation eval = new CardsTypeEvaluation();
             //eval.SetOptimalSlotCardsEvalInfoCount(10);

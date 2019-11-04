@@ -15,7 +15,6 @@ namespace CardRuleNS
         public uint bit_95_64;
         public uint bit_63_32;
         public uint bit_31_0;
-
         public CardKey(
             uint bit_207_192, uint bit_191_160, uint bit_159_128,
             uint bit_127_96, uint bit_95_64, uint bit_63_32, uint bit_31_0)
@@ -27,6 +26,17 @@ namespace CardRuleNS
             this.bit_95_64 = bit_95_64;
             this.bit_63_32 = bit_63_32;
             this.bit_31_0 = bit_31_0;
+        }
+
+        public void Clear()
+        {
+            bit_207_192 = 0;
+            bit_191_160 = 0;
+            bit_159_128 = 0;
+            bit_127_96 = 0;
+            bit_95_64 = 0;
+            bit_63_32 = 0;
+            bit_31_0 = 0;
         }
 
         public class EqualityComparer : IEqualityComparer<CardKey>
@@ -102,7 +112,7 @@ namespace CardRuleNS
         /// <summary>
         /// 是否生成同花字典
         /// </summary>
-        bool isCreateTonghuaDict = false;
+        bool isCreateAllTonghuaDict = false;
 
         /// <summary>
         /// 是否生成单张5个字典
@@ -127,14 +137,14 @@ namespace CardRuleNS
             CreateSanTiaoDict();
             CreateDuiZiDict();
 
-            if(isCreateTonghuaDict)
+            if(isCreateAllTonghuaDict)
                 CreateTongHuaDict();
 
             if (isCreateSingle5Dict)
                 CreateSingle5Dict();
         }
 
-        void AddToDict(Dictionary<CardKey, CardsTypeCombInfo> dict, CardKey cardkey, int count, float score)
+        void AddToDict(Dictionary<CardKey, CardsTypeCombInfo> dict, CardKey cardkey, int laiziCount, float score)
         {
             CardsTypeCombInfo old;
             if (dict.TryGetValue(cardkey, out old))
@@ -145,7 +155,7 @@ namespace CardRuleNS
             }
             else
             {
-                dict[cardkey] = new CardsTypeCombInfo(count, score);
+                dict[cardkey] = new CardsTypeCombInfo(laiziCount, score);
             }
         }
 
@@ -1134,6 +1144,292 @@ namespace CardRuleNS
                 cardkey = new CardKey();
                 cardkey = AppendCardToCardKey(cardkey, cards[i].value, cards[i].suit);
                 AddToDict(duiziKeyDict, cardkey, 1, score);
+            }
+        }
+
+        /// <summary>
+        /// 用于初始手牌一次生成同花字典(和具体手牌相关)
+        /// </summary>
+        /// <param name="handCardFaces"></param>
+        /// <param name="laizi"></param>
+        public void CreateTongHuaDict(CardFace[] handCardFaces, CardFace[] laizi = null)
+        {
+            tonghuaKeyDict.Clear();
+            CardsTypeCreater creater = new CardsTypeCreater();
+            creater.SetLaizi(laizi);
+
+            int laiziCount = 0;
+            CardInfo[] cards = CardsTransform.Instance.CreateFormatCards(handCardFaces, laizi, ref laiziCount);
+
+            HashSet<CardKey> cardkeyHashSet = new HashSet<CardKey>();
+
+            List<CardInfo>[] suitCards = new List<CardInfo>[]
+          {
+                new List<CardInfo>(),new List<CardInfo>(),
+                new List<CardInfo>(),new List<CardInfo>(),
+          };
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                suitCards[cards[i].suit].Add(cards[i]);
+            }
+
+            CardKey cardkey = new CardKey();
+            List<CardInfo> suitcards;
+
+            //5张同花
+            for (int a = 0; a < 4; a++)
+            {
+                suitcards = suitCards[a];
+                for (int i = 0; i < suitcards.Count - 4; i++)
+                    for (int j = i + 1; j < suitcards.Count - 3; j++)
+                        for (int k = j + 1; k < suitcards.Count - 2; k++)
+                            for (int m = k + 1; m < suitcards.Count - 1; m++)
+                                for (int n = m + 1; n < suitcards.Count; n++)
+                                {
+                                    cardkey.Clear();
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[i].value, suitcards[i].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[j].value, suitcards[j].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[k].value, suitcards[k].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[m].value, suitcards[m].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[n].value, suitcards[n].suit);
+
+                                    if (suitcards[i].value == suitcards[j].value && suitcards[i].value == suitcards[k].value &&
+                                        suitcards[i].value == suitcards[m].value && suitcards[i].value == suitcards[n].value)
+                                        continue;
+
+                                    if (!cardkeyHashSet.Contains(cardkey))
+                                    {
+                                        CardsTypeCombInfo combInfo;
+                                        bool ret = tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        ret = shunziKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        ret = huluKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        ret = tiezhiKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        cardkeyHashSet.Add(cardkey);
+
+                                        CardInfo[] cardInfos = CreateCardInfos(cardkey);
+                                        CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+                                        creater.CreateUsedTonghuaCmpCardsTypeArray(cardfaces);
+                                        CardsTypeInfo info = creater.GetMaxScoreCardsTypeInfo();
+
+                                        float score;
+                                        switch (info.type)
+                                        {
+                                            case CardsType.SanTiao: score = 60 + info.score; break;
+                                            case CardsType.TwoDui: score = 40 + info.score; break;
+                                            case CardsType.DuiZi: score = 20 + info.score; break;
+                                            default: score = info.score; break;
+                                        }
+
+                                        AddToDict(tonghuaKeyDict, cardkey, 0, score);
+                                    }
+                                }
+            }
+
+
+            //4张同花
+            if (laiziCount >= 1)
+            {
+                CardFace[] tmpCardFaces = new CardFace[5];
+
+                for (int a = 0; a < 4; a++)
+                {
+                    suitcards = suitCards[a];
+                    for (int j = 0; j < suitcards.Count - 3; j++)
+                        for (int k = j + 1; k < suitcards.Count - 2; k++)
+                            for (int m = k + 1; m < suitcards.Count - 1; m++)
+                                for (int n = m + 1; n < suitcards.Count; n++)
+                                {
+                                    cardkey = new CardKey();
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[j].value, suitcards[j].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[k].value, suitcards[k].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[m].value, suitcards[m].suit);
+                                    cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[n].value, suitcards[n].suit);
+
+                                    if (suitcards[j].value == suitcards[k].value &&
+                                           suitcards[j].value == suitcards[m].value &&
+                                           suitcards[j].value == suitcards[n].value)
+                                        continue;
+
+
+                                    if (!cardkeyHashSet.Contains(cardkey))
+                                    {
+
+                                        CardsTypeCombInfo combInfo;
+                                        bool ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        ret = CardsTypeDict.Instance.huluKeyDict.TryGetValue(cardkey, out combInfo);
+                                        if (ret == true && combInfo.laiziCount <= laiziCount)
+                                            continue;
+
+                                        cardkeyHashSet.Add(cardkey);
+
+                                        CardInfo[] cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+                                        CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+                                        for (int i = 0; i < cardfaces.Length; i++)
+                                            tmpCardFaces[i] = cardfaces[i];
+                                        tmpCardFaces[4] = laizi[0];
+                                        creater.CreateUsedTonghuaCmpCardsTypeArray(tmpCardFaces);
+                                        CardsTypeInfo info = creater.GetMaxScoreCardsTypeInfo();
+
+                                        float score;
+                                        switch (info.type)
+                                        {
+                                            case CardsType.SanTiao: score = 60 + info.score; break;
+                                            case CardsType.TwoDui: score = 40 + info.score; break;
+                                            case CardsType.DuiZi: score = 20 + info.score; break;
+                                            default: score = info.score; break;
+                                        }
+
+                                        AddToDict(tonghuaKeyDict, cardkey, 1, score);
+
+                                    }
+                                }
+                }
+            }
+
+
+            //3张同花
+            if (laiziCount >= 2)
+            {
+                CardFace[] tmpCardFaces = new CardFace[5];
+
+                for (int a = 0; a < 4; a++)
+                {
+                    suitcards = suitCards[a];
+                    for (int k = 0; k < suitcards.Count - 2; k++)
+                        for (int m = k + 1; m < suitcards.Count - 1; m++)
+                            for (int n = m + 1; n < suitcards.Count; n++)
+                            {
+                                cardkey = new CardKey();
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[k].value, suitcards[k].suit);
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[m].value, suitcards[m].suit);
+                                cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[n].value, suitcards[n].suit);
+                                if (!cardkeyHashSet.Contains(cardkey))
+                                {
+
+                                    CardsTypeCombInfo combInfo;
+                                    bool ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+                                    if (ret == true && combInfo.laiziCount <= laiziCount)
+                                        continue;
+
+                                    ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
+                                    if (ret == true && combInfo.laiziCount <= laiziCount)
+                                        continue;
+
+                                    ret = CardsTypeDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out combInfo);
+                                    if (ret == true && combInfo.laiziCount <= laiziCount)
+                                        continue;
+
+                                    ret = CardsTypeDict.Instance.huluKeyDict.TryGetValue(cardkey, out combInfo);
+                                    if (ret == true && combInfo.laiziCount <= laiziCount)
+                                        continue;
+
+
+                                    cardkeyHashSet.Add(cardkey);
+
+                                    CardInfo[] cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+                                    CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+                                    for (int i = 0; i < cardfaces.Length; i++)
+                                        tmpCardFaces[i] = cardfaces[i];
+                                    tmpCardFaces[3] = laizi[0];
+                                    tmpCardFaces[4] = laizi[0];
+                                    creater.CreateUsedTonghuaCmpCardsTypeArray(tmpCardFaces);
+                                    CardsTypeInfo info = creater.GetMaxScoreCardsTypeInfo();
+
+                                    float score;
+                                    switch (info.type)
+                                    {
+                                        case CardsType.SanTiao: score = 60 + info.score; break;
+                                        case CardsType.TwoDui: score = 40 + info.score; break;
+                                        case CardsType.DuiZi: score = 20 + info.score; break;
+                                        default: score = info.score; break;
+                                    }
+
+                                    AddToDict(tonghuaKeyDict, cardkey, 2, score);
+                                }
+                            }
+                }
+            }
+
+
+            //2张同花
+            if (laiziCount >= 3)
+            {
+                CardFace[] tmpCardFaces = new CardFace[5];
+
+                for (int a = 0; a < 4; a++)
+                {
+                    suitcards = suitCards[a];
+                    for (int m = 0; m < suitcards.Count - 1; m++)
+                        for (int n = m + 1; n < suitcards.Count; n++)
+                        {
+                            cardkey = new CardKey();
+                            cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[m].value, suitcards[m].suit);
+                            cardkey = CardsTypeDict.Instance.AppendCardToCardKey(cardkey, suitcards[n].value, suitcards[n].suit);
+                            if (!cardkeyHashSet.Contains(cardkey))
+                            {
+                                CardsTypeCombInfo combInfo;
+                                bool ret = CardsTypeDict.Instance.tongHuaShunKeyDict.TryGetValue(cardkey, out combInfo);
+                                if (ret == true && combInfo.laiziCount <= laiziCount)
+                                    continue;
+
+                                ret = CardsTypeDict.Instance.shunziKeyDict.TryGetValue(cardkey, out combInfo);
+                                if (ret == true && combInfo.laiziCount <= laiziCount)
+                                    continue;
+
+                                ret = CardsTypeDict.Instance.tiezhiKeyDict.TryGetValue(cardkey, out combInfo);
+                                if (ret == true && combInfo.laiziCount <= laiziCount)
+                                    continue;
+
+                                ret = CardsTypeDict.Instance.huluKeyDict.TryGetValue(cardkey, out combInfo);
+                                if (ret == true && combInfo.laiziCount <= laiziCount)
+                                    continue;
+
+                                cardkeyHashSet.Add(cardkey);
+
+                                CardInfo[] cardInfos = CardsTypeDict.Instance.CreateCardInfos(cardkey);
+                                CardFace[] cardfaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
+                                for (int i = 0; i < cardfaces.Length; i++)
+                                    tmpCardFaces[i] = cardfaces[i];
+                                tmpCardFaces[2] = laizi[0];
+                                tmpCardFaces[3] = laizi[0];
+                                tmpCardFaces[4] = laizi[0];
+                                creater.CreateUsedTonghuaCmpCardsTypeArray(tmpCardFaces);
+                                CardsTypeInfo info = creater.GetMaxScoreCardsTypeInfo();
+
+                                float score;
+                                switch (info.type)
+                                {
+                                    case CardsType.SanTiao: score = 60 + info.score; break;
+                                    case CardsType.TwoDui: score = 40 + info.score; break;
+                                    case CardsType.DuiZi: score = 20 + info.score; break;
+                                    default: score = info.score; break;
+                                }
+
+                                AddToDict(tonghuaKeyDict, cardkey, 3, score);
+
+                            }
+                        }
+                }
             }
         }
 
