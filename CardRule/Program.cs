@@ -23,9 +23,6 @@ CardFace.Heart_10,
 
             CardsTypeDict dict = CardsTypeDict.Instance;
 
-            /////////////////////////////////////////////////
-            //1.根据当前手牌生成同花牌型查询字典
-            CardsTypeDict.Instance.CreateTongHuaDict(cardValues);
 
             /////////////////////////////////////////////////
             //2.获取普通牌型组合
