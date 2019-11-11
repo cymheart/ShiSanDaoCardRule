@@ -35,7 +35,7 @@ namespace CardRuleNS
     public class CardsTypeEvaluation
     {
         /// <summary>
-        /// 分值水数权重，1:偏向牌型分值加权， 0：偏向水数加权
+        /// 牌型分值水数权重，1:完全偏向牌型分值加权， 0：完全偏向水数加权
         /// </summary>
         float scoreAndShuiWeight = 0.9f;
 
@@ -46,9 +46,9 @@ namespace CardRuleNS
 
         /// <summary>
         /// 方差在InOutCubic曲线上的取值范围
-        /// 例:0~0.3
+        /// 例:0~0.08
         /// </summary>
-        float varianceCubicRange = 0.3f;
+        float varianceCubicRange = 0.18f;
 
         /// <summary>
         /// 最大分数
@@ -402,8 +402,15 @@ namespace CardRuleNS
                     evalInfo.totalScore / maxScore * scoreAndShuiWeight +
                     evalInfo.totalShuiScore / maxShui * (1 - scoreAndShuiWeight);
 
+                //获取三个槽的分值相对总分的偏离方差
+                //当总分很高的情况下，如果三个槽的分值相差太大，那么方差会比较高，
+                //反之，即三个槽分值相差太不算太大，这时候方差会比较小
                 evalInfo.variance = SolveVariance(evalInfo.slotScore);
 
+                //根据偏离程度（方差）,取分值的权重，
+                //即当偏离值很高时，偏离值对分值的权重影响将会很高，会让分值变的比较低，这种组牌策略为平衡型
+                //可以通过调节varianceCubicRange的值来控制影响程度，当varianceCubicRange = 0时，意味着不受
+                //偏离程度的影响
                 float normalVar = evalInfo.variance / varianceLimit;
                 float weight = 1 - InOutCubic(normalVar, 0f, varianceCubicRange, 1);
                 evalInfo.compEval = weight * evalInfo.scoreAndShuiEval;
@@ -534,14 +541,14 @@ namespace CardRuleNS
 
             float avg = score / nums.Length;
             float sub;
-            float var = 0;
+            float v = 0;
             for (int i = 0; i < nums.Length; i++)
             {
                 sub = (nums[i] - avg) / avg;
-                var += sub * sub;
+                v += sub * sub;
             }
 
-            float variance = var / nums.Length;
+            float variance = v / nums.Length;
             variance = (float)Math.Sqrt(variance);
             return variance;
         }
@@ -570,6 +577,7 @@ namespace CardRuleNS
         List<SlotCardsEvalInfo> GetOptimalSlotCardsEvalInfoList(List<SlotCardsEvalInfo> slotCardsEvalInfoList)
         {
             List<SlotCardsEvalInfo> newSlotCardsEvalInfo = new List<SlotCardsEvalInfo>();
+            List<SlotCardsEvalInfo> sameSlotCardsEvalInfo = new List<SlotCardsEvalInfo>();
             int count = 0;
             SlotCardsEvalInfo evalInfo;
             CardsTypeInfo info;
@@ -595,17 +603,53 @@ namespace CardRuleNS
                     continue;
 
                 PostSort(evalInfo);
+
+                //排除组合牌型类似的牌型组
+                if (IsCardsTypeGroupSame(newSlotCardsEvalInfo, evalInfo))
+                {
+                    sameSlotCardsEvalInfo.Add(evalInfo);
+                    continue;
+                }
+
                 newSlotCardsEvalInfo.Add(evalInfo);
-
-
                 count++;
 
                 if (count == optimalSlotCardsEvalInfoCount)
                     break;
             }
 
+
+            if(count < optimalSlotCardsEvalInfoCount)
+            {
+                int n = Math.Min(optimalSlotCardsEvalInfoCount - newSlotCardsEvalInfo.Count, sameSlotCardsEvalInfo.Count);
+
+                for(int i=0; i < n; i++)
+                {
+                    newSlotCardsEvalInfo.Add(sameSlotCardsEvalInfo[i]);
+                }
+            }
+
+
             return newSlotCardsEvalInfo;
         }
+
+
+        bool IsCardsTypeGroupSame(List<SlotCardsEvalInfo> newSlotCardsEvalInfo, SlotCardsEvalInfo evalInfo)
+        {
+            SlotCardsEvalInfo existEvalInfo;
+            for (int i=0; i < newSlotCardsEvalInfo.Count; i++)
+            {
+                existEvalInfo = newSlotCardsEvalInfo[i];
+
+                if (existEvalInfo.slotCardsType[0] == evalInfo.slotCardsType[0] &&
+                    existEvalInfo.slotCardsType[1] == evalInfo.slotCardsType[1] &&
+                    existEvalInfo.slotCardsType[2] == evalInfo.slotCardsType[2])
+                    return true;
+            }
+
+            return false;
+        }
+
 
         void PostSort(SlotCardsEvalInfo evalInfo)
         {
