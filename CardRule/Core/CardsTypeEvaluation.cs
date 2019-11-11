@@ -37,7 +37,7 @@ namespace CardRuleNS
         /// <summary>
         /// 牌型分值水数权重，1:完全偏向牌型分值加权， 0：完全偏向水数加权
         /// </summary>
-        float scoreAndShuiWeight = 0.9f;
+        float scoreAndShuiWeight = 0.7f;
 
         /// <summary>
         /// 每道牌型偏离方差倍率的上限
@@ -48,7 +48,7 @@ namespace CardRuleNS
         /// 方差在InOutCubic曲线上的取值范围
         /// 例:0~0.08
         /// </summary>
-        float varianceCubicRange = 0.18f;
+        float varianceCubicRange = 0.2f;
 
         /// <summary>
         /// 最大分数
@@ -740,7 +740,8 @@ namespace CardRuleNS
             float score = 0;
             if (cardsTypeInfo != null)
             {
-                score = ((float)cardsTypeInfo.Value.type - 1) * 100;
+                float weigth = 100;
+                score = ((float)cardsTypeInfo.Value.type - 1) * weigth;
                 score += cardsTypeInfo.Value.score;
             }
 
