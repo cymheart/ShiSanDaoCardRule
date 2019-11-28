@@ -75,7 +75,6 @@ namespace CardRuleNS
         CardsTypeMatch match = new CardsTypeMatch();
         int[] idxs = new int[10];
         int optimalSlotCardsEvalInfoCount = 50;
-
         int maxCount = 10;
 
         private struct EvalFuncParamDatas
@@ -252,10 +251,15 @@ namespace CardRuleNS
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
                 if (curtSlotCardTypeInfo.Value.laiziCount > 0)
-                    cardFaces = CardsTransform.Instance.RemoveLaiziByCount(cardFaces, laizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
+                {
+                    cardFaces = CardsTransform.Instance.RemoveLaiziByCount(
+                        cardFaces, laizi, curtSlotCardTypeInfo.Value.laiziCount, removeLaizi);
+                }
 
                 //移除当前槽已使用的牌型牌
-                CardInfo[] cardInfos = CardsTransform.Instance.CreateRemoveFaceValues(cardFaces, curtSlotCardTypeInfo.Value.cardFaceValues);
+                CardInfo[] cardInfos = CardsTransform.Instance.CreateRemoveFaceValues(
+                    cardFaces, curtSlotCardTypeInfo.Value.cardFaceValues);
+
                 cardFaces = CardsTransform.Instance.CreateCardFaces(cardInfos);
 
                 //添加数据
@@ -298,7 +302,7 @@ namespace CardRuleNS
                 else
                     evalInfo.slotCardsType[0] = cardsTypeInfos[0].Value.type;
 
-                evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], value);
+                evalInfo.slotScore[0] = CalCardsScore(cardsTypeInfos[0], null);
                 evalInfo.slotShuiScore[0] = GetCardsTypeShuiScore(cardsTypeInfos[0], 0);
 
                 //中道
@@ -319,7 +323,7 @@ namespace CardRuleNS
                 else
                     evalInfo.slotCardsType[1] = cardsTypeInfos[1].Value.type;
 
-                evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], value);
+                evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], null);
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
 
 
@@ -328,7 +332,9 @@ namespace CardRuleNS
 
                 if (evalInfo.slotScore[1] == evalInfo.slotScore[0])
                 {
-                    int cmp = CmpScoreEqualCards(evalInfo.slotCardFaceList[1].ToArray(), evalInfo.slotCardFaceList[0].ToArray());
+                    int cmp = CmpScoreEqualCards(
+                        evalInfo.slotCardFaceList[1].ToArray(), evalInfo.slotCardFaceList[0].ToArray());
+
                     if (cmp == 1)
                         return;
                 }
@@ -374,7 +380,7 @@ namespace CardRuleNS
                 else
                     evalInfo.slotCardsType[2] = cardsTypeInfos[2].Value.type;
 
-                evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], value);
+                evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], null);
 
                 if (evalInfo.slotScore[2] > evalInfo.slotScore[1])
                     return;
@@ -766,7 +772,7 @@ namespace CardRuleNS
         /// <param name="cardsTypeInfo">牌的牌型详细信息</param>
         /// <param name="otherCardValue">包含的其它杂牌</param>
         /// <returns></returns>
-        public float CalCardsScore(CardsTypeInfo cardsTypeInfo, CardInfo[] otherCardInfos)
+        float CalCardsScore(CardsTypeInfo cardsTypeInfo, CardInfo[] otherCardInfos)
         {
             int[] values = null;
             if (otherCardInfos != null && otherCardInfos.Length > 0)
