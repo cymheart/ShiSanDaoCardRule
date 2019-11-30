@@ -248,6 +248,7 @@ namespace CardRuleNS
                     return;
                 }
 
+               
                 //根据赖子牌使用数量，移除当前槽相同数量的赖子牌
                 CardFace[] removeLaizi = new CardFace[5];
                 if (curtSlotCardTypeInfo.Value.laiziCount > 0)
@@ -325,8 +326,7 @@ namespace CardRuleNS
 
                 evalInfo.slotScore[1] = CalCardsScore(cardsTypeInfos[1], null);
                 evalInfo.slotShuiScore[1] = GetCardsTypeShuiScore(cardsTypeInfos[1], 1);
-
-
+       
                 if (evalInfo.slotScore[1] > evalInfo.slotScore[0])
                     return;
 
@@ -381,6 +381,7 @@ namespace CardRuleNS
                     evalInfo.slotCardsType[2] = cardsTypeInfos[2].Value.type;
 
                 evalInfo.slotScore[2] = CalCardsScore(cardsTypeInfos[2], null);
+
 
                 if (evalInfo.slotScore[2] > evalInfo.slotScore[1])
                     return;
@@ -587,6 +588,7 @@ namespace CardRuleNS
             int count = 0;
             SlotCardsEvalInfo evalInfo;
             CardsTypeInfo info;
+            float[] calCardsMaxScore = new float[3];
 
             for (int i = 0; i < slotCardsEvalInfoList.Count; i++)
             {
@@ -598,14 +600,25 @@ namespace CardRuleNS
                 if (info.type != evalInfo.slotCardsType[2])
                     continue;
 
+                calCardsMaxScore[2] = CalCardsScore(info, null);
+
                 optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[1].ToArray());
                 info = optimalCardCreater.GetMaxScoreCardsTypeInfo();
                 if (info.type != evalInfo.slotCardsType[1])
                     continue;
 
+                calCardsMaxScore[1] = CalCardsScore(info, null);
+
                 optimalCardCreater.CreateAllCardsTypeArray(evalInfo.slotCardFaceList[0].ToArray());
                 info = optimalCardCreater.GetMaxScoreCardsTypeInfo();
                 if (info.type != evalInfo.slotCardsType[0])
+                    continue;
+
+                calCardsMaxScore[0] = CalCardsScore(info, null);
+
+                if (calCardsMaxScore[2] > calCardsMaxScore[1] ||
+                    calCardsMaxScore[1] > calCardsMaxScore[0] ||
+                    calCardsMaxScore[2] > calCardsMaxScore[0])
                     continue;
 
                 PostSort(evalInfo);
